@@ -57,7 +57,7 @@ export const Login = () => {
                 </form>
                 <div className={styles.signup}>
                     <span className={styles.signup}>Don't have an account?
-                        <a className={styles.link} href='/register'>Signup</a>
+                        <a className={styles.link} href='/register'> Sign up </a>
                     </span>
                 </div>
             </div>

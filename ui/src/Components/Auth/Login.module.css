@@ -49,14 +49,15 @@ h1 {
     font-size: 1.2rem;
     font-weight: 500;
     letter-spacing: 1px;
-    margin-top: 1.7rem;
     cursor: pointer;
     height: 60px;
-    width: 100%;
+    width: 90%;
     padding: 0 15px;
     font-size: 17px;
     margin-top: 0.5rem;
     margin-bottom: 1.3rem;
+	margin-left: 15px;
+	margin-right: 15px;
     border: 1px solid #ddd;
     border-radius: 6px;
     outline: none;
@@ -73,4 +74,8 @@ h1 {
 
 .link {
     color: #009579;
+}
+
+.link:hover {
+	color: #53b4a3;
 }
