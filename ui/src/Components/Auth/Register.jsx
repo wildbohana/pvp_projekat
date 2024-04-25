@@ -82,7 +82,7 @@ export const Register = () => {
                             setErrorMessage('Please fill input fields!');
                         }
 						// Samo na frontu se proverava da li se poklapaju lozinke
-						else if (password != password2) {
+						else if (password !== password2) {
 							setErrorMessage('Passwords do not match!');
 						} 						
 						else {

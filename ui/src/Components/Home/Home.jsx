@@ -4,15 +4,18 @@ import axios from 'axios';
 import styles from './Home.module.css'
 import { Navbar } from '../Common/Navbar'
 
+import User from '../../Classes/User'
+import Drive from '../../Classes/Drive'
+
 export const Home = () => {
     return (
-        <div>
+        <>
             <Navbar />
             <div className={styles.homeContainer}>
-                <table>
-					<tr>HI</tr>
-				</table>
+				<User />
+				<hr/>
+				<Drive/>
             </div>
-        </div >
+        </>
     );
 };
