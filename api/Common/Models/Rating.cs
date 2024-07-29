@@ -5,6 +5,7 @@
         // int ili string (GUID)
         public int Id { get; set; }
 
+        public int RideId { get; set; }
         public int Rate { get; set; }
         public int CustomerId { get; set; }
         public string? CustomerUsername { get; set; }

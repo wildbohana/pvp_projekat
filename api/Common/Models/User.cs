@@ -4,9 +4,7 @@ namespace Common.Models
 {
     public class User
     {
-        // Ili int ili string ako ćeš koristiti GUID
-        public int Id { get; set; }
-
+        // Username je ID korisnika (ne menja se)
         public string? Username { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
