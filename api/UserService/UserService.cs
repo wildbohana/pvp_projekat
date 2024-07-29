@@ -8,36 +8,32 @@ using Common.Interfaces;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using UserService.Implementation;
 
 namespace UserService
 {
-    internal sealed class UserService : StatefulService, IUserService
+    internal sealed class UserService : StatefulService
     {
-        public UserService(StatefulServiceContext context) : base(context) { }
-
-        #region IUserService Implementation
-        public void CreateNewUser()
+        private UserServiceImplementation usi;
+        public UserService(StatefulServiceContext context) : base(context)
         {
-            throw new NotImplementedException();
+            usi = new UserServiceImplementation(this.StateManager, Context.PartitionId.ToString());
         }
 
-        public void GetUserInfo()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateUser()
-        {
-            throw new NotImplementedException();
-        }
-        #endregion IUserService Implementation
-
-        #region Default Methods
+        #region Create listeners
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new ServiceReplicaListener[0];
+            return new[] { new ServiceReplicaListener(context => this.CreateCommunicationListener(context)) };
         }
 
+        // TODO uradi ovo a da nije WCF
+        private ICommunicationListener CreateCommunicationListener(ServiceContext context)
+        {
+            return null;
+        }
+        #endregion Create listeners
+
+        #region RunAsync
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
             var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
@@ -61,6 +57,6 @@ namespace UserService
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
         }
-        #endregion Default Methods
+        #endregion RunAsync
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace Common.Interfaces
+﻿using Microsoft.ServiceFabric.Services.Remoting;
+
+namespace Common.Interfaces
 {
-    public interface IEmailService
+    public interface IEmailService : IService
     {
         void SendEmail();
 

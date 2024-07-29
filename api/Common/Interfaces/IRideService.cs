@@ -1,6 +1,8 @@
-﻿namespace Common.Interfaces
+﻿using Microsoft.ServiceFabric.Services.Remoting;
+
+namespace Common.Interfaces
 {
-    public interface IRideService
+    public interface IRideService : IService
     {
         void CreateNewRide();
         void AcceptRide();
