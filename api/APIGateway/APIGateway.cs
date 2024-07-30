@@ -12,6 +12,8 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Data;
 
+// port je 8102
+
 namespace APIGateway
 {
     /// <summary>
@@ -19,14 +21,8 @@ namespace APIGateway
     /// </summary>
     internal sealed class APIGateway : StatelessService
     {
-        public APIGateway(StatelessServiceContext context)
-            : base(context)
-        { }
+        public APIGateway(StatelessServiceContext context) : base(context) { }
 
-        /// <summary>
-        /// Optional override to create listeners (like tcp, http) for this service instance.
-        /// </summary>
-        /// <returns>The collection of listeners.</returns>
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
             return new ServiceInstanceListener[]

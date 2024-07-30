@@ -1,41 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.Fabric;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Common.Interfaces;
-using Microsoft.ServiceFabric.Data.Collections;
+﻿using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using UserService.Implementation;
+using System.Fabric;
+using Common.Interfaces;
+using Common.Models;
+using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 
 namespace UserService
 {
-    internal sealed class UserService : StatefulService
+    internal sealed class UserService : StatefulService, IUserService
     {
-        private UserServiceImplementation usi;
-        public UserService(StatefulServiceContext context) : base(context)
-        {
-            usi = new UserServiceImplementation(this.StateManager, Context.PartitionId.ToString());
-        }
+        public UserService(StatefulServiceContext context) : base(context) { }
 
         #region Create listeners
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new[] { new ServiceReplicaListener(context => this.CreateCommunicationListener(context)) };
-        }
-
-        // TODO uradi ovo a da nije WCF
-        private ICommunicationListener CreateCommunicationListener(ServiceContext context)
-        {
-            return null;
+            return this.CreateServiceRemotingReplicaListeners();
         }
         #endregion Create listeners
 
         #region RunAsync
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
+            // TODO dodaj svoje rečnike
             var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
 
             while (true)
@@ -58,5 +45,31 @@ namespace UserService
             }
         }
         #endregion RunAsync
+
+        #region IUserService Implementation
+
+        public bool CreateNewUser()
+        {
+            return false;
+        }
+
+        public async Task<User> GetUserInfo()
+        {
+            return new User() { Username = "testing" };
+        }
+
+        public bool UpdateUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        // TODO remove
+        public async Task<bool> Test()
+        {
+            bool retval = true;
+            return retval;
+        }
+        #endregion IUserService Implementation
+
     }
 }

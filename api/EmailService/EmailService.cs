@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Fabric;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Common.Interfaces;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using System.Fabric;
 
 namespace EmailService
 {
@@ -14,21 +10,17 @@ namespace EmailService
     {
         public EmailService(StatelessServiceContext context) : base(context) { }
 
-        #region IEmailService Implementation
-        public void SendEmail()
-        {
-            throw new NotImplementedException();
-        }
-        #endregion IEmailService Implementation
-
-        #region Default Methods
+        #region Create listeners
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
-            return new ServiceInstanceListener[0];
+            return this.CreateServiceRemotingInstanceListeners();
         }
+        #endregion Create listeners
 
+        #region RunAsync
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
+            // TODO ne znam da li ovde treba nešto menjati
             long iterations = 0;
 
             while (true)
@@ -40,6 +32,14 @@ namespace EmailService
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
         }
-        #endregion Default Methods
+        #endregion RunAsync
+
+        #region IEmailService Implementation
+        public void SendEmail()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion IEmailService Implementation
+
     }
 }
