@@ -20,14 +20,13 @@ namespace APIGateway.Controllers
         }
         #endregion Logger
 
-        // TODO remove
-        [HttpGet("testRemoting")]
-        public async Task<IActionResult> TestRemoting()
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterAsync(RegisterDTO data)
         {
             try
             {
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var temp = await proxy.Test();
+                var temp = await proxy.RegisterAsync(data);
 
                 return Ok(temp);
             }
@@ -38,13 +37,13 @@ namespace APIGateway.Controllers
             }
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterDTO data)
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync(LoginDTO data)
         {
             try
             {
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var temp = await proxy.RegisterAsync(data);
+                var temp = await proxy.LoginAsync(data);
 
                 return Ok(temp);
             }

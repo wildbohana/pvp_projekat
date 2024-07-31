@@ -79,14 +79,6 @@ namespace UserService
         #endregion RunAsync
 
         #region IUserService Implementation
-
-        // TODO remove
-        public async Task<bool> Test()
-        {
-            bool retval = true;
-            return retval;
-        }
-
         public async Task<bool> LoginAsync(LoginDTO credentials)
         {
             bool status = false;

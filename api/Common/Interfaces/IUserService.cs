@@ -17,9 +17,5 @@ namespace Common.Interfaces
         Task<bool> UpdateProfileAsync(UpdateUserDTO credentials);
 
         Task<bool> UserExistsAsync(string email);
-
-        // TODO remove
-        Task<bool> Test();
-
     }
 }
