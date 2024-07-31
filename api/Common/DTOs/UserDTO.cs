@@ -1,7 +1,4 @@
-﻿using System.Runtime.Serialization;
-using System.ServiceModel;
-
-namespace Common.DTOs
+﻿namespace Common.DTOs
 {
     public class UserDTO
     {

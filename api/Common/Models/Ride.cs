@@ -1,4 +1,5 @@
 ﻿using Common.Enums;
+using Common.TableEntites;
 
 namespace Common.Models
 {
@@ -17,9 +18,9 @@ namespace Common.Models
         public ERideStatus Status { get; set; }
 
         public int CustomerId { get; set; }
-        public User? Customer { get; set; }
+        public UserEntity? Customer { get; set; }
 
         public int? DriverId { get; set; }
-        public User? Driver { get; set; }
+        public UserEntity? Driver { get; set; }
     }
 }

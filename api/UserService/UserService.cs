@@ -3,24 +3,32 @@ using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Fabric;
 using Common.Interfaces;
-using Common.Models;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Common.DTOs;
 using Common.Enums;
+using Azure.Data.Tables;
+using Common.TableEntites;
+using Common.Models;
 
-// TODO jwt tokens
+/*
+TODO:
+ - JWT tokens
+ - hash passwords
+ - upload slike u Blob
+ - ostale funkcije za korisnike (block/verify - updateUser)
+*/
 
 namespace UserService
 {
     internal sealed class UserService : StatefulService, IUserService
     {
         #region Fields
-        //private TableClient userTable = null!;
-        //private Thread userDatabaseThread = null!;
-        private IReliableDictionary<string, User> userDictionary = null!;   // Init u RunAsync
-        #endregion Fields
+        private TableClient userTable = null!;
+        private Thread userTableThread = null!;
+        private IReliableDictionary<string, User> userDictionary = null!;   // Init u RunAsync    
 
         public UserService(StatefulServiceContext context) : base(context) { }
+        #endregion Fields
 
         #region Create listeners
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
@@ -30,52 +38,59 @@ namespace UserService
         #endregion Create listeners
 
         #region RunAsync
-        // TODO promeni da se koristi baza
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
+            await SetUserTableAsync();
             userDictionary = await StateManager.GetOrAddAsync<IReliableDictionary<string, User>>("UserDictionary");
-            //await PopulateUserDictionary();
+            await PopulateUserDictionary();
 
-            //userDatabaseThread = new Thread(new ThreadStart(UserDatabaseWriteThread));
-            //userDatabaseThread.Start();
+            userTableThread = new Thread(new ThreadStart(UserTableWriteThread));
+            userTableThread.Start();
+
         }
 
+        private async Task SetUserTableAsync()
+        {
+            var tableServiceClient = new TableServiceClient("UseDevelopmentStorage=true");
+            await tableServiceClient.CreateTableIfNotExistsAsync("User");
+            userTable = tableServiceClient.GetTableClient("User");
+        }
 
-        //private async Task PopulateUserDictionary()
-        //{
-        //    var entities = userTable.QueryAsync<UsersTable>(x => true).GetAsyncEnumerator();
+        private async Task PopulateUserDictionary()
+        {
+            var entities = userTable.QueryAsync<UserEntity>(x => true).GetAsyncEnumerator();
 
-        //    using (var tx = StateManager.CreateTransaction())
-        //    {
-        //        while (await entities.MoveNextAsync())
-        //        {
-        //            var user = new User(entities.Current);
-        //            await userDictionary.TryAddAsync(tx, user.Email, user);
-        //        }
+            using (var tx = StateManager.CreateTransaction())
+            {
+                while (await entities.MoveNextAsync())
+                {
+                    var user = new User(entities.Current);
+                    await userDictionary.TryAddAsync(tx, user.Email, user);
+                }
 
-        //        await tx.CommitAsync();
-        //    }
-        //}
+                await tx.CommitAsync();
+            }
+        }
 
+        private async void UserTableWriteThread()
+        {
+            while (true)
+            {
+                using (var tx = StateManager.CreateTransaction())
+                {
+                    var enumerator = (await userDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
 
-        //private async void UserDatabaseWriteThread()
-        //{
-        //    while (true)
-        //    {
-        //        using (var tx = StateManager.CreateTransaction())
-        //        {
-        //            var enumerator = (await userDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+                    while (await enumerator.MoveNextAsync(CancellationToken.None))
+                    {
+                        var user = enumerator.Current.Value;
+                        var userEntity = new UserEntity(user);
+                        await userTable.UpsertEntityAsync(userEntity, TableUpdateMode.Merge, CancellationToken.None);
+                    }
+                }
 
-        //            while (await enumerator.MoveNextAsync(CancellationToken.None))
-        //            {
-        //                var user = enumerator.Current.Value;
-        //                await userTable.UpsertEntityAsync(new UsersTable(user), TableUpdateMode.Merge, CancellationToken.None);
-        //            }
-        //        }
-
-        //        Thread.Sleep(5000);
-        //    }
-        //}
+                Thread.Sleep(5000);
+            }
+        }
         #endregion RunAsync
 
         #region IUserService Implementation
@@ -98,7 +113,6 @@ namespace UserService
 
         public async Task<bool> RegisterAsync(RegisterDTO credentials)
         {
-            // TODO hash password
             bool status = false;
 
             using (var tx = StateManager.CreateTransaction())
@@ -107,28 +121,15 @@ namespace UserService
 
                 if (!userResult.HasValue)
                 {
-                    if (!credentials.Password.Equals(credentials.ConfirmPassword)) status = false;
+                    if (!credentials.Password.Equals(credentials.ConfirmPassword))
+                    {
+                        status = false;
+                    }
                     else
                     {
                         try
                         {
-                            // TODO change
-                            var newUser = new User()
-                            { 
-                                Password = credentials.ConfirmPassword,
-                                Username = credentials.Username,
-                                Email = credentials.Email,
-                                FirstName = credentials.Firstname,
-                                Lastname = credentials.Lastname,
-                                UserType = credentials.Role == EUserType.Customer.ToString() ? EUserType.Customer : EUserType.Driver,
-                                Address = credentials.Address,
-                                DateOfBirth = credentials.DateOfBirth,
-                                VerificationStatus = EVerificationStatus.Approved,
-                                IsBlocked = false,
-                                Busy = false,
-                                PhotoUrl = ""
-                            };
-                            await userDictionary.AddAsync(tx, newUser.Email, newUser);
+                            await userDictionary.AddAsync(tx, credentials.Email, new User(credentials));
                             await tx.CommitAsync();
                             status = true;
                         }
@@ -150,9 +151,8 @@ namespace UserService
             {
                 var userResult = await userDictionary.TryGetValueAsync(tx, email);
 
-                // TODO change return type (UpdateUserDTO)
-                //if (userResult.HasValue) return new UpdateUserDTO(userResult.Value);
-                if (userResult.HasValue) return null;
+                if (userResult.HasValue)
+                    return new UpdateUserDTO(userResult.Value);
                 return null;
             }
         }
@@ -185,8 +185,7 @@ namespace UserService
                     {
                         try
                         {
-                            // TODO change construtor for User
-                            await userDictionary.TryUpdateAsync(tx, credentials.Email, new User(), user);
+                            await userDictionary.TryUpdateAsync(tx, credentials.Email, new User(credentials), user);
                             await tx.CommitAsync();
                             status = true;
                         }
@@ -216,6 +215,5 @@ namespace UserService
             return status;
         }
         #endregion IUserService Implementation
-
     }
 }
