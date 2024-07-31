@@ -35,7 +35,7 @@ namespace EmailService
         #endregion RunAsync
 
         #region IEmailService Implementation
-        public void SendEmail()
+        public Task<bool> SendEmail()
         {
             throw new NotImplementedException();
         }

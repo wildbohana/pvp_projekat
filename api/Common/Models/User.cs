@@ -4,9 +4,9 @@ namespace Common.Models
 {
     public class User
     {
-        // Username je ID korisnika (ne menja se)
+        // Email je ID korisnika (ne menja se)
+        public string? Email { get; set; } 
         public string? Username { get; set; }
-        public string? Email { get; set; }
         public string? Password { get; set; }
         public string? FirstName { get; set; }
         public string? Lastname { get; set; }

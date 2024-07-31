@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="7.1.2175" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

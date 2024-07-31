@@ -9,8 +9,10 @@ namespace Common.DTOs
         public string Username { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
-        [StringLength(15, MinimumLength = 6, ErrorMessage = "Password length must be between 6 and 15 characters")]
         public string Password { get; set; }
+
+        [Required(ErrorMessage = "Password confirmation is required")]
+        public string ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]

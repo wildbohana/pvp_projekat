@@ -1,4 +1,7 @@
-﻿namespace Common.DTOs
+﻿using System.Runtime.Serialization;
+using System.ServiceModel;
+
+namespace Common.DTOs
 {
     public class AuthSuccessDTO
     {

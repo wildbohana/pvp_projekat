@@ -4,7 +4,6 @@ namespace Common.Interfaces
 {
     public interface IEmailService : IService
     {
-        void SendEmail();
-
+        Task<bool> SendEmail();
     }
 }
