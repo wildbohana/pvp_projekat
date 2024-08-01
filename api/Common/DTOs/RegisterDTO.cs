@@ -14,6 +14,6 @@ namespace Common.DTOs
         public string? DateOfBirth { get; set; }
         public string? Address { get; set; }
         public string? Role { get; set; }
-        public string? Photo { get; set; }
+        public string? PhotoUrl { get; set; }
     }
 }

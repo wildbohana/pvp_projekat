@@ -10,15 +10,12 @@ using Azure.Data.Tables;
 using Common.TableEntites;
 using Common.Models;
 using static System.Net.Mime.MediaTypeNames;
+using System.Data;
+using System.Net;
+using Common.Helpers;
 
-/*
-TODO:
- - JWT tokens
- - hash passwords
- - datum odluči šta ćeš - ostavi string ili pretvori u DateOnly
- - upload slike u Blob
- - OAuth registracija/login (samo na frontu)
-*/
+// TODO Upload slike u Blob
+// TODO OAuth registracija/login (samo na frontu)
 
 namespace UserService
 {
@@ -94,7 +91,7 @@ namespace UserService
         }
         #endregion RunAsync
 
-        #region IUserService Implementation
+        #region Auth actions
         public async Task<bool> LoginAsync(LoginDTO credentials)
         {
             bool status = false;
@@ -105,9 +102,8 @@ namespace UserService
 
                 if (userResult.HasValue && userResult.Value.Password != null)
                 {
-                    // TODO hash credentials.Password
-                    //string hashedPassword = HashHelper.HashPassword(credentials.Password);
-                    if (userResult.Value.Password.Equals(credentials.Password))
+                    string hashedPassword = HashHelper.HashPassword(credentials.Password);
+                    if (userResult.Value.Password.Equals(hashedPassword))
                     {
                         status = true;
                     }
@@ -136,9 +132,8 @@ namespace UserService
                     {
                         User newUser = new User(credentials);
 
-                        // TODO
                         // Heširanje lozinke
-                        //newUser.Password = HashHelper.HashPassword(credentials.ConfirmPassword);
+                        newUser.Password = HashHelper.HashPassword(credentials.ConfirmPassword);
 
                         // TODO
                         // Upload slike
@@ -173,15 +168,35 @@ namespace UserService
 
             return status;
         }
+        #endregion Auth actions
 
+        #region User actions
         public async Task<UserDTO?> GetUserDataAsync(string email)
         {
             using (var tx = StateManager.CreateTransaction())
             {
                 var userResult = await userDictionary.TryGetValueAsync(tx, email);
-
+                
                 if (userResult.HasValue)
-                    return new UserDTO(userResult.Value);
+                {
+                    User user = userResult.Value;
+                    UserDTO userInfo = new()
+                    {
+                        Email = user.Email,
+                        Username = user.Username,
+                        Firstname = user.Firstname,
+                        Lastname = user.Lastname,
+                        Address = user.Address,
+                        DateOfBirth = user.DateOfBirth,
+                        ConfirmNewPassword = "",
+                        ConfirmOldPassword = "",
+                        NewPassword = "",
+                        Role = user.UserType.ToString(),
+                        PhotoUrl = user.PhotoUrl
+                    };
+
+                    return userInfo;
+                }
                 return null;
             }
         }
@@ -214,7 +229,9 @@ namespace UserService
                 {
                     var user = userResult.Value;
 
-                    if (!credentials.ConfirmOldPassword.Equals(user.Password))
+                    // TODO ostavi ili obriši? ovako korisnik uvek mora da menja lozinku?
+                    string hashedOldPassword = HashHelper.HashPassword(credentials.ConfirmOldPassword);
+                    if (!hashedOldPassword.Equals(user.Password))
                     {
                         status = false;
                     }
@@ -232,12 +249,11 @@ namespace UserService
                         newUser.Username = credentials.Username ?? newUser.Username;
                         newUser.DateOfBirth = credentials.DateOfBirth ?? newUser.DateOfBirth;
 
-                        // TODO
                         // Promena lozinke
-                        //if (!string.IsNullOrEmpty(credentials.ConfirmNewPassword))
-                        //{
-                        //    newUser.Password = HashHelper.HashPassword(updatedUser.Lozinka, salt);
-                        //}
+                        if (!string.IsNullOrEmpty(credentials.ConfirmNewPassword))
+                        {
+                            newUser.Password = HashHelper.HashPassword(credentials.ConfirmNewPassword);
+                        }
 
                         // TODO
                         // Promena slike
@@ -284,8 +300,9 @@ namespace UserService
 
             return status;
         }
+        #endregion User actions
 
-        // TODO fix deserialization
+        #region Admin actions
         public async Task<IEnumerable<DriverDTO>> GetAllDriversAsync()
         {
             var drivers = new List<DriverDTO>();
@@ -307,7 +324,6 @@ namespace UserService
             return drivers;
         }
 
-        // TODO fix
         public async Task<bool> BlockDriverAsync(string driverId)
         {
             bool status = false;
@@ -317,6 +333,10 @@ namespace UserService
                 var userResult = await userDictionary.TryGetValueAsync(tx, driverId);
 
                 if (!userResult.HasValue)
+                {
+                    status = false;
+                }
+                else if (userResult.Value.UserType != EUserType.Driver)
                 {
                     status = false;
                 }
@@ -363,6 +383,10 @@ namespace UserService
                 {
                     status = false;
                 }
+                else if (userResult.Value.VerificationStatus != EVerificationStatus.Pending)
+                {
+                    status = false;
+                }
                 else
                 {
                     var user = userResult.Value;
@@ -397,6 +421,10 @@ namespace UserService
                 {
                     status = false;
                 }
+                else if (userResult.Value.VerificationStatus != EVerificationStatus.Pending)
+                {
+                    status = false;
+                }
                 else
                 {
                     var user = userResult.Value;
@@ -418,6 +446,6 @@ namespace UserService
 
             return status;
         }
-        #endregion IUserService Implementation
+        #endregion Admin actions
     }
 }

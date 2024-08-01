@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 
+// TODO JWT tokene
+
 namespace APIGateway.Controllers
 {
     [ApiController]
@@ -11,12 +13,14 @@ namespace APIGateway.Controllers
     public class UsersController : ControllerBase
     {
         [HttpGet("profile")]
-        public async Task<IActionResult> GetProfileAsync()
+        public async Task<IActionResult> GetProfileAsync(string testId)
         {
             try
             {
+                string userId = testId;     // samo za testiranje
+
                 // check jwt token (dobavi userId iz njega)
-                string userId = "mejl_adresa_iz_tokena";
+                //string userId = "mejl_adresa_iz_tokena";
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetUserDataAsync(userId);

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 
+// TODO JWT tokene
+
 namespace APIGateway.Controllers
 {
     [ApiController]

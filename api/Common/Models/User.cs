@@ -65,32 +65,11 @@ namespace Common.Models
             Lastname = user.Lastname;
             DateOfBirth = user.DateOfBirth;
             UserType = user.Role == EUserType.Customer.ToString() ? EUserType.Customer : EUserType.Driver;
-            PhotoUrl = "";
+            PhotoUrl = user.PhotoUrl;
             VerificationStatus = (UserType == EUserType.Customer) ? EVerificationStatus.Approved : EVerificationStatus.Pending;
             IsBlocked = false;
             Busy = false;
             AvgRate = 0;
-        }
-
-        // TODO probably remove
-        public User(UserDTO user)
-        {
-            Email = user.Email;
-            Username = user.Username;
-            Password = user.NewPassword;
-            Address = user.Address;
-            Firstname = user.Firstname;
-            Lastname = user.Lastname;
-            DateOfBirth = user.DateOfBirth;
-            UserType = user.Role == EUserType.Customer.ToString() ? EUserType.Customer : EUserType.Driver;
-            
-            //PhotoUrl = "";
-            
-            // Ali ako ovako ostavim onda će se ovo uvek resetovati?
-            //VerificationStatus = (UserType == EUserType.Customer) ? EVerificationStatus.Approved : EVerificationStatus.Pending;
-            //IsBlocked = false;
-            //Busy = false;
-            //AvgRate = 0;
         }
     }
 }
