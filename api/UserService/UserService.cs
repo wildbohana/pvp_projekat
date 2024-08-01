@@ -9,13 +9,15 @@ using Common.Enums;
 using Azure.Data.Tables;
 using Common.TableEntites;
 using Common.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 /*
 TODO:
  - JWT tokens
  - hash passwords
+ - datum odluči šta ćeš - ostavi string ili pretvori u DateOnly
  - upload slike u Blob
- - ostale funkcije za korisnike (block/verify - updateUser)
+ - OAuth registracija/login (samo na frontu)
 */
 
 namespace UserService
@@ -46,7 +48,6 @@ namespace UserService
 
             userTableThread = new Thread(new ThreadStart(UserTableWriteThread));
             userTableThread.Start();
-
         }
 
         private async Task SetUserTableAsync()
@@ -104,7 +105,12 @@ namespace UserService
 
                 if (userResult.HasValue && userResult.Value.Password != null)
                 {
-                    if (userResult.Value.Password.Equals(credentials.Password)) status = true;
+                    // TODO hash credentials.Password
+                    //string hashedPassword = HashHelper.HashPassword(credentials.Password);
+                    if (userResult.Value.Password.Equals(credentials.Password))
+                    {
+                        status = true;
+                    }
                 }
             }
 
@@ -117,6 +123,7 @@ namespace UserService
 
             using (var tx = StateManager.CreateTransaction())
             {
+                // Provera da li je neko već iskoristio tu email adresu
                 var userResult = await userDictionary.TryGetValueAsync(tx, credentials.Email);
 
                 if (!userResult.HasValue)
@@ -127,9 +134,31 @@ namespace UserService
                     }
                     else
                     {
+                        User newUser = new User(credentials);
+
+                        // TODO
+                        // Heširanje lozinke
+                        //newUser.Password = HashHelper.HashPassword(credentials.ConfirmPassword);
+
+                        // TODO
+                        // Upload slike
+                        //if (credentials.Photo != "")
+                        //{
+                        //    Image image;
+                        //    using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(credentials.Photo.Split(',')[1])))
+                        //    {
+                        //        image = Image.FromStream(ms);
+                        //    }
+                        //    newUser.PhotoUrl = new BlobHelper().UploadImage(image, "slike", Guid.NewGuid().ToString() + ".jpg");
+                        //}
+                        //else
+                        //{
+                        //    newUser.PhotoUrl = "";
+                        //}
+
                         try
                         {
-                            await userDictionary.AddAsync(tx, credentials.Email, new User(credentials));
+                            await userDictionary.AddAsync(tx, credentials.Email, newUser);
                             await tx.CommitAsync();
                             status = true;
                         }
@@ -145,19 +174,31 @@ namespace UserService
             return status;
         }
 
-        public async Task<UpdateUserDTO?> GetUserDataAsync(string email)
+        public async Task<UserDTO?> GetUserDataAsync(string email)
         {
             using (var tx = StateManager.CreateTransaction())
             {
                 var userResult = await userDictionary.TryGetValueAsync(tx, email);
 
                 if (userResult.HasValue)
-                    return new UpdateUserDTO(userResult.Value);
+                    return new UserDTO(userResult.Value);
                 return null;
             }
         }
 
-        public async Task<bool> UpdateProfileAsync(UpdateUserDTO credentials)
+        public async Task<bool> GetBusyStatusAsync(string email)
+        {
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var userResult = await userDictionary.TryGetValueAsync(tx, email);
+
+                if (userResult.HasValue)
+                    return userResult.Value.Busy;
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateProfileAsync(UserDTO credentials)
         {
             bool status = false;
 
@@ -183,9 +224,38 @@ namespace UserService
                     }
                     else
                     {
+                        User newUser = user;
+
+                        newUser.Firstname = credentials.Firstname ?? newUser.Firstname;
+                        newUser.Lastname = credentials.Lastname ?? newUser.Lastname;
+                        newUser.Address = credentials.Address ?? newUser.Address;
+                        newUser.Username = credentials.Username ?? newUser.Username;
+                        newUser.DateOfBirth = credentials.DateOfBirth ?? newUser.DateOfBirth;
+
+                        // TODO
+                        // Promena lozinke
+                        //if (!string.IsNullOrEmpty(credentials.ConfirmNewPassword))
+                        //{
+                        //    newUser.Password = HashHelper.HashPassword(updatedUser.Lozinka, salt);
+                        //}
+
+                        // TODO
+                        // Promena slike
+                        //if (!credentials.Photo.StartsWith("http"))
+                        //{
+                        //    Image image;
+                        //    string slikaB64 = credentials.Photo;
+                        //    using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(slikaB64.Split(',')[1])))
+                        //    {
+                        //        image = Image.FromStream(ms);
+                        //    }
+                        //    newUser.PhotoUrl = new BlobHelper().UploadImage(image, "slike", Guid.NewGuid().ToString() + ".jpg");
+                        //}
+
+                        // Upis promene u rečnik
                         try
                         {
-                            await userDictionary.TryUpdateAsync(tx, credentials.Email, new User(credentials), user);
+                            await userDictionary.TryUpdateAsync(tx, credentials.Email, newUser, user);
                             await tx.CommitAsync();
                             status = true;
                         }
@@ -210,6 +280,140 @@ namespace UserService
                 var userResult = await userDictionary.TryGetValueAsync(tx, email);
 
                 if (userResult.HasValue) status = true;
+            }
+
+            return status;
+        }
+
+        // TODO fix deserialization
+        public async Task<IEnumerable<DriverDTO>> GetAllDriversAsync()
+        {
+            var drivers = new List<DriverDTO>();
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var enumerator = (await userDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(CancellationToken.None))
+                {
+                    var tmp = enumerator.Current.Value;
+                    if (tmp.UserType == EUserType.Driver)
+                    {
+                        drivers.Add(new DriverDTO(tmp));
+                    }
+                }
+            }
+
+            return drivers;
+        }
+
+        // TODO fix
+        public async Task<bool> BlockDriverAsync(string driverId)
+        {
+            bool status = false;
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var userResult = await userDictionary.TryGetValueAsync(tx, driverId);
+
+                if (!userResult.HasValue)
+                {
+                    status = false;
+                }
+                else
+                {
+                    var oldUser = userResult.Value;
+                    var updatedUser = userResult.Value;
+
+                    if (!oldUser.IsBlocked)
+                    {
+                        updatedUser.IsBlocked = true;
+                    }
+                    else
+                    {
+                        updatedUser.IsBlocked = false;
+                    }
+
+                    try
+                    {
+                        await userDictionary.TryUpdateAsync(tx, driverId, updatedUser, oldUser);
+                        await tx.CommitAsync();
+                        status = true;
+                    }
+                    catch (Exception)
+                    {
+                        status = false;
+                        tx.Abort();
+                    }
+                }
+            }
+
+            return status;
+        }
+
+        public async Task<bool> ApproveDriverAsync(string driverId)
+        {
+            bool status = false;
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var userResult = await userDictionary.TryGetValueAsync(tx, driverId);
+
+                if (!userResult.HasValue)
+                {
+                    status = false;
+                }
+                else
+                {
+                    var user = userResult.Value;
+                    user.VerificationStatus = EVerificationStatus.Approved;
+
+                    try
+                    {
+                        await userDictionary.TryUpdateAsync(tx, driverId, user, user);
+                        await tx.CommitAsync();
+                        status = true;
+                    }
+                    catch (Exception)
+                    {
+                        status = false;
+                        tx.Abort();
+                    }
+                }
+            }
+
+            return status;
+        }
+
+        public async Task<bool> DenyDriverAsync(string driverId)
+        {
+            bool status = false;
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var userResult = await userDictionary.TryGetValueAsync(tx, driverId);
+
+                if (!userResult.HasValue)
+                {
+                    status = false;
+                }
+                else
+                {
+                    var user = userResult.Value;
+                    user.VerificationStatus = EVerificationStatus.Denied;
+
+                    try
+                    {
+                        await userDictionary.TryUpdateAsync(tx, driverId, user, user);
+                        await tx.CommitAsync();
+                        status = true;
+                    }
+                    catch (Exception)
+                    {
+                        status = false;
+                        tx.Abort();
+                    }
+                }
             }
 
             return status;

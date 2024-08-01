@@ -3,6 +3,8 @@ using Common.Enums;
 using Common.TableEntites;
 using System.Runtime.Serialization;
 
+// In memory model (čuva se u rečniku)
+
 namespace Common.Models
 {
     [DataContract]
@@ -19,7 +21,6 @@ namespace Common.Models
         public string? Firstname { get; set; }
         [DataMember]
         public string? Lastname { get; set; }
-        //public DateOnly DateOfBirth { get; set; }
         [DataMember]
         public string? DateOfBirth { get; set; }
         [DataMember]
@@ -71,7 +72,8 @@ namespace Common.Models
             AvgRate = 0;
         }
 
-        public User(UpdateUserDTO user)
+        // TODO probably remove
+        public User(UserDTO user)
         {
             Email = user.Email;
             Username = user.Username;

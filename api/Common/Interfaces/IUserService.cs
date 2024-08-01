@@ -7,15 +7,17 @@ namespace Common.Interfaces
 {
     public interface IUserService : IService
     {
-        // Dodati još i metode za blokiranje i verifikaciju vozača
         Task<bool> LoginAsync(LoginDTO credentials);
-
         Task<bool> RegisterAsync(RegisterDTO credentials);
-
-        Task<UpdateUserDTO?> GetUserDataAsync(string email);
-
-        Task<bool> UpdateProfileAsync(UpdateUserDTO credentials);
-
+        Task<UserDTO?> GetUserDataAsync(string email);
+        Task<bool> UpdateProfileAsync(UserDTO credentials);
         Task<bool> UserExistsAsync(string email);
+        Task<bool> GetBusyStatusAsync(string email);
+
+        // Samo za admina
+        Task<IEnumerable<DriverDTO>> GetAllDriversAsync();
+        Task<bool> BlockDriverAsync(string driverId);
+        Task<bool> ApproveDriverAsync(string driverId);
+        Task<bool> DenyDriverAsync(string driverId);
     }
 }
