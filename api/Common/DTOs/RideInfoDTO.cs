@@ -1,13 +1,11 @@
 ﻿using Common.Enums;
-using Common.TableEntites;
+using Common.Models;
 using System.Runtime.Serialization;
 
-// In-memory model (čuva se u rečniku)
-
-namespace Common.Models
+namespace Common.DTOs
 {
     [DataContract]
-    public class Ride
+    public class RideInfoDTO
     {
         [DataMember]
         public string? Id { get; set; }
@@ -32,21 +30,19 @@ namespace Common.Models
         [DataMember]
         public string? DriverId { get; set; } = null;
 
-        public Ride(RideEntity entity)
+        public RideInfoDTO(Ride ride)
         {
-            Id = entity.Id;
-            StartAddress = entity.StartAddress;
-            FinalAddress = entity.FinalAddress;
-            Distance = entity.Distance;
-            Price = entity.Price;
-            PickUpTime = entity.PickUpTime;
-            RideDuration = entity.RideDuration;
-            StartTime = entity.StartTime;
-            Status = entity.Status;
-            CustomerId = entity.CustomerId;
-            DriverId = entity.DriverId;
+            Id = ride.Id;
+            StartAddress = ride.StartAddress;
+            FinalAddress = ride.FinalAddress;
+            Distance = ride.Distance;
+            Price = ride.Price;
+            PickUpTime = ride.PickUpTime;
+            RideDuration = ride.RideDuration;
+            StartTime = ride.StartTime;
+            Status = ride.Status;
+            CustomerId = ride.CustomerId;
+            DriverId = ride.DriverId;
         }
-
-        // RideDTO -> Ride manuelno pravi (šta je sigurno sigurno je)
     }
 }

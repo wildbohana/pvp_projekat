@@ -3,7 +3,8 @@
     public enum ERideStatus
     {
         Pending,
-        Accepted,
+        ConfirmedByCustomer,
+        ConfirmedByDriver,
         InProgress,
         Completed
     }

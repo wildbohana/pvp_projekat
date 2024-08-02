@@ -1,20 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Fabric;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Azure.Data.Tables;
 using Common.Interfaces;
+using Common.Models;
+using Common.TableEntites;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using System.Fabric;
 
 namespace RideService
 {
     internal sealed class RideService : StatefulService, IRideService
     {
+        #region Fields
+        private TableClient rideTable = null!;
+        private Thread rideTableThread = null!;
+        private IReliableDictionary<string, Ride> rideDictionary = null!;   // Init u RunAsync    
+
         public RideService(StatefulServiceContext context) : base(context) { }
+        #endregion Fields
 
         #region Create listeners
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
@@ -26,26 +30,54 @@ namespace RideService
         #region RunAsync
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
-            // TODO dodaj svoje rečnike
-            var myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
+            await SetRideTableAsync();
+            rideDictionary = await StateManager.GetOrAddAsync<IReliableDictionary<string, Ride>>("RideDictionary");
+            await PopulateRideDictionary();
 
-            while (true)
+            rideTableThread = new Thread(new ThreadStart(RideTableWriteThread));
+            rideTableThread.Start();
+        }
+
+        private async Task SetRideTableAsync()
+        {
+            var tableServiceClient = new TableServiceClient("UseDevelopmentStorage=true");
+            await tableServiceClient.CreateTableIfNotExistsAsync("Ride");
+            rideTable = tableServiceClient.GetTableClient("Ride");
+        }
+
+        private async Task PopulateRideDictionary()
+        {
+            var entities = rideTable.QueryAsync<RideEntity>(x => true).GetAsyncEnumerator();
+
+            using (var tx = StateManager.CreateTransaction())
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                using (var tx = this.StateManager.CreateTransaction())
+                while (await entities.MoveNextAsync())
                 {
-                    var result = await myDictionary.TryGetValueAsync(tx, "Counter");
-
-                    ServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
-                        result.HasValue ? result.Value.ToString() : "Value does not exist.");
-
-                    await myDictionary.AddOrUpdateAsync(tx, "Counter", 0, (key, value) => ++value);
-
-                    await tx.CommitAsync();
+                    var ride = new Ride(entities.Current);
+                    await rideDictionary.TryAddAsync(tx, ride.Id, ride);
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                await tx.CommitAsync();
+            }
+        }
+
+        private async void RideTableWriteThread()
+        {
+            while (true)
+            {
+                using (var tx = StateManager.CreateTransaction())
+                {
+                    var enumerator = (await rideDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+
+                    while (await enumerator.MoveNextAsync(CancellationToken.None))
+                    {
+                        var ride = enumerator.Current.Value;
+                        var rideEntity = new RideEntity(ride);
+                        await rideTable.UpsertEntityAsync(rideEntity, TableUpdateMode.Merge, CancellationToken.None);
+                    }
+                }
+
+                Thread.Sleep(5000);
             }
         }
         #endregion RunAsync

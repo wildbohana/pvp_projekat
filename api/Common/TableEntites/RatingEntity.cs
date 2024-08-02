@@ -28,6 +28,7 @@ namespace Common.TableEntites
         public RatingEntity(Rating rating)
         {
             RowKey = rating.Id;
+            Id = rating.Id;
             Rate = rating.Rate;
             CustomerId = rating.CustomerId;
             DriverId = rating.DriverId;
