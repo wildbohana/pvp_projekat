@@ -35,7 +35,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateAsync(UserDTO data)
+        public async Task<IActionResult> UpdateAsync(RideDTO data)
         {
             try
             {

@@ -9,8 +9,8 @@ namespace Common.Interfaces
     {
         Task<bool> LoginAsync(LoginDTO credentials);
         Task<bool> RegisterAsync(RegisterDTO credentials);
-        Task<UserDTO?> GetUserDataAsync(string email);
-        Task<bool> UpdateProfileAsync(UserDTO credentials);
+        Task<RideDTO?> GetUserDataAsync(string email);
+        Task<bool> UpdateProfileAsync(RideDTO credentials);
         Task<bool> UserExistsAsync(string email);
         Task<bool> GetBusyStatusAsync(string email);
 

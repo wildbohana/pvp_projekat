@@ -88,19 +88,19 @@ namespace RatingService
         #endregion RunAsync
 
         #region Rating methods
-        public async Task<bool> RateRideAsync(RatingDTO data)
+        public async Task<bool> RateRideAsync(RatingDTO data, string customerId)
         {
             bool status = false;
 
             using (var tx = StateManager.CreateTransaction())
             {
                 // Provera da li je neko već ocenio tu vožnju
-                var userResult = await ratingDictionary.TryGetValueAsync(tx, data.RideId);
+                var ratingResult = await ratingDictionary.TryGetValueAsync(tx, data.RideId);
 
-                if (!userResult.HasValue)
+                if (!ratingResult.HasValue)
                 {
-                    Rating newRating = new Rating(data);
-                                            
+                    Rating newRating = new Rating(data, customerId);
+
                     try
                     {
                         await ratingDictionary.AddAsync(tx, data.RideId, newRating);

@@ -16,13 +16,13 @@ namespace Common.Models
         [DataMember]
         public string? FinalAddress { get; set; }
         [DataMember]
-        public double Distance { get; set; }    // u kilometrima
+        public double Distance { get; set; }        // u kilometrima
         [DataMember]
         public float Price { get; set; }
         [DataMember]
-        public int PickUpTime { get; set; }     // u minutama
+        public int PickUpTime { get; set; }         // u minutama
         [DataMember]
-        public int RideDuration { get; set; }   // u minutama
+        public int RideDuration { get; set; }       // u minutama
         [DataMember]
         public DateTime StartTime { get; set; }
         [DataMember]

@@ -18,12 +18,12 @@ namespace Common.Models
         [DataMember]
         public string? DriverId { get; set; }
 
-        public Rating(RatingDTO data)
+        public Rating(RatingDTO data, string customerId)
         {
             Id = data.RideId;
             Rate = data.Rate;
-            CustomerId = data.CustomerId;
             DriverId = data.DriverId;
+            CustomerId = customerId;
         }
 
         public Rating(RatingEntity entity)

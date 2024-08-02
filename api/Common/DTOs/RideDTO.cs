@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace Common.DTOs
 {
     [DataContract]
-    public class UserDTO
+    public class RideDTO
     {
         [DataMember]
         public string? Email { get; set; }   // Ne može da se menja (jer je ID) 

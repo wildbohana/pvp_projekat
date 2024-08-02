@@ -1,18 +1,15 @@
-﻿using Microsoft.ServiceFabric.Data.Collections;
-using Microsoft.ServiceFabric.Services.Communication.Runtime;
-using Microsoft.ServiceFabric.Services.Runtime;
-using System.Fabric;
-using Common.Interfaces;
-using Microsoft.ServiceFabric.Services.Remoting.Runtime;
+﻿using Azure.Data.Tables;
 using Common.DTOs;
 using Common.Enums;
-using Azure.Data.Tables;
-using Common.TableEntites;
-using Common.Models;
-using static System.Net.Mime.MediaTypeNames;
-using System.Data;
-using System.Net;
 using Common.Helpers;
+using Common.Interfaces;
+using Common.Models;
+using Common.TableEntites;
+using Microsoft.ServiceFabric.Data.Collections;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Runtime;
+using Microsoft.ServiceFabric.Services.Runtime;
+using System.Fabric;
 
 // TODO Upload slike u Blob
 // TODO OAuth registracija/login (samo na frontu)
@@ -172,7 +169,7 @@ namespace UserService
         #endregion Auth actions
 
         #region User actions
-        public async Task<UserDTO?> GetUserDataAsync(string email)
+        public async Task<RideDTO?> GetUserDataAsync(string email)
         {
             using (var tx = StateManager.CreateTransaction())
             {
@@ -181,7 +178,7 @@ namespace UserService
                 if (userResult.HasValue)
                 {
                     User user = userResult.Value;
-                    UserDTO userInfo = new()
+                    RideDTO userInfo = new()
                     {
                         Email = user.Email,
                         Username = user.Username,
@@ -214,7 +211,7 @@ namespace UserService
             }
         }
 
-        public async Task<bool> UpdateProfileAsync(UserDTO credentials)
+        public async Task<bool> UpdateProfileAsync(RideDTO credentials)
         {
             bool status = false;
 

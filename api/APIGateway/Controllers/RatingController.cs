@@ -18,9 +18,10 @@ namespace APIGateway.Controllers
             try
             {
                 // check jwt token (provera da li je admin poslao zahtev)
+                string userId = "izvuci-iz-tokena";
 
                 IRatingService proxy = ServiceProxy.Create<IRatingService>(new Uri("fabric:/api/RatingService"), new ServicePartitionKey(1));
-                var temp = await proxy.RateRideAsync(data);
+                var temp = await proxy.RateRideAsync(data, userId);
 
                 return Ok(temp);
             }

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-// Probably will need some changes
+// Koristi vozač kada potvrđuje vožnju
 
 namespace Common.DTOs
 {

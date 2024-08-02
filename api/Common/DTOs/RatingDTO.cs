@@ -16,7 +16,5 @@ namespace Common.DTOs
         public int Rate { get; set; }     // u controller-u proveri da li je rating između 1 i 5
         [DataMember]
         public string? DriverId { get; set; }
-        [DataMember]
-        public string? CustomerId { get; set; }
     }
 }

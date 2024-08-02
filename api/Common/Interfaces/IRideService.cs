@@ -5,14 +5,22 @@ namespace Common.Interfaces
 {
     public interface IRideService : IService
     {
-        Task<bool> CreateRideRequestAsync(RideNewDTO data, string userId);     // promeniti da vraća string rideId
-        Task<RideEstimateDTO> GetRideEstimationAsync(string rideId, string userId);
-        Task<bool> ConfirmRideRequestAsync(RideEstimateDTO data, string userId);
-        Task<bool> AcceptRideAsync(RideAcceptDTO data, string driverId); // za vozače
-        Task<bool> CompleteRideAsync(string rideId, string driverId);    // za vozače
-        Task<RideInfoDTO> GetRideInfoAsync(string rideId);
+        // Svi
+        Task<RideInfoDTO?> GetRideInfoAsync(string rideId);
+
+        // Korisnici
+        Task<RideEstimateDTO> CreateRideRequestAsync(RideNewDTO data, string customerId);     // vraća ili string rideId, ili RideEstimateDTO
+        Task<RideEstimateDTO> GetRideEstimationAsync(string rideId, string customerId);
+        Task<bool> ConfirmRideRequestAsync(RideEstimateDTO data, string customerId);
+        Task<bool> DeleteRideRequest(RideEstimateDTO data, string customerId);      // šalje se ili rideId, ili RideEstimateDTO
+
+        // Vozači
+        Task<bool> AcceptRideAsync(RideAcceptDTO data, string driverId);
+        Task<bool> CompleteRideAsync(string rideId, string driverId);
+        Task<IEnumerable<RideInfoDTO>> GetAllPendingRidesAsync();   // one koje su potvrđene od korisnika
+
+        // Admin
         Task<IEnumerable<RideInfoDTO>> GetAllRidesAdminAsync();
-        Task<IEnumerable<RideInfoDTO>> GetAllPendingRidesAsync();    // za vozače, i to one koje su potvrđene od korisnika
         Task<IEnumerable<RideInfoDTO>> GetPreviousRidesDriverAsync(string driverId);
         Task<IEnumerable<RideInfoDTO>> GetPreviousRidesCustomerAsync(string customerId);
     }
