@@ -9,9 +9,8 @@ namespace Common.Models
     [DataContract]
     public class Ride
     {
-        // ili int ili string (GUID)
         [DataMember]
-        public int Id { get; set; }
+        public string? Id { get; set; }
         [DataMember]
         public string? StartAddress { get; set; }
         [DataMember]
@@ -27,17 +26,12 @@ namespace Common.Models
         [DataMember]
         public DateTime StartTime { get; set; }
         [DataMember]
-        public ERideStatus Status { get; set; }
+        public ERideStatus Status { get; set; }     // default - Pending
 
         [DataMember]
         public string? CustomerId { get; set; }
         [DataMember]
-        public UserEntity? Customer { get; set; }
-
-        [DataMember]
         public string? DriverId { get; set; }
-        [DataMember]
-        public UserEntity? Driver { get; set; }
 
         // TODO constructors (za RideDTO i RideEntity)
     }

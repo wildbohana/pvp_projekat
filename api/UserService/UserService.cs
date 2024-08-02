@@ -16,6 +16,7 @@ using Common.Helpers;
 
 // TODO Upload slike u Blob
 // TODO OAuth registracija/login (samo na frontu)
+// TODO slanje email-a kada admin odobri/odbije vozača
 
 namespace UserService
 {
@@ -368,6 +369,7 @@ namespace UserService
                 }
             }
 
+            // if (status) sendEmail();
             return status;
         }
 
@@ -406,6 +408,7 @@ namespace UserService
                 }
             }
 
+            // if (status) sendEmail();
             return status;
         }
 
@@ -444,6 +447,7 @@ namespace UserService
                 }
             }
 
+            // if (status) sendEmail();
             return status;
         }
         #endregion Admin actions

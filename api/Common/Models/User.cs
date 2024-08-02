@@ -35,8 +35,6 @@ namespace Common.Models
         public bool IsBlocked { get; set; }
         [DataMember]
         public bool Busy { get; set; }
-        [DataMember]
-        public double AvgRate { get; set; } = 0;
 
         public User(UserEntity user)
         {
@@ -52,7 +50,6 @@ namespace Common.Models
             VerificationStatus = user.VerificationStatus;
             IsBlocked = user.IsBlocked;
             Busy = user.Busy;
-            AvgRate = user.AvgRate;
         }
 
         public User(RegisterDTO user)
@@ -69,7 +66,6 @@ namespace Common.Models
             VerificationStatus = (UserType == EUserType.Customer) ? EVerificationStatus.Approved : EVerificationStatus.Pending;
             IsBlocked = false;
             Busy = false;
-            AvgRate = 0;
         }
     }
 }

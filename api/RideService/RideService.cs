@@ -51,46 +51,40 @@ namespace RideService
         #endregion RunAsync
 
         #region IRideService Implementation
-        public async Task<bool> AcceptRide()
+        public async Task<bool> AcceptRideAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> CompleteRide()
+        public async Task<bool> CompleteRideAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> CreateNewRide()
+        public async Task<bool> CreateNewRideAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> GetAllRidesAdmin()
+        public async Task<bool> GetAllRidesAdminAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> GetPreviousRidesCustomer()
+        public async Task<bool> GetPreviousRidesCustomerAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> GetPreviousRidesDriver()
+        public async Task<bool> GetPreviousRidesDriverAsync()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> GetRideInfo()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> RateRide()
+        public async Task<bool> GetRideInfoAsync()
         {
             throw new NotImplementedException();
         }
         #endregion IRideService Implementation
-
     }
 }

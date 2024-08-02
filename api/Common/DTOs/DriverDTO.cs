@@ -20,8 +20,6 @@ namespace Common.DTOs
         public string? VerificationStatus { get; set; }
         [DataMember]
         public bool? IsBlocked { get; set; }
-        [DataMember]
-        public double AvgRate { get; set; } = 0;
 
         public DriverDTO(User driver)
         {
@@ -31,7 +29,6 @@ namespace Common.DTOs
             Lastname = driver.Lastname;
             VerificationStatus = driver.VerificationStatus.ToString();
             IsBlocked = driver.IsBlocked;
-            AvgRate = driver.AvgRate;
         }
     }
 }

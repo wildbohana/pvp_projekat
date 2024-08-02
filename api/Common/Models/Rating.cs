@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using Common.DTOs;
+using Common.TableEntites;
+using System.Runtime.Serialization;
 
 // In-memory model (čuva se u rečniku)
 
@@ -7,22 +9,29 @@ namespace Common.Models
     [DataContract]
     public class Rating
     {
-        // int ili string (GUID)
         [DataMember]
-        public int Id { get; set; }
-        [DataMember]
-        public int RideId { get; set; }
+        public string? Id { get; set; }     // RideId
         [DataMember]
         public int Rate { get; set; }
         [DataMember]
-        public int CustomerId { get; set; }
+        public string? CustomerId { get; set; }
         [DataMember]
-        public string? CustomerUsername { get; set; }
-        [DataMember]
-        public int DriverId { get; set; }
-        [DataMember]
-        public string? DriverUsername { get; set; }
+        public string? DriverId { get; set; }
 
-        // TODO constructors (za RatingDTO i RatingEntity)
+        public Rating(RatingDTO data)
+        {
+            Id = data.RideId;
+            Rate = data.Rate;
+            CustomerId = data.CustomerId;
+            DriverId = data.DriverId;
+        }
+
+        public Rating(RatingEntity entity)
+        {
+            Id = entity.Id;
+            Rate = entity.Rate;
+            CustomerId = entity.CustomerId;
+            DriverId = entity.DriverId;
+        }
     }
 }

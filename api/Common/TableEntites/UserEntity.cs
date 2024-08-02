@@ -20,7 +20,6 @@ namespace Common.TableEntites
         public EVerificationStatus VerificationStatus { get; set; }
         public bool IsBlocked { get; set; }
         public bool Busy { get; set; }
-        public double AvgRate { get; set; } = 0;
 
         // ITableEntity implementation
         public string PartitionKey { get; set; } = "User";
@@ -51,7 +50,6 @@ namespace Common.TableEntites
             VerificationStatus = user.VerificationStatus;
             IsBlocked = user.IsBlocked;
             Busy = user.Busy;
-            AvgRate = user.AvgRate;
         }
     }
 }

@@ -4,14 +4,12 @@ namespace Common.Interfaces
 {
     public interface IRideService : IService
     {
-        Task<bool> CreateNewRide();
-        Task<bool> AcceptRide();
-        Task<bool> RateRide();
-        Task<bool> CompleteRide();
-        Task<bool> GetRideInfo();
-        Task<bool> GetAllRidesAdmin();
-        Task<bool> GetPreviousRidesDriver();
-        Task<bool> GetPreviousRidesCustomer();
-
+        Task<bool> CreateNewRideAsync();
+        Task<bool> AcceptRideAsync();
+        Task<bool> CompleteRideAsync();
+        Task<bool> GetRideInfoAsync();
+        Task<bool> GetAllRidesAdminAsync();
+        Task<bool> GetPreviousRidesDriverAsync();
+        Task<bool> GetPreviousRidesCustomerAsync();
     }
 }
