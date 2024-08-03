@@ -9,7 +9,7 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 namespace APIGateway.Controllers
 {
     [ApiController]
-    [Route("rating/[controller]")]
+    [Route("rating")]
     public class RatingController : ControllerBase
     {
         [HttpPost("rate-ride")]

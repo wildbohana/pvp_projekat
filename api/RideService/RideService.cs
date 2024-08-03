@@ -94,7 +94,8 @@ namespace RideService
             using (var tx = StateManager.CreateTransaction())
             {
                 Random rand = new Random();
-                Ride newRide = new Ride(data.StartAddress, data.FinalAddress, customerId);
+                //string rideId = Guid.NewGuid().ToString();
+                Ride newRide = new Ride(data.StartAddress, data.FinalAddress, customerId);  // TODO NE VALJA ID (BUDE SVE 00000)
 
                 try
                 {
@@ -128,14 +129,15 @@ namespace RideService
             }
         }
 
-        public async Task<bool> ConfirmRideRequestAsync(RideEstimateDTO data, string customerId)
+        // TODO PROMENI DA SE ŠALJE  SAMO  ID VOŽNJE
+        public async Task<bool> ConfirmRideRequestAsync(string rideId, string customerId)
         {
             bool status = false;
 
             // lock dict
             using (var tx = StateManager.CreateTransaction())
             {
-                var rideResult = await rideDictionary.TryGetValueAsync(tx, data.Id);
+                var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
 
                 if (rideResult.HasValue)
                 {
@@ -148,7 +150,7 @@ namespace RideService
 
                         try
                         {
-                            await rideDictionary.TryUpdateAsync(tx, data.Id, acceptedRide, ride);
+                            await rideDictionary.TryUpdateAsync(tx, rideId, acceptedRide, ride);
                             await tx.CommitAsync();
                             status = true;
                         }
@@ -165,19 +167,19 @@ namespace RideService
         }
 
         // lock dict
-        public async Task<bool> DeleteRideRequestAsync(RideEstimateDTO data, string customerId)
+        public async Task<bool> DeleteRideRequestAsync(string rideId, string customerId)
         {
             bool status = false;
 
             using (var tx = StateManager.CreateTransaction())
             {
-                var rideResult = await rideDictionary.TryGetValueAsync(tx, data.Id);
+                var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
 
                 if (rideResult.HasValue)
                 {
                     try
                     {
-                        await rideDictionary.TryRemoveAsync(tx, data.Id);
+                        await rideDictionary.TryRemoveAsync(tx, rideId);
                         await tx.CommitAsync();
                         status = true;
                     }
@@ -234,7 +236,7 @@ namespace RideService
                     {
                         var acceptedRide = ride;
                         acceptedRide.Status = ERideStatus.InProgress;
-                        acceptedRide.StartTime = DateTime.Now;
+                        acceptedRide.StartTime = DateTime.UtcNow;
 
                         try
                         {

@@ -9,7 +9,7 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 namespace APIGateway.Controllers
 {
     [ApiController]
-    [Route("users/[controller]")]
+    [Route("users")]
     public class UsersController : ControllerBase
     {
         [HttpGet("profile")]

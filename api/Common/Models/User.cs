@@ -61,7 +61,7 @@ namespace Common.Models
             Firstname = user.Firstname;
             Lastname = user.Lastname;
             DateOfBirth = user.DateOfBirth;
-            UserType = user.Role == EUserType.Customer.ToString() ? EUserType.Customer : EUserType.Driver;
+            UserType = user.Role == EUserType.Driver.ToString() ? EUserType.Driver : EUserType.Customer;
             PhotoUrl = user.PhotoUrl;
             VerificationStatus = (UserType == EUserType.Customer) ? EVerificationStatus.Approved : EVerificationStatus.Pending;
             IsBlocked = false;

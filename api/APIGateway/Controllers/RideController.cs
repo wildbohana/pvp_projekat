@@ -11,7 +11,7 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 namespace APIGateway.Controllers
 {
     [ApiController]
-    [Route("ride/[controller]")]
+    [Route("ride")]
     public class RideController : ControllerBase
     {
         // svi
@@ -39,10 +39,15 @@ namespace APIGateway.Controllers
             try
             {
                 // check jwt token (provera da li je korisnik poslao zahtev)
-                string userId = "izvuci-iz-tokena";
+                string customerId = "izvuci-iz-tokena";
+
+                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
+                var isBusy = await proxyUser.GetBusyStatusAsync(customerId);
+
+                if (isBusy) return Unauthorized();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.CreateRideRequestAsync(data, userId);
+                var temp = await proxy.CreateRideRequestAsync(data, customerId);
 
                 return Ok(temp);
             }
@@ -61,6 +66,11 @@ namespace APIGateway.Controllers
                 // check jwt token (provera da li je korisnik poslao zahtev)
                 string customerId = "izvuci-iz-tokena";
 
+                //IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
+                //var isBusy = await proxyUser.GetBusyStatusAsync(customerId);
+
+                //if (isBusy) return Unauthorized();
+
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetRideEstimationAsync(rideId, customerId);
 
@@ -74,12 +84,18 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("confirm-request")]
-        public async Task<IActionResult> ConfirmRideRequest(RideEstimateDTO data)
+        public async Task<IActionResult> ConfirmRideRequest(string data)
         {
             try
             {
                 // check jwt token (provera da li je korisnik poslao zahtev)
                 string userId = "izvuci-iz-tokena";
+
+
+                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
+                var isBusy = await proxyUser.GetBusyStatusAsync(userId);
+
+                if (isBusy) return Unauthorized();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.ConfirmRideRequestAsync(data, userId);
@@ -94,12 +110,17 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("delete-request")]
-        public async Task<IActionResult> DeleteRideRequest(RideEstimateDTO data)
+        public async Task<IActionResult> DeleteRideRequest(string data)
         {
             try
             {
                 // check jwt token (provera da li je korisnik poslao zahtev)
                 string userId = "izvuci-iz-tokena";
+
+                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
+                var isBusy = await proxyUser.GetBusyStatusAsync(userId);
+
+                if (isBusy) return Unauthorized();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.DeleteRideRequestAsync(data, userId);
@@ -145,15 +166,23 @@ namespace APIGateway.Controllers
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var verified = await proxyUser.IsDriverVerifiedCheckAsync(driverId);
                 var blocked = await proxyUser.IsDriverBlockedCheckAsync(driverId);
+                var isBusy = await proxyUser.GetBusyStatusAsync(driverId);
 
-                if (!verified || blocked)
+                if (!verified || blocked || isBusy)
                 {
                     return Unauthorized();
                 }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.AcceptRideAsync(rideId, driverId);
+                var rideInfo = await proxy.GetRideInfoAsync(rideId);
 
+                // Vozač
+                if (temp)
+                {
+                    await proxyUser.ChangeBusyStatusAsync(rideInfo.DriverId, true);
+                    await proxyUser.ChangeBusyStatusAsync(rideInfo.CustomerId, true);
+                }
                 return Ok(temp);
             }
             catch (Exception ex)
@@ -182,6 +211,14 @@ namespace APIGateway.Controllers
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.CompleteRideAsync(rideId, driverId);
+                var rideInfo = await proxy.GetRideInfoAsync(rideId);
+
+                // Vozač
+                if (temp)
+                {
+                    await proxyUser.ChangeBusyStatusAsync(rideInfo.DriverId, false);
+                    await proxyUser.ChangeBusyStatusAsync(rideInfo.CustomerId, false);
+                }
 
                 return Ok(temp);
             }
@@ -198,6 +235,15 @@ namespace APIGateway.Controllers
             try
             {
                 // check jwt token (dobavi userId iz njega)
+                string driverId = "izvuci-iz-tokena";
+
+                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
+                var isBusy = await proxyUser.GetBusyStatusAsync(driverId);
+
+                if (isBusy)
+                {
+                    return Unauthorized();
+                }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetAllPendingRidesAsync();
@@ -221,9 +267,8 @@ namespace APIGateway.Controllers
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var verified = await proxyUser.IsDriverVerifiedCheckAsync(driverId);
-                var blocked = await proxyUser.IsDriverBlockedCheckAsync(driverId);
 
-                if (!verified || blocked)
+                if (!verified)
                 {
                     return Unauthorized();
                 }

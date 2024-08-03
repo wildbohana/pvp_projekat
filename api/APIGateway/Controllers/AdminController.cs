@@ -8,7 +8,7 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 namespace APIGateway.Controllers
 {
     [ApiController]
-    [Route("admin/[controller]")]
+    [Route("admin")]
     public class AdminController : ControllerBase
     {
         [HttpPost("verify-approve")]

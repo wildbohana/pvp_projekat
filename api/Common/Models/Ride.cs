@@ -51,14 +51,14 @@ namespace Common.Models
         {
             Random rand = new Random();
 
-            Id = new Guid().ToString();
+            Id = Guid.NewGuid().ToString();
             StartAddress = startAddress;
             FinalAddress = finalAddress;
             Distance = rand.Next(1, 10);
             Price = rand.Next(300, 1000);
             PickUpTime = rand.Next(4, 12);
             RideDuration = rand.Next(5, 15);
-            StartTime = DateTime.Now.AddMinutes(PickUpTime);    // ažuriraj još jednom kada vozač potvrdi vožnju
+            StartTime = DateTime.UtcNow.AddMinutes(PickUpTime);    // ažuriraj još jednom kada vozač potvrdi vožnju
             Status = ERideStatus.Pending;
             CustomerId = customerId;
             DriverId = null;

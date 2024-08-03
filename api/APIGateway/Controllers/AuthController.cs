@@ -12,7 +12,7 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 namespace APIGateway.Controllers
 {
     [ApiController]
-    [Route("auth/[controller]")]
+    [Route("auth")]
     public class AuthController : ControllerBase
     {
         [HttpPost("register")]

@@ -332,6 +332,44 @@ namespace UserService
 
             return status;
         }
+
+        public async Task<bool> ChangeBusyStatusAsync(string email, bool value)
+        {
+            bool status = false;
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var userResult = await userDictionary.TryGetValueAsync(tx, email);
+
+                if (!userResult.HasValue)
+                {
+                    status = false;
+                }
+                else if (userResult.Value.VerificationStatus != EVerificationStatus.Pending)
+                {
+                    status = false;
+                }
+                else
+                {
+                    var user = userResult.Value;
+                    user.Busy = value;
+
+                    try
+                    {
+                        await userDictionary.TryUpdateAsync(tx, email, user, user);
+                        await tx.CommitAsync();
+                        status = true;
+                    }
+                    catch (Exception)
+                    {
+                        status = false;
+                        tx.Abort();
+                    }
+                }
+            }
+
+            return status;
+        }
         #endregion User actions
 
         #region Admin actions
