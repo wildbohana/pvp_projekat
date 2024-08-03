@@ -10,6 +10,8 @@ using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Fabric;
 
+// TODO lock na rideDictionary gde treba
+
 namespace RideService
 {
     internal sealed class RideService : StatefulService, IRideService
@@ -17,7 +19,7 @@ namespace RideService
         #region Fields
         private TableClient rideTable = null!;
         private Thread rideTableThread = null!;
-        private IReliableDictionary<string, Ride> rideDictionary = null!;   // Init u RunAsync    
+        private IReliableDictionary<string, Ride> rideDictionary = null!;   // Init u RunAsync
 
         public RideService(StatefulServiceContext context) : base(context) { }
         #endregion Fields
@@ -85,38 +87,52 @@ namespace RideService
         #endregion RunAsync
 
         #region Customer methods
-        // TODO sve -_-
-        public async Task<RideEstimateDTO> CreateRideRequestAsync(RideNewDTO data, string customerId)
+        public async Task<RideEstimateDTO?> CreateRideRequestAsync(RideNewDTO data, string customerId)
         {
-            throw new NotImplementedException();
+            RideEstimateDTO result = null;
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                Random rand = new Random();
+                Ride newRide = new Ride(data.StartAddress, data.FinalAddress, customerId);
+
+                try
+                {
+                    await rideDictionary.AddAsync(tx, newRide.Id, newRide);
+                    await tx.CommitAsync();
+                    result = new RideEstimateDTO(newRide);
+                }
+                catch (Exception)
+                {
+                    tx.Abort();
+                }
+                
+            }
+
+            return result;
         }
 
-        public async Task<RideEstimateDTO> GetRideEstimationAsync(string rideId, string customerId)
+        public async Task<RideEstimateDTO?> GetRideEstimationAsync(string rideId, string customerId)
         {
-            throw new NotImplementedException();
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
+
+                if (rideResult.HasValue)
+                {
+                    RideEstimateDTO rideInfo = new RideEstimateDTO(rideResult.Value);
+                    return rideInfo;
+                }
+
+                return null;
+            }
         }
 
         public async Task<bool> ConfirmRideRequestAsync(RideEstimateDTO data, string customerId)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> DeleteRideRequest(RideEstimateDTO data, string customerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<RideInfoDTO>> GetPreviousRidesCustomerAsync(string customerId)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion Customer methods
-
-        #region  Driver methods
-        public async Task<bool> AcceptRideAsync(RideAcceptDTO data, string driverId)
-        {
             bool status = false;
 
+            // lock dict
             using (var tx = StateManager.CreateTransaction())
             {
                 var rideResult = await rideDictionary.TryGetValueAsync(tx, data.Id);
@@ -125,10 +141,10 @@ namespace RideService
                 {
                     var ride = rideResult.Value;
 
-                    if (rideResult.Value.Status == ERideStatus.ConfirmedByCustomer && ride.DriverId.Equals(driverId))
+                    if (rideResult.Value.Status == ERideStatus.Pending && ride.CustomerId.Equals(customerId))
                     {
                         var acceptedRide = ride;
-                        acceptedRide.Status = ERideStatus.ConfirmedByDriver;
+                        acceptedRide.Status = ERideStatus.ConfirmedByCustomer;
 
                         try
                         {
@@ -142,16 +158,70 @@ namespace RideService
                             tx.Abort();
                         }
                     }
-                }                
+                }
             }
 
             return status;
         }
 
-        public async Task<bool> CompleteRideAsync(string rideId, string driverId)
+        // lock dict
+        public async Task<bool> DeleteRideRequestAsync(RideEstimateDTO data, string customerId)
         {
             bool status = false;
 
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var rideResult = await rideDictionary.TryGetValueAsync(tx, data.Id);
+
+                if (rideResult.HasValue)
+                {
+                    try
+                    {
+                        await rideDictionary.TryRemoveAsync(tx, data.Id);
+                        await tx.CommitAsync();
+                        status = true;
+                    }
+                    catch (Exception)
+                    {
+                        status = false;
+                        tx.Abort();
+                    }
+                }
+            }
+
+            return status;
+        }
+
+        // Na frontu prikazati listu gotovih vožnji, i pored njih dugme "OCENI"
+        // Ako je vožnja već ocenjena, prikazati ocenu (ili broj zvezdica, svejedno)
+        public async Task<IEnumerable<RideInfoDTO>> GetPreviousRidesCustomerAsync(string customerId)
+        {
+            var rides = new List<RideInfoDTO>();
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var enumerator = (await rideDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(CancellationToken.None))
+                {
+                    var tmp = enumerator.Current.Value;
+                    if (tmp.Status == ERideStatus.Completed && tmp.CustomerId.Equals(customerId))
+                    {
+                        rides.Add(new RideInfoDTO(tmp));
+                    }
+                }
+            }
+
+            return rides;
+        }
+        #endregion Customer methods
+
+        #region  Driver methods
+        public async Task<bool> AcceptRideAsync(string rideId, string driverId)
+        {
+            bool status = false;
+
+            // lock dict
             using (var tx = StateManager.CreateTransaction())
             {
                 var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
@@ -160,7 +230,45 @@ namespace RideService
                 {
                     var ride = rideResult.Value;
 
-                    if (rideResult.Value.Status == ERideStatus.ConfirmedByDriver && ride.DriverId.Equals(driverId))
+                    if (rideResult.Value.Status == ERideStatus.ConfirmedByCustomer && ride.DriverId.Equals(driverId))
+                    {
+                        var acceptedRide = ride;
+                        acceptedRide.Status = ERideStatus.InProgress;
+                        acceptedRide.StartTime = DateTime.Now;
+
+                        try
+                        {
+                            await rideDictionary.TryUpdateAsync(tx, rideId, acceptedRide, ride);
+                            await tx.CommitAsync();
+                            status = true;
+                        }
+                        catch (Exception)
+                        {
+                            status = false;
+                            tx.Abort();
+                        }
+                    }
+                }
+            }
+
+            return status;
+        }
+
+        // Manuelno ili automatski da se pozove ova metoda?
+        public async Task<bool> CompleteRideAsync(string rideId, string driverId)
+        {
+            bool status = false;
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                // lock dict
+                var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
+
+                if (rideResult.HasValue)
+                {
+                    var ride = rideResult.Value;
+
+                    if (rideResult.Value.Status == ERideStatus.InProgress && ride.DriverId.Equals(driverId))
                     {
                         var completedRide = ride;
                         completedRide.Status = ERideStatus.Completed;

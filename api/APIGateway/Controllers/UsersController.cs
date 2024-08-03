@@ -35,7 +35,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateAsync(RideDTO data)
+        public async Task<IActionResult> UpdateAsync(UserDTO data)
         {
             try
             {
@@ -63,6 +63,25 @@ namespace APIGateway.Controllers
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetBusyStatusAsync(userId);
+
+                return Ok(temp);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return BadRequest(message);
+            }
+        }
+
+        [HttpGet("verified-check")]
+        public async Task<IActionResult> GetDriverVerifiedCheck(string driverId)
+        {
+            try
+            {
+                // check jwt token
+
+                IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
+                var temp = await proxy.IsDriverVerifiedCheckAsync(driverId);
 
                 return Ok(temp);
             }

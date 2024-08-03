@@ -6,6 +6,9 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 
 // TODO JWT tokene
 
+// Login vraća jwt token i userType (ili i njega kao i userId ubaciti u token?)
+// UserType ti treba na frontu da bi znala da li je admin/driver/customer
+
 namespace APIGateway.Controllers
 {
     [ApiController]

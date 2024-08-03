@@ -4,7 +4,6 @@
     {
         Pending,
         ConfirmedByCustomer,
-        ConfirmedByDriver,
         InProgress,
         Completed
     }

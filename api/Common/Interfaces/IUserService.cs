@@ -9,10 +9,12 @@ namespace Common.Interfaces
     {
         Task<bool> LoginAsync(LoginDTO credentials);
         Task<bool> RegisterAsync(RegisterDTO credentials);
-        Task<RideDTO?> GetUserDataAsync(string email);
-        Task<bool> UpdateProfileAsync(RideDTO credentials);
+        Task<UserDTO?> GetUserDataAsync(string email);
+        Task<bool> UpdateProfileAsync(UserDTO credentials);
         Task<bool> UserExistsAsync(string email);
         Task<bool> GetBusyStatusAsync(string email);
+        Task<bool> IsDriverVerifiedCheckAsync(string email);
+        Task<bool> IsDriverBlockedCheckAsync(string email);
 
         // Samo za admina
         Task<IEnumerable<DriverDTO>> GetAllDriversAsync();

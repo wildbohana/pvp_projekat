@@ -1,14 +1,14 @@
-﻿using Common.Enums;
-using Common.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
-
-// Za prikaz profila i za ažuriranje podataka
-// Po potrebi u kontroleru menjati polja (kao u RCA)
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Common.DTOs
 {
     [DataContract]
-    public class RideDTO
+    public class UserDTO
     {
         [DataMember]
         public string? Email { get; set; }   // Ne može da se menja (jer je ID) 

@@ -15,6 +15,8 @@ using System.Fabric;
 // TODO OAuth registracija/login (samo na frontu)
 // TODO slanje email-a kada admin odobri/odbije vozača
 
+// lock dictionary where needed
+
 namespace UserService
 {
     internal sealed class UserService : StatefulService, IUserService
@@ -111,6 +113,7 @@ namespace UserService
             return status;
         }
 
+        // lock dict
         public async Task<bool> RegisterAsync(RegisterDTO credentials)
         {
             bool status = false;
@@ -169,7 +172,7 @@ namespace UserService
         #endregion Auth actions
 
         #region User actions
-        public async Task<RideDTO?> GetUserDataAsync(string email)
+        public async Task<UserDTO?> GetUserDataAsync(string email)
         {
             using (var tx = StateManager.CreateTransaction())
             {
@@ -178,7 +181,7 @@ namespace UserService
                 if (userResult.HasValue)
                 {
                     User user = userResult.Value;
-                    RideDTO userInfo = new()
+                    UserDTO userInfo = new()
                     {
                         Email = user.Email,
                         Username = user.Username,
@@ -211,7 +214,37 @@ namespace UserService
             }
         }
 
-        public async Task<bool> UpdateProfileAsync(RideDTO credentials)
+        public async Task<bool> IsDriverVerifiedCheckAsync(string email)
+        {
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var userResult = await userDictionary.TryGetValueAsync(tx, email);
+                var result = false;
+
+                if (userResult.HasValue)
+                    if (userResult.Value.VerificationStatus == EVerificationStatus.Approved)
+                        result = true;
+
+                return result;
+            }
+        }
+
+        public async Task<bool> IsDriverBlockedCheckAsync(string email)
+        {
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var userResult = await userDictionary.TryGetValueAsync(tx, email);
+                var result = false;
+
+                if (userResult.HasValue)
+                    result = userResult.Value.IsBlocked;
+
+                return result;
+            }
+        }
+
+        // lock dict?
+        public async Task<bool> UpdateProfileAsync(UserDTO credentials)
         {
             bool status = false;
 
@@ -227,13 +260,14 @@ namespace UserService
                 {
                     var user = userResult.Value;
 
-                    // TODO ostavi ili obriši? ovako korisnik uvek mora da menja lozinku?
+                    // Korisnik mora uneti lozinku kod svake promene profila
                     string hashedOldPassword = HashHelper.HashPassword(credentials.ConfirmOldPassword);
                     if (!hashedOldPassword.Equals(user.Password))
                     {
                         status = false;
                     }
-                    else if (!credentials.NewPassword.Equals(credentials.ConfirmNewPassword))
+                    // Ako je promenjena i lozinka, ali nije dobro uneta drugi put
+                    else if (!string.IsNullOrEmpty(credentials.ConfirmNewPassword) && !credentials.NewPassword.Equals(credentials.ConfirmNewPassword))
                     {
                         status = false;
                     }
@@ -322,6 +356,7 @@ namespace UserService
             return drivers;
         }
 
+        // lock dict (mada ne mora, jedan je admin)
         public async Task<bool> BlockDriverAsync(string driverId)
         {
             bool status = false;
@@ -370,6 +405,7 @@ namespace UserService
             return status;
         }
 
+        // lock dict (opet, ne mora)
         public async Task<bool> ApproveDriverAsync(string driverId)
         {
             bool status = false;
@@ -409,6 +445,7 @@ namespace UserService
             return status;
         }
 
+        // lock dict (neobavezno)
         public async Task<bool> DenyDriverAsync(string driverId)
         {
             bool status = false;

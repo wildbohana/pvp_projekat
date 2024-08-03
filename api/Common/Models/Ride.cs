@@ -47,6 +47,23 @@ namespace Common.Models
             DriverId = entity.DriverId;
         }
 
+        public Ride(string? startAddress, string? finalAddress, string? customerId)
+        {
+            Random rand = new Random();
+
+            Id = new Guid().ToString();
+            StartAddress = startAddress;
+            FinalAddress = finalAddress;
+            Distance = rand.Next(1, 10);
+            Price = rand.Next(300, 1000);
+            PickUpTime = rand.Next(4, 12);
+            RideDuration = rand.Next(5, 15);
+            StartTime = DateTime.Now.AddMinutes(PickUpTime);    // ažuriraj još jednom kada vozač potvrdi vožnju
+            Status = ERideStatus.Pending;
+            CustomerId = customerId;
+            DriverId = null;
+        }
+
         // RideDTO -> Ride manuelno pravi (šta je sigurno sigurno je)
     }
 }
