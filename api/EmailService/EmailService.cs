@@ -1,13 +1,20 @@
 using Common.Interfaces;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using MimeKit;
 using System.Fabric;
 
 namespace EmailService
 {
     internal sealed class EmailService : StatelessService, IEmailService
     {
+        // TODO premesti u app.config
+        private const string fromAddress = "drs.projekat.tim12@gmail.com";
+        private const string appPassword = "aetu jlgc mmnz svvh";
+
         public EmailService(StatelessServiceContext context) : base(context) { }
 
         #region Create listeners
@@ -35,11 +42,32 @@ namespace EmailService
         #endregion RunAsync
 
         #region IEmailService Implementation
-        public Task<bool> SendEmail()
+        public async Task SendEmail(string emailAddress, bool isApproved)
         {
-            throw new NotImplementedException();
+            var messageBody = "Hello!\n\nYour account has been ";
+            if (isApproved)
+            {
+                messageBody += "approved.\nHappy riding!";
+            }
+            else
+            {
+                messageBody += "denied.\nSorry to hear that.";
+            }
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Administrator", fromAddress));
+            message.To.Add(new MailboxAddress("", emailAddress));
+            message.Subject = "Driver verification status";
+            message.Body = new TextPart("plain") { Text = messageBody };
+
+            using (var client = new SmtpClient())
+            {
+                await client.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(fromAddress, appPassword);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+            }
         }
         #endregion IEmailService Implementation
-
     }
 }

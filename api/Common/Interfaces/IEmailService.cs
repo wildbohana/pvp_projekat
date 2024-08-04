@@ -4,6 +4,6 @@ namespace Common.Interfaces
 {
     public interface IEmailService : IService
     {
-        Task<bool> SendEmail();
+        Task SendEmail(string emailAddress, bool isApproved);
     }
 }

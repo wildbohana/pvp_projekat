@@ -6,14 +6,15 @@ using Common.Interfaces;
 using Common.Models;
 using Common.TableEntites;
 using Microsoft.ServiceFabric.Data.Collections;
+using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Drawing;
 using System.Fabric;
 
 // TODO OAuth registracija/login (samo na frontu)
-// TODO slanje email-a kada admin odobri/odbije vozača
 
 // lock dictionary where needed
 
@@ -437,7 +438,6 @@ namespace UserService
                 }
             }
 
-            // if (status) sendEmail();
             return status;
         }
 
@@ -477,7 +477,12 @@ namespace UserService
                 }
             }
 
-            // if (status) sendEmail();
+            if (status)
+            {
+                IEmailService proxy = ServiceProxy.Create<IEmailService>(new Uri("fabric:/api/EmailService"));
+                await proxy.SendEmail(driverId, true);
+            }
+
             return status;
         }
 
@@ -517,7 +522,12 @@ namespace UserService
                 }
             }
 
-            // if (status) sendEmail();
+            if (status)
+            {
+                IEmailService proxy = ServiceProxy.Create<IEmailService>(new Uri("fabric:/api/EmailService"));
+                await proxy.SendEmail(driverId, false);
+            }
+
             return status;
         }
         #endregion Admin actions
