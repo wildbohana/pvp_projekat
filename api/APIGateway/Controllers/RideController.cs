@@ -177,7 +177,6 @@ namespace APIGateway.Controllers
                 var temp = await proxy.AcceptRideAsync(rideId, driverId);
                 var rideInfo = await proxy.GetRideInfoAsync(rideId);
 
-                // Vozač
                 if (temp)
                 {
                     await proxyUser.ChangeBusyStatusAsync(rideInfo.DriverId, true);
@@ -213,7 +212,6 @@ namespace APIGateway.Controllers
                 var temp = await proxy.CompleteRideAsync(rideId, driverId);
                 var rideInfo = await proxy.GetRideInfoAsync(rideId);
 
-                // Vozač
                 if (temp)
                 {
                     await proxyUser.ChangeBusyStatusAsync(rideInfo.DriverId, false);
@@ -240,10 +238,7 @@ namespace APIGateway.Controllers
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var isBusy = await proxyUser.GetBusyStatusAsync(driverId);
 
-                if (isBusy)
-                {
-                    return Unauthorized();
-                }
+                if (isBusy) return Unauthorized();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetAllPendingRidesAsync();
@@ -268,10 +263,7 @@ namespace APIGateway.Controllers
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var verified = await proxyUser.IsDriverVerifiedCheckAsync(driverId);
 
-                if (!verified)
-                {
-                    return Unauthorized();
-                }
+                if (!verified) return Unauthorized();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetPreviousRidesDriverAsync(driverId);

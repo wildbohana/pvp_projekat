@@ -1,10 +1,14 @@
 ﻿using Common.DTOs;
 using Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 // TODO JWT tokene
+// TODO OAuth registracija/login (samo na frontu)
 
 // Login vraća jwt token i userType (ili i njega kao i userId ubaciti u token?)
 // UserType ti treba na frontu da bi znala da li je admin/driver/customer
@@ -15,6 +19,14 @@ namespace APIGateway.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
+        #region Config
+        private IConfiguration _config;
+        public AuthController(IConfiguration config)
+        {
+            _config = config;
+        }
+        #endregion Config
+
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterDTO data)
         {

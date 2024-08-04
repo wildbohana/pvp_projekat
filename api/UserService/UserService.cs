@@ -14,10 +14,6 @@ using Microsoft.ServiceFabric.Services.Runtime;
 using System.Drawing;
 using System.Fabric;
 
-// TODO OAuth registracija/login (samo na frontu)
-
-// lock dictionary where needed
-
 namespace UserService
 {
     internal sealed class UserService : StatefulService, IUserService
@@ -114,7 +110,6 @@ namespace UserService
             return status;
         }
 
-        // lock dict
         public async Task<bool> RegisterAsync(RegisterDTO credentials)
         {
             bool status = false;
@@ -243,7 +238,6 @@ namespace UserService
             }
         }
 
-        // lock dict?
         public async Task<bool> UpdateProfileAsync(UserDTO credentials)
         {
             bool status = false;
@@ -287,7 +281,7 @@ namespace UserService
                             newUser.Password = HashHelper.HashPassword(credentials.ConfirmNewPassword);
                         }
 
-                        //Promena slike
+                        // Promena slike
                         if (!string.IsNullOrEmpty(credentials.PhotoUrl) && !credentials.PhotoUrl.StartsWith("http"))
                         {
                             Image image;
@@ -393,7 +387,6 @@ namespace UserService
             return drivers;
         }
 
-        // lock dict (mada ne mora, jedan je admin)
         public async Task<bool> BlockDriverAsync(string driverId)
         {
             bool status = false;
@@ -441,7 +434,6 @@ namespace UserService
             return status;
         }
 
-        // lock dict (opet, ne mora)
         public async Task<bool> ApproveDriverAsync(string driverId)
         {
             bool status = false;
@@ -486,7 +478,6 @@ namespace UserService
             return status;
         }
 
-        // lock dict (neobavezno)
         public async Task<bool> DenyDriverAsync(string driverId)
         {
             bool status = false;

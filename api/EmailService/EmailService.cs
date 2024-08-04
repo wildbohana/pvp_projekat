@@ -11,11 +11,14 @@ namespace EmailService
 {
     internal sealed class EmailService : StatelessService, IEmailService
     {
+        #region Fields
         // TODO premesti u app.config
+        // Obriši appPassword iz naloga kad završiš sa projekatom
         private const string fromAddress = "drs.projekat.tim12@gmail.com";
         private const string appPassword = "aetu jlgc mmnz svvh";
 
         public EmailService(StatelessServiceContext context) : base(context) { }
+        #endregion Fields
 
         #region Create listeners
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
@@ -27,7 +30,6 @@ namespace EmailService
         #region RunAsync
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
-            // TODO ne znam da li ovde treba nešto menjati
             long iterations = 0;
 
             while (true)
@@ -47,11 +49,11 @@ namespace EmailService
             var messageBody = "Hello!\n\nYour account has been ";
             if (isApproved)
             {
-                messageBody += "approved.\nHappy riding!";
+                messageBody += "approved.\n\nHappy riding!";
             }
             else
             {
-                messageBody += "denied.\nSorry to hear that.";
+                messageBody += "denied.\n\nSorry to hear that.";
             }
 
             var message = new MimeMessage();

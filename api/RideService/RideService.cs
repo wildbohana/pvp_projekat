@@ -10,8 +10,6 @@ using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Fabric;
 
-// TODO lock na rideDictionary gde treba
-
 namespace RideService
 {
     internal sealed class RideService : StatefulService, IRideService
@@ -130,42 +128,37 @@ namespace RideService
         {
             bool status = false;
 
-            // lock dict
-            //lock (rideDictionary)
-            //{
-                using (var tx = StateManager.CreateTransaction())
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
+
+                if (rideResult.HasValue)
                 {
-                    var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
+                    var ride = rideResult.Value;
 
-                    if (rideResult.HasValue)
+                    if (rideResult.Value.Status == ERideStatus.Pending && ride.CustomerId.Equals(customerId))
                     {
-                        var ride = rideResult.Value;
+                        var acceptedRide = ride;
+                        acceptedRide.Status = ERideStatus.ConfirmedByCustomer;
 
-                        if (rideResult.Value.Status == ERideStatus.Pending && ride.CustomerId.Equals(customerId))
+                        try
                         {
-                            var acceptedRide = ride;
-                            acceptedRide.Status = ERideStatus.ConfirmedByCustomer;
-
-                            try
-                            {
-                                await rideDictionary.TryUpdateAsync(tx, rideId, acceptedRide, ride);
-                                await tx.CommitAsync();
-                                status = true;
-                            }
-                            catch (Exception)
-                            {
-                                status = false;
-                                tx.Abort();
-                            }
+                            await rideDictionary.TryUpdateAsync(tx, rideId, acceptedRide, ride);
+                            await tx.CommitAsync();
+                            status = true;
+                        }
+                        catch (Exception)
+                        {
+                            status = false;
+                            tx.Abort();
                         }
                     }
                 }
-            //}
-
+            }
+            
             return status;
         }
 
-        // lock dict
         public async Task<bool> DeleteRideRequestAsync(string rideId, string customerId)
         {
             bool status = false;
@@ -222,7 +215,6 @@ namespace RideService
         {
             bool status = false;
 
-            // lock dict
             using (var tx = StateManager.CreateTransaction())
             {
                 var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
@@ -262,7 +254,6 @@ namespace RideService
 
             using (var tx = StateManager.CreateTransaction())
             {
-                // lock dict
                 var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
 
                 if (rideResult.HasValue)
