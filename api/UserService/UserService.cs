@@ -9,9 +9,9 @@ using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using System.Drawing;
 using System.Fabric;
 
-// TODO Upload slike u Blob
 // TODO OAuth registracija/login (samo na frontu)
 // TODO slanje email-a kada admin odobri/odbije vozača
 
@@ -136,21 +136,20 @@ namespace UserService
                         // Heširanje lozinke
                         newUser.Password = HashHelper.HashPassword(credentials.ConfirmPassword);
 
-                        // TODO
                         // Upload slike
-                        //if (credentials.Photo != "")
-                        //{
-                        //    Image image;
-                        //    using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(credentials.Photo.Split(',')[1])))
-                        //    {
-                        //        image = Image.FromStream(ms);
-                        //    }
-                        //    newUser.PhotoUrl = new BlobHelper().UploadImage(image, "slike", Guid.NewGuid().ToString() + ".jpg");
-                        //}
-                        //else
-                        //{
-                        //    newUser.PhotoUrl = "";
-                        //}
+                        if (!string.IsNullOrEmpty(credentials.PhotoUrl))
+                        {
+                            Image image;
+                            using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(credentials.PhotoUrl.Split(',')[1])))
+                            {
+                                image = Image.FromStream(ms);
+                            }
+                            newUser.PhotoUrl = new BlobHelper().UploadImage(new Bitmap(image), Guid.NewGuid().ToString() + ".jpg");
+                        }
+                        else
+                        {
+                            newUser.PhotoUrl = "";
+                        }
 
                         try
                         {
@@ -287,18 +286,17 @@ namespace UserService
                             newUser.Password = HashHelper.HashPassword(credentials.ConfirmNewPassword);
                         }
 
-                        // TODO
-                        // Promena slike
-                        //if (!credentials.Photo.StartsWith("http"))
-                        //{
-                        //    Image image;
-                        //    string slikaB64 = credentials.Photo;
-                        //    using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(slikaB64.Split(',')[1])))
-                        //    {
-                        //        image = Image.FromStream(ms);
-                        //    }
-                        //    newUser.PhotoUrl = new BlobHelper().UploadImage(image, "slike", Guid.NewGuid().ToString() + ".jpg");
-                        //}
+                        //Promena slike
+                        if (!string.IsNullOrEmpty(credentials.PhotoUrl) && !credentials.PhotoUrl.StartsWith("http"))
+                        {
+                            Image image;
+                            string slikaB64 = credentials.PhotoUrl;
+                            using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(slikaB64.Split(',')[1])))
+                            {
+                                image = Image.FromStream(ms);
+                            }
+                            newUser.PhotoUrl = new BlobHelper().UploadImage(new Bitmap(image), Guid.NewGuid().ToString() + ".jpg");
+                        }
 
                         // Upis promene u rečnik
                         try

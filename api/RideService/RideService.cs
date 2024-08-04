@@ -89,19 +89,16 @@ namespace RideService
         #region Customer methods
         public async Task<RideEstimateDTO?> CreateRideRequestAsync(RideNewDTO data, string customerId)
         {
-            RideEstimateDTO result = null;
-
             using (var tx = StateManager.CreateTransaction())
             {
                 Random rand = new Random();
-                //string rideId = Guid.NewGuid().ToString();
-                Ride newRide = new Ride(data.StartAddress, data.FinalAddress, customerId);  // TODO NE VALJA ID (BUDE SVE 00000)
+                Ride newRide = new Ride(data.StartAddress, data.FinalAddress, customerId);
 
                 try
                 {
                     await rideDictionary.AddAsync(tx, newRide.Id, newRide);
                     await tx.CommitAsync();
-                    result = new RideEstimateDTO(newRide);
+                    return new RideEstimateDTO(newRide);
                 }
                 catch (Exception)
                 {
@@ -110,7 +107,7 @@ namespace RideService
                 
             }
 
-            return result;
+            return null;
         }
 
         public async Task<RideEstimateDTO?> GetRideEstimationAsync(string rideId, string customerId)
@@ -129,39 +126,41 @@ namespace RideService
             }
         }
 
-        // TODO PROMENI DA SE ŠALJE  SAMO  ID VOŽNJE
         public async Task<bool> ConfirmRideRequestAsync(string rideId, string customerId)
         {
             bool status = false;
 
             // lock dict
-            using (var tx = StateManager.CreateTransaction())
-            {
-                var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
-
-                if (rideResult.HasValue)
+            //lock (rideDictionary)
+            //{
+                using (var tx = StateManager.CreateTransaction())
                 {
-                    var ride = rideResult.Value;
+                    var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
 
-                    if (rideResult.Value.Status == ERideStatus.Pending && ride.CustomerId.Equals(customerId))
+                    if (rideResult.HasValue)
                     {
-                        var acceptedRide = ride;
-                        acceptedRide.Status = ERideStatus.ConfirmedByCustomer;
+                        var ride = rideResult.Value;
 
-                        try
+                        if (rideResult.Value.Status == ERideStatus.Pending && ride.CustomerId.Equals(customerId))
                         {
-                            await rideDictionary.TryUpdateAsync(tx, rideId, acceptedRide, ride);
-                            await tx.CommitAsync();
-                            status = true;
-                        }
-                        catch (Exception)
-                        {
-                            status = false;
-                            tx.Abort();
+                            var acceptedRide = ride;
+                            acceptedRide.Status = ERideStatus.ConfirmedByCustomer;
+
+                            try
+                            {
+                                await rideDictionary.TryUpdateAsync(tx, rideId, acceptedRide, ride);
+                                await tx.CommitAsync();
+                                status = true;
+                            }
+                            catch (Exception)
+                            {
+                                status = false;
+                                tx.Abort();
+                            }
                         }
                     }
                 }
-            }
+            //}
 
             return status;
         }
