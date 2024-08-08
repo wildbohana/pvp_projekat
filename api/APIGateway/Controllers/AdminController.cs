@@ -1,7 +1,10 @@
-﻿using Common.Interfaces;
+﻿using Common.Helpers;
+using Common.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
+using System.Security.Claims;
 
 // TODO JWT tokene
 
@@ -12,11 +15,12 @@ namespace APIGateway.Controllers
     public class AdminController : ControllerBase
     {
         [HttpPost("verify-approve")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> VerifyApproveAsync(string driverId)
         {
             try
             {
-                // check jwt token (provera da li je admin poslao zahtev)
+                // TODO token
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.ApproveDriverAsync(driverId);
@@ -31,11 +35,12 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("verify-deny")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> VerifyDenyAsync(string driverId)
         {
             try
             {
-                // check jwt token (provera da li je admin poslao zahtev)
+                // TODO token (da li je admin)
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.DenyDriverAsync(driverId);
@@ -50,11 +55,12 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("block")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> BlockAsync(string driverId)
         {
             try
             {
-                // check jwt token (provera da li je admin poslao zahtev)
+                // TODO token (da li je admin)
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.BlockDriverAsync(driverId);
@@ -69,11 +75,12 @@ namespace APIGateway.Controllers
         }
 
         [HttpGet("all-drivers")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetAllDriversAsync()
         {
             try
             {
-                // check jwt token (dobavi userId iz njega)
+                // TODO token (da li je admin)
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetAllDriversAsync();

@@ -197,6 +197,20 @@ namespace UserService
             }
         }
 
+        public async Task<string?> GetUserTypeFromEmail(string email)
+        {
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var userResult = await userDictionary.TryGetValueAsync(tx, email);
+
+                if (userResult.HasValue)
+                {
+                    return userResult.Value.UserType.ToString();
+                }
+                return null;
+            }
+        }
+
         public async Task<bool> GetBusyStatusAsync(string email)
         {
             using (var tx = StateManager.CreateTransaction())
@@ -521,6 +535,7 @@ namespace UserService
 
             return status;
         }
+
         #endregion Admin actions
     }
 }

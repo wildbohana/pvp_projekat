@@ -1,16 +1,18 @@
 ﻿using Common.DTOs;
+using Common.Helpers;
 using Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 // TODO JWT tokene
 // TODO OAuth registracija/login (samo na frontu)
 
-// Login vraća jwt token i userType (ili i njega kao i userId ubaciti u token?)
+// Dodaj neku metodu koja preko userId saznaje koji je tip korisnika
 // UserType ti treba na frontu da bi znala da li je admin/driver/customer
 
 namespace APIGateway.Controllers
@@ -19,16 +21,21 @@ namespace APIGateway.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        #region Config
-        private IConfiguration _config;
-        public AuthController(IConfiguration config)
+        #region Fields
+        private readonly string _validAudience = "";
+        private readonly string _validIssuer = "";
+        private readonly string _secretKey = "";
+
+        public AuthController(IConfiguration configuration)
         {
-            _config = config;
+            _validAudience = configuration["JwtSettings:ValidAudience"];
+            _validIssuer = configuration["JwtSettings:ValidIssuer"];
+            _secretKey = configuration["JwtSettings:SecretKey"];
         }
-        #endregion Config
+        #endregion Fields
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterDTO data)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterDTO data)
         {
             try
             {
@@ -45,18 +52,24 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(LoginDTO data)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginDTO data)
         {
             try
             {
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.LoginAsync(data);
 
-                // TODO
-                // if (temp) var token = GenerateJwtToken();
-                // return Ok(token);
+                if (temp)
+                {
+                    var userType = await proxy.GetUserTypeFromEmail(data.Email);
+                    var token = GenerateAccessToken(data.Email, userType);
 
-                return Ok(temp);
+                    return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token) });
+                }
+                else
+                {
+                    return Unauthorized();
+                }
             }
             catch (Exception ex)
             {
@@ -64,5 +77,33 @@ namespace APIGateway.Controllers
                 return BadRequest(message);
             }
         }
+
+
+        // Generating token based on user information
+        private JwtSecurityToken GenerateAccessToken(string userId, string userRole)
+        {
+            // Create user claims
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, userId),
+                new Claim(ClaimTypes.Role, userRole)
+            };
+
+            // Create a JWT
+            var token = new JwtSecurityToken(
+                issuer: _validIssuer,
+                audience: _validAudience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(60), // Token expiration time
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(_secretKey)), 
+                    SecurityAlgorithms.HmacSha256)
+            );
+
+            return token;
+        }
+
+
+
     }
 }

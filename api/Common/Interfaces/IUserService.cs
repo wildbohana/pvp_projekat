@@ -16,6 +16,7 @@ namespace Common.Interfaces
         Task<bool> ChangeBusyStatusAsync(string email, bool value);
         Task<bool> IsDriverVerifiedCheckAsync(string email);
         Task<bool> IsDriverBlockedCheckAsync(string email);
+        Task<string?> GetUserTypeFromEmail(string email);
 
         // Samo za admina
         Task<IEnumerable<DriverDTO>> GetAllDriversAsync();

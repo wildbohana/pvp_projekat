@@ -1,8 +1,10 @@
 ﻿using Common.DTOs;
 using Common.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
+using System.Security.Claims;
 
 // TODO JWT tokene
 
@@ -13,14 +15,18 @@ namespace APIGateway.Controllers
     public class UsersController : ControllerBase
     {
         [HttpGet("profile")]
+        [Authorize]
         public async Task<IActionResult> GetProfileAsync(string testId)
         {
             try
             {
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+                
                 string userId = testId;     // samo za testiranje
 
-                // check jwt token (dobavi userId iz njega)
-                //string userId = "mejl_adresa_iz_tokena";
+                // TODO token (dobavi userId)
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetUserDataAsync(userId);
@@ -39,7 +45,7 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token
+                // TODO token (dobavi userId)
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.UpdateProfileAsync(data);
@@ -59,7 +65,7 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token
+                // TODO token (dobavi userId)
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetBusyStatusAsync(userId);
@@ -78,7 +84,7 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token
+                // TODO token (dobavi userId)
 
                 IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var temp = await proxy.IsDriverVerifiedCheckAsync(driverId);

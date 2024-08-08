@@ -12,7 +12,11 @@ namespace APIGateway
 {
     internal sealed class APIGateway : StatelessService
     {
-        public APIGateway(StatelessServiceContext context) : base(context) { }
+        private IConfiguration _configuration;
+        public APIGateway(StatelessServiceContext context) : base(context) 
+        {
+            _configuration = new ConfigurationManager();
+        }
 
         #region Create listeners
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
@@ -26,25 +30,6 @@ namespace APIGateway
 
                         var builder = WebApplication.CreateBuilder();
 
-                        //#region Jwt config
-                        //var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
-                        //var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
-
-                        //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-                        //{
-                        //    options.TokenValidationParameters = new TokenValidationParameters
-                        //    {
-                        //        ValidateIssuer = true,
-                        //        ValidateAudience = true,
-                        //        ValidateLifetime = true,
-                        //        ValidateIssuerSigningKey = true,
-                        //        ValidIssuer = jwtIssuer,
-                        //        ValidAudience = jwtIssuer,
-                        //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-                        //    };
-                        //});
-                        //#endregion
-                        
                         builder.Services.AddSingleton<StatelessServiceContext>(serviceContext);
                         builder.WebHost
                                     .UseKestrel()
@@ -55,11 +40,31 @@ namespace APIGateway
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
 
+                        // Load configuration from appsettings.json
+                        //var configuration = new ConfigurationBuilder()
+                        //    .SetBasePath(builder.Environment.ContentRootPath)
+                        //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                        //    .Build();
+                        // Add JWT authentication
+                        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                        .AddJwtBearer(options =>
+                        {
+                            options.TokenValidationParameters = new TokenValidationParameters
+                            {
+                                ValidateIssuer = true,
+                                //ValidateAudience = true,
+                                ValidateLifetime = true,
+                                ValidateIssuerSigningKey = true,
+                                ValidIssuer = _configuration["JwtSettings:ValidIssuer"],
+                                //ValidAudience = _configuration["JwtSettings:ValidAudience"],
+                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]))
+                            };
+                        });
+
                         // cors pt.1
-                        // alt: policy.WithOrigins("http://localhost:3000")
                         builder.Services.AddCors(policyBuilder =>
                             policyBuilder.AddDefaultPolicy(policy =>
-                                policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod())
+                                policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod())
                         );
 
                         var app = builder.Build();
@@ -73,6 +78,7 @@ namespace APIGateway
                             app.UseSwaggerUI();
                         }
                         app.UseAuthorization();
+                        app.UseAuthentication();
                         app.MapControllers();
 
                         return app;

@@ -38,7 +38,7 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (provera da li je korisnik poslao zahtev)
+                // TODO token (dobavi userId, provera da li je Customer)
                 string customerId = "izvuci-iz-tokena";
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
@@ -63,7 +63,7 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (provera da li je korisnik poslao zahtev)
+                // TODO token (dobavi userId, provera da li je Customer)
                 string customerId = "izvuci-iz-tokena";
 
                 //IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
@@ -88,7 +88,7 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (provera da li je korisnik poslao zahtev)
+                // TODO token (dobavi userId, provera da li je Customer)
                 string userId = "izvuci-iz-tokena";
 
 
