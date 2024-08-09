@@ -37,7 +37,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateAsync(UserDTO data)
+        public async Task<IActionResult> UpdateAsync([FromBody] UserDTO data)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpGet("verified-check")]
-        public async Task<IActionResult> GetDriverVerifiedCheck(string driverId)
+        public async Task<IActionResult> GetDriverVerifiedCheck([FromBody] string driverId)
         {
             try
             {

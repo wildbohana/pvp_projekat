@@ -1,7 +1,5 @@
 ﻿using Common.DTOs;
-using Common.Models;
 using Microsoft.ServiceFabric.Services.Remoting;
-using Microsoft.Win32;
 
 namespace Common.Interfaces
 {

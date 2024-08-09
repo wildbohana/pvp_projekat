@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
-
-namespace Common.DTOs
+﻿namespace Common.DTOs
 {
     public class RegisterDTO
     {

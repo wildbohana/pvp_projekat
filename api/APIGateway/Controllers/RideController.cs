@@ -14,7 +14,7 @@ namespace APIGateway.Controllers
     {
         // svi
         [HttpGet]
-        public async Task<IActionResult> GetRideInfo(string rideId)
+        public async Task<IActionResult> GetRideInfo([FromBody] string rideId)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace APIGateway.Controllers
 
         // korisnici
         [HttpPost("new-ride")]
-        public async Task<IActionResult> NewRideRequest(RideNewDTO data)
+        public async Task<IActionResult> NewRideRequest([FromBody] RideNewDTO data)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpGet("ride-estimate")]
-        public async Task<IActionResult> GetRideEstimation(string rideId)
+        public async Task<IActionResult> GetRideEstimation([FromBody] string rideId)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("confirm-request")]
-        public async Task<IActionResult> ConfirmRideRequest(string data)
+        public async Task<IActionResult> ConfirmRideRequest([FromBody] string data)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("delete-request")]
-        public async Task<IActionResult> DeleteRideRequest(string data)
+        public async Task<IActionResult> DeleteRideRequest([FromBody] string data)
         {
             try
             {
@@ -203,7 +203,7 @@ namespace APIGateway.Controllers
 
         // vozač
         [HttpPost("accept-ride")]
-        public async Task<IActionResult> AcceptRide(string rideId)
+        public async Task<IActionResult> AcceptRide([FromBody] string rideId)
         {
             try
             {
@@ -250,7 +250,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("complete-ride")]
-        public async Task<IActionResult> CompleteRide(string rideId)
+        public async Task<IActionResult> CompleteRide([FromBody] string rideId)
         {
             try
             {

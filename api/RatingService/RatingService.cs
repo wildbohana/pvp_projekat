@@ -9,9 +9,6 @@ using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Fabric;
 
-// TODO proveri da li je customerId stvarno Customer user
-// TODO proveri da li je driverId stvarno Driver user
-
 namespace RatingService
 {
     internal sealed class RatingService : StatefulService, IRatingService

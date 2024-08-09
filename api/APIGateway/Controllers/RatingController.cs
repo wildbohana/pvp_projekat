@@ -13,7 +13,7 @@ namespace APIGateway.Controllers
     public class RatingController : ControllerBase
     {
         [HttpPost("rate-ride")]
-        public async Task<IActionResult> RateRideAsync(RatingDTO data)
+        public async Task<IActionResult> RateRideAsync([FromBody] RatingDTO data)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace APIGateway.Controllers
 
         // Samo admin
         [HttpGet("get-rating")]
-        public async Task<IActionResult> GetDriverRatingAsync(string driverId)
+        public async Task<IActionResult> GetDriverRatingAsync([FromBody] string driverId)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpGet("rated-check")]
-        public async Task<IActionResult> RatedCheckAsync(string rideId)
+        public async Task<IActionResult> RatedCheckAsync([FromBody] string rideId)
         {
             try
             {

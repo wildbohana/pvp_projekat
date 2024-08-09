@@ -9,10 +9,10 @@ namespace Common.Interfaces
         Task<RideInfoDTO?> GetRideInfoAsync(string rideId);
 
         // Korisnici
-        Task<RideEstimateDTO?> CreateRideRequestAsync(RideNewDTO data, string customerId);     // vraća ili string rideId, ili RideEstimateDTO
+        Task<RideEstimateDTO?> CreateRideRequestAsync(RideNewDTO data, string customerId);
         Task<RideEstimateDTO?> GetRideEstimationAsync(string rideId, string customerId);
         Task<bool> ConfirmRideRequestAsync(string rideId, string customerId);
-        Task<bool> DeleteRideRequestAsync(string rideId, string customerId);      // šalje se ili rideId, ili RideEstimateDTO
+        Task<bool> DeleteRideRequestAsync(string rideId, string customerId);
         Task<IEnumerable<RideInfoDTO>> GetPreviousRidesCustomerAsync(string customerId);
 
         // Vozači

@@ -6,7 +6,6 @@ using Common.Interfaces;
 using Common.Models;
 using Common.TableEntites;
 using Microsoft.ServiceFabric.Data.Collections;
-using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
