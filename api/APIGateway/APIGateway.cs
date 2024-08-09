@@ -36,27 +36,23 @@ namespace APIGateway
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
 
-                        // Load configuration from appsettings.json
-                        //var configuration = new ConfigurationBuilder()
-                        //    .SetBasePath(builder.Environment.ContentRootPath)
-                        //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        //    .Build();
                         // Add JWT authentication
                         builder.Services.AddAuthentication(opt =>
                         {
                             opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                             opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                            opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                         }).AddJwtBearer(options =>
                         {
+                            options.RequireHttpsMetadata = false;
+                            options.SaveToken = true;
                             options.TokenValidationParameters = new TokenValidationParameters
                             {
                                 ValidateIssuer = true,
-                                ValidateAudience = false,   // TODO promeni na true
+                                ValidateAudience = true,
                                 ValidateLifetime = true,
                                 ValidateIssuerSigningKey = true,
                                 ValidIssuer = builder.Configuration["JwtSettings:ValidIssuer"],
-                                //ValidAudience = builder.Configuration["JwtSettings:ValidAudience"],
+                                ValidAudience = builder.Configuration["JwtSettings:ValidAudience"],
                                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
                             };
                         });
