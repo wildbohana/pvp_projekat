@@ -1,5 +1,4 @@
 ﻿using Common.DTOs;
-using Common.Helpers;
 using Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -9,11 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-// TODO JWT tokene
 // TODO OAuth registracija/login (samo na frontu)
-
-// Dodaj neku metodu koja preko userId saznaje koji je tip korisnika
-// UserType ti treba na frontu da bi znala da li je admin/driver/customer
 
 namespace APIGateway.Controllers
 {
@@ -64,7 +59,8 @@ namespace APIGateway.Controllers
                     var userType = await proxy.GetUserTypeFromEmail(data.Email);
                     var token = GenerateAccessToken(data.Email, userType);
 
-                    return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token) });
+                    //return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token) });
+                    return Ok(new JwtSecurityTokenHandler().WriteToken(token));
                 }
                 else
                 {
@@ -78,8 +74,7 @@ namespace APIGateway.Controllers
             }
         }
 
-
-        // Generating token based on user information
+        #region Generate token
         private JwtSecurityToken GenerateAccessToken(string userId, string userRole)
         {
             // Create user claims
@@ -102,8 +97,6 @@ namespace APIGateway.Controllers
 
             return token;
         }
-
-
-
+        #endregion Generate token
     }
 }

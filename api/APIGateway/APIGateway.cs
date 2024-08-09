@@ -12,11 +12,7 @@ namespace APIGateway
 {
     internal sealed class APIGateway : StatelessService
     {
-        private IConfiguration _configuration;
-        public APIGateway(StatelessServiceContext context) : base(context) 
-        {
-            _configuration = new ConfigurationManager();
-        }
+        public APIGateway(StatelessServiceContext context) : base(context) { }
 
         #region Create listeners
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
@@ -40,31 +36,32 @@ namespace APIGateway
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
 
-                        // Load configuration from appsettings.json
-                        //var configuration = new ConfigurationBuilder()
-                        //    .SetBasePath(builder.Environment.ContentRootPath)
-                        //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        //    .Build();
                         // Add JWT authentication
-                        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                        .AddJwtBearer(options =>
+                        builder.Services.AddAuthentication(opt =>
                         {
+                            opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                            opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                        }).AddJwtBearer(options =>
+                        {
+                            options.RequireHttpsMetadata = false;
+                            options.SaveToken = true;
                             options.TokenValidationParameters = new TokenValidationParameters
                             {
                                 ValidateIssuer = true,
-                                //ValidateAudience = true,
+                                ValidateAudience = true,
                                 ValidateLifetime = true,
                                 ValidateIssuerSigningKey = true,
-                                ValidIssuer = _configuration["JwtSettings:ValidIssuer"],
-                                //ValidAudience = _configuration["JwtSettings:ValidAudience"],
-                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]))
+                                ValidIssuer = builder.Configuration["JwtSettings:ValidIssuer"],
+                                ValidAudience = builder.Configuration["JwtSettings:ValidAudience"],
+                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
                             };
                         });
 
                         // cors pt.1
+                        // TODO promeni Origins na http://localhost:3000
                         builder.Services.AddCors(policyBuilder =>
                             policyBuilder.AddDefaultPolicy(policy =>
-                                policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod())
+                                policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod())
                         );
 
                         var app = builder.Build();

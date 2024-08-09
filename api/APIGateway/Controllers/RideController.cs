@@ -1,12 +1,10 @@
 ﻿using Common.DTOs;
+using Common.Enums;
 using Common.Interfaces;
-using Common.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
-
-// Provera koji je tip korisnika kad se šalju zahtevi (npr. vozač ne može da poruči vožnju)
+using System.Security.Claims;
 
 namespace APIGateway.Controllers
 {
@@ -38,16 +36,26 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // TODO token (dobavi userId, provera da li je Customer)
-                string customerId = "izvuci-iz-tokena";
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("Driver can't request a ride!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(customerId);
+                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
 
-                if (isBusy) return Unauthorized();
+                if (isBusy) return BadRequest();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.CreateRideRequestAsync(data, customerId);
+                var temp = await proxy.CreateRideRequestAsync(data, emailFromToken);
 
                 return Ok(temp);
             }
@@ -63,16 +71,26 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // TODO token (dobavi userId, provera da li je Customer)
-                string customerId = "izvuci-iz-tokena";
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
 
-                //IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                //var isBusy = await proxyUser.GetBusyStatusAsync(customerId);
+                if (role == null || role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("Driver can't request a ride!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
-                //if (isBusy) return Unauthorized();
+                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
+                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
+
+                if (isBusy) return BadRequest();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.GetRideEstimationAsync(rideId, customerId);
+                var temp = await proxy.GetRideEstimationAsync(rideId, emailFromToken);
 
                 return Ok(temp);
             }
@@ -88,17 +106,26 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // TODO token (dobavi userId, provera da li je Customer)
-                string userId = "izvuci-iz-tokena";
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
 
+                if (role == null || role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("Driver can't request a ride!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(userId);
+                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
 
                 if (isBusy) return Unauthorized();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.ConfirmRideRequestAsync(data, userId);
+                var temp = await proxy.ConfirmRideRequestAsync(data, emailFromToken);
 
                 return Ok(temp);
             }
@@ -114,16 +141,26 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (provera da li je korisnik poslao zahtev)
-                string userId = "izvuci-iz-tokena";
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("Driver can't request a ride!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(userId);
+                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
 
-                if (isBusy) return Unauthorized();
+                if (isBusy) return BadRequest();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.DeleteRideRequestAsync(data, userId);
+                var temp = await proxy.DeleteRideRequestAsync(data, emailFromToken);
 
                 return Ok(temp);
             }
@@ -139,11 +176,21 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (dobavi userId iz njega)
-                string customerId = "izvuci-iz-tokena";
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || !role.Equals(EUserType.Customer.ToString()))
+                {
+                    return BadRequest("You are not a customer!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.GetPreviousRidesCustomerAsync(customerId);
+                var temp = await proxy.GetPreviousRidesCustomerAsync(emailFromToken);
 
                 return Ok(temp);
             }
@@ -160,13 +207,24 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (provera da li je korisnik poslao zahtev)
-                string driverId = "izvuci-iz-tokena";
+
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || !role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("You are not a driver!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var verified = await proxyUser.IsDriverVerifiedCheckAsync(driverId);
-                var blocked = await proxyUser.IsDriverBlockedCheckAsync(driverId);
-                var isBusy = await proxyUser.GetBusyStatusAsync(driverId);
+                var verified = await proxyUser.IsDriverVerifiedCheckAsync(emailFromToken);
+                var blocked = await proxyUser.IsDriverBlockedCheckAsync(emailFromToken);
+                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
 
                 if (!verified || blocked || isBusy)
                 {
@@ -174,7 +232,7 @@ namespace APIGateway.Controllers
                 }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.AcceptRideAsync(rideId, driverId);
+                var temp = await proxy.AcceptRideAsync(rideId, emailFromToken);
                 var rideInfo = await proxy.GetRideInfoAsync(rideId);
 
                 if (temp)
@@ -196,12 +254,22 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (provera da li je korisnik poslao zahtev)
-                string driverId = "izvuci-iz-tokena";
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || !role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("You are not a  driver!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var verified = await proxyUser.IsDriverVerifiedCheckAsync(driverId);
-                var blocked = await proxyUser.IsDriverBlockedCheckAsync(driverId);
+                var verified = await proxyUser.IsDriverVerifiedCheckAsync(emailFromToken);
+                var blocked = await proxyUser.IsDriverBlockedCheckAsync(emailFromToken);
 
                 if (!verified || blocked)
                 {
@@ -209,7 +277,7 @@ namespace APIGateway.Controllers
                 }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.CompleteRideAsync(rideId, driverId);
+                var temp = await proxy.CompleteRideAsync(rideId, emailFromToken);
                 var rideInfo = await proxy.GetRideInfoAsync(rideId);
 
                 if (temp)
@@ -232,13 +300,24 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (dobavi userId iz njega)
-                string driverId = "izvuci-iz-tokena";
+
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || !role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("You are not a driver!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(driverId);
+                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
 
-                if (isBusy) return Unauthorized();
+                if (isBusy) return BadRequest();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetAllPendingRidesAsync();
@@ -257,16 +336,26 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (dobavi userId iz njega)
-                string driverId = "izvuci-iz-tokena";
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || !role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("You are not a driver!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var verified = await proxyUser.IsDriverVerifiedCheckAsync(driverId);
+                var verified = await proxyUser.IsDriverVerifiedCheckAsync(emailFromToken);
 
                 if (!verified) return Unauthorized();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.GetPreviousRidesDriverAsync(driverId);
+                var temp = await proxy.GetPreviousRidesDriverAsync(emailFromToken);
 
                 return Ok(temp);
             }
@@ -284,7 +373,13 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (dobavi userId iz njega)
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+
+                if (role == null || !role.Equals(EUserType.Administrator.ToString()))
+                {
+                    return Unauthorized("You are not admin!");
+                }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetAllRidesAdminAsync();

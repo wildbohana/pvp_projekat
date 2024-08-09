@@ -1,10 +1,10 @@
 ﻿using Common.DTOs;
+using Common.Enums;
 using Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
-
-// TODO JWT tokene
+using System.Security.Claims;
 
 namespace APIGateway.Controllers
 {
@@ -17,11 +17,21 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (provera da li je admin poslao zahtev)
-                string userId = "izvuci-iz-tokena";
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("Driver can't rate a ride!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
 
                 IRatingService proxy = ServiceProxy.Create<IRatingService>(new Uri("fabric:/api/RatingService"), new ServicePartitionKey(1));
-                var temp = await proxy.RateRideAsync(data, userId);
+                var temp = await proxy.RateRideAsync(data, emailFromToken);
 
                 return Ok(temp);
             }
@@ -38,8 +48,13 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (dobavi userId iz njega)
-                // proveri da li je admin u pitanju
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+
+                if (role == null || !role.Equals(EUserType.Administrator.ToString()))
+                {
+                    return Unauthorized("You are not administrator!");
+                }
 
                 IRatingService proxy = ServiceProxy.Create<IRatingService>(new Uri("fabric:/api/RatingService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetAverageDriverRateAsync(driverId);
@@ -58,8 +73,6 @@ namespace APIGateway.Controllers
         {
             try
             {
-                // check jwt token (dobavi userId iz njega)
-
                 IRatingService proxy = ServiceProxy.Create<IRatingService>(new Uri("fabric:/api/RatingService"), new ServicePartitionKey(1));
                 var temp = await proxy.HasBeenRatedCheckAsync(rideId);
 
