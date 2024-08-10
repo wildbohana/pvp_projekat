@@ -1,9 +1,8 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-//const api_url = process.env.API_URL;
-
-const api_url = "http://localhost:8102";
+// Na svaku promenu vrednosti iz .env moraš ponovo pokrenuti ceo front
+const api_url = process.env.REACT_APP_API_URL;
 
 const axiosInstance = axios.create({
 	baseURL: api_url,  
