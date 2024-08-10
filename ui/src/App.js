@@ -11,8 +11,8 @@ npm install axios
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import { Login } from './Pages/Auth/Login';
-import { Register } from './Pages/Auth/Register';
+import Login from './Pages/Auth/Login';
+import Register from './Pages/Auth/Register';
 import { Home } from './Pages/Home/Home';
 
 function App() {

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import styles from './Register.module.css'
+import axiosInstance from "../../Utils/axiosInstance";
 
-export const Register = () => {
+function Register() {
     const [firstname, setFirstName] = useState('');
     const [lastname, setLastName] = useState('');
     const [address, setAddress] = useState('');
@@ -13,87 +12,100 @@ export const Register = () => {
 	const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 	const [password2, setPassword2] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [image, setImage] = useState('');
+	const navigate = useNavigate();
 
-    const navigate = useNavigate();
+	const handleImageUploaded = (e) => {
+		const file = e.target.files[0];
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			setImage(reader.result);
+		}
+		reader.readAsDataURL(file);
+	}
 
-    const handleRegister = async () => {
-        try {
-            const response = await axios.post('/auth/register', {
-                firstname,
-                lastname,
-                address,
-                dob,
-                usertype,
-                email,
-				username,
-                password,
-            });
-            const successMessage = response.data;
-            console.log(successMessage);
+    // Function to convert array buffer to base64 string with header
+	const arrayBufferToBase64 = (buffer, mimeType) => {
+		let binary = '';
+		const bytes = new Uint8Array(buffer);
+		const len = bytes.byteLength;
+		for (let i = 0; i < len; i++) {
+			binary += String.fromCharCode(bytes[i]);
+		}
+		const base64String = btoa(binary);
+		return `data:${mimeType};base64,${base64String}`;
+	};
+	
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		const userData = {
+            Firstname: firstname,
+			Lastname: lastname,
+            Address: address,
+            DateOfBirth: dob,
+            Role: usertype,
+			Email: email,
+            Username: username,
+			Password: password,
+            ConfirmPassword: password2,
+			PhoroUrl: image,
+		};
 
-            setErrorMessage('');
-            window.alert('Registration successful!');
-        } catch (error) {
-            console.error('Registration failed:', error.response ? error.response.data : error.message);
-            setErrorMessage('Registration failed. Please check your details and try again.');
-        }
-    };
-
-    const handleRegisterClick = () => {
-        navigate('/');
-    }
-
+        // login je rutiran na /
+		try {
+			const response = await axiosInstance.post("auth/register", {...userData});
+			navigate("/")
+		} catch (error) {
+			console.error("There was an error!", error);
+		}
+	};  
+	
+	const navigateToLogin = () => {
+		navigate('/');
+	};
+    
     return (
-        <div className={styles.container}>
-            <div className={styles.form}>
-                <h1>Register</h1>
-                <form>	
-					<table>
-						<tr>
-							<td><input type="text" className={styles['form-input']} placeholder='Enter your first name' value={firstname} onChange={(e) => setFirstName(e.target.value)} /></td>
-							<td><input type="text" className={styles['form-input']} placeholder='Enter your last name' value={lastname} onChange={(e) => setLastName(e.target.value)} /></td>
-						</tr>
-						<tr>
-							<td><input type="text" className={styles['form-input']} placeholder='Enter your address' value={address} onChange={(e) => setAddress(e.target.value)} /></td>
-							<td><input type="date" className={styles['form-input']} placeholder='Enter your date of birth' value={dob} onChange={(e) => setDob(e.target.value)} /></td>
-						</tr>
-						<tr>
-							<td><input type="email" className={styles['form-input']} placeholder='Enter your email' value={email} onChange={(e) => setEmail(e.target.value)} /></td>
-							<td><input type="text" className={styles['form-input']} placeholder='Enter your username' value={username} onChange={(e) => setUsername(e.target.value)} /></td>
-						</tr>
-						<tr>
-							<td><input type="password" className={styles['form-input']} placeholder='Enter your password' value={password} onChange={(e) => setPassword(e.target.value)} /></td>
-							<td><input type="password" className={styles['form-input']} placeholder='Confirm password' value={password2} onChange={(e) => setPassword2(e.target.value)} /></td>
-						</tr>
-						<tr>
-							<td>
-								<select value={usertype} onChange={(e) => setType(e.target.value)}>
-									<option value="driver">Driver</option>
-									<option value="customer">Customer</option>
-								</select>
-							</td>
-						</tr>
-					</table>
-					
-                    <button className={styles.button} onClick={(e) => {
-                        e.preventDefault();
-                        if (firstname.trim() === '' || lastname.trim() === '' || address.trim() === '' || dob.trim() === '' || usertype.trim() === '' || username.trim() === '' || email.trim() === '' || password.trim() === '' || password2.trim() === '') {
-                            setErrorMessage('Please fill input fields!');
-                        }
-						// Samo na frontu se proverava da li se poklapaju lozinke
-						else if (password !== password2) {
-							setErrorMessage('Passwords do not match!');
-						} 						
-						else {
-                            handleRegister();
-                            handleRegisterClick();
-                            setErrorMessage('');
-                        }
-                    }}>Register</button>
-                    {errorMessage && <p style={{ color: 'red', textAlign: 'center', marginBottom: 20 }} > {errorMessage}</p>}
-                </form>
-            </div>
-        </div>
+        <div className="App">
+		<div className="auth-form-container">
+			<h1>Register</h1>
+			<form className="register-form" onSubmit={handleSubmit}>
+				<label htmlFor="firstname">First Name</label>
+				<input value={firstname} onChange={(e) => setFirstName(e.target.value)} id="firstname" placeholder="First Name" />
+
+				<label htmlFor="lastname">Last Name</label>
+				<input value={lastname} onChange={(e) => setLastName(e.target.value)} id="lastname" placeholder="Last Name" />
+
+                <label htmlFor="username">Username</label>
+				<input value={username} onChange={(e) => setUsername(e.target.value)} id="username" placeholder="First Name" />
+
+				<label htmlFor="email">Email</label>
+				<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" />
+
+				<label htmlFor="password">Password</label>
+				<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="********" id="password" />
+
+				<label htmlFor="password">Confirm Password</label>
+				<input value={password2} onChange={(e) => setPassword2(e.target.value)} type="password" placeholder="********" id="password2" />
+
+				<label htmlFor="address">Address</label>
+				<input value={address} onChange={(e) => setAddress(e.target.value)} id="address" placeholder="Address" />
+
+                <label htmlFor="dob">Date of Birth</label>
+				<input type="date" placeholder='Enter your date of birth' value={dob} onChange={(e) => setDob(e.target.value)} id="dob" />
+
+                <label htmlFor="usertype">User role</label>
+				<input value={usertype} onChange={(e) => setType(e.target.value)} id="usertype" placeholder="Driver/Cusomer" />
+
+				<label htmlFor="image">Image</label>
+				<input type="file" onChange={handleImageUploaded} />
+
+				<button type="submit" className="register-button">Register</button>
+			</form>
+			
+			<button className="link-btn" onClick={navigateToLogin}>Already have an account? Login here.</button>
+		</div>
+		</div>
     );
 };
+
+export default Register;

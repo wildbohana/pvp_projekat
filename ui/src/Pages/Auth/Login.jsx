@@ -1,66 +1,51 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'
-import styles from './Login.module.css'
+import axiosInstance from "../../Utils/axiosInstance";
+import Cookies from 'js-cookie';
 
-export const Login = () => {
+function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-
     const navigate = useNavigate();
-    const handleLogin = async () => {
-        try {
-            const response = await axios.post('/auth/login', {
-                email,
-                password,
-            });
+    
+	const handleSubmit = async (e) => {
+		e.preventDefault();
 
-			/*
-			const { token } = response.data;
-            localStorage.clear();
-            console.log(localStorage);
+		const loginData = {
+			Email: email,
+			Password: password
+		};
+		axiosInstance.post("/auth/login", loginData)
+			.then(response => {
+				const token = response.data;
+				Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
+				localStorage.setItem('currentUser', email);
+				navigate('/');
+			})
+			.catch(error => {
+				console.error('Error during login:', error);
+			});
+	}
 
-            localStorage.setItem('userToken', token);
-            console.log(localStorage);
-			*/
-            
-			setErrorMessage('');
-            handleLoginSuccessfulClick();
-        } catch (error) {
-            console.error('Login failed:', error.response ? error.response.data : error.message);
-            setErrorMessage('Login failed. Please check your credentials.');
-        }
-    };
+	const navigateToRegister = () => {
+		navigate('/register');
+	};
+    
+	return (
+		<div className="App">
+		<div className="auth-form-container">
+			<h2>Login</h2>
+			<form className="login-form" onSubmit={handleSubmit}>
+				<label htmlFor="email">email</label>
+				<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" name="email" />
+				<label htmlFor="password">password</label>
+				<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="********" id="password" name="password" />
+				<button type="submit">Log In</button>
+			</form>
+			<button className="link-btn" onClick={navigateToRegister}>Don't have an account? Register here.</button>
+		</div>
+		</div>
+	)
+}
 
-    const handleLoginSuccessfulClick = () => {
-        navigate('/home');
-    };
-
-    return (
-        <div className={styles.container}>
-            <div className={styles.form}>
-                <h1>Login</h1>
-                <form>
-                    <input type="text" placeholder='Enter your email' className={styles['form-input']} value={email} onChange={(e) => setEmail(e.target.value)} />
-                    <input type="password" placeholder='Enter your password' className="form-input" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <button className={styles.button} onClick={(e) => {
-                        e.preventDefault();
-                        if (email.trim() === '' || password.trim() === '') {
-                            setErrorMessage('Please enter both email and password.');
-                        } else {
-                            handleLogin();
-                            setErrorMessage('');
-                        }
-                    }}>Login</button>
-                    {errorMessage && <p style={{ color: 'red', textAlign: 'center', marginBottom: 20 }}>{errorMessage}</p>}
-                </form>
-                <div className={styles.signup}>
-                    <span className={styles.signup}>Don't have an account?
-                        <a className={styles.link} href='/register'> Sign up </a>
-                    </span>
-                </div>
-            </div>
-        </div>
-    );
-};
+export default Login;
