@@ -10,6 +10,7 @@ import Login from './Views/Auth/Login';
 import Register from './Views/Auth/Register';
 import Navbar from './Components/Navbar';
 import MyProfile from './Views/Profile/MyProfile';
+import HomePage from './Views/Home/HomePage';
 
 function App() {
 
@@ -33,6 +34,7 @@ const checkAuth = () => {
 		<Router>
 		<Navbar />
 			<Routes>
+				<Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/profile" element={<ProtectedRoute><MyProfile/></ProtectedRoute>}/>

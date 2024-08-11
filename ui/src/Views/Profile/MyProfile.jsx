@@ -18,11 +18,12 @@ function MyProfile() {
         Role: '',
 		PhotoUrl: '',
     });
-
+    
     useEffect(() => {
         axiosInstance.get('/users/profile').then(response => {
             setProfile(response.data);
             console.log(response.data);
+            //const usrRole = response.data.role;
         }).catch(error => {
             console.error("Error fetching profile: ", error);
             toast("Error fetching profile");
