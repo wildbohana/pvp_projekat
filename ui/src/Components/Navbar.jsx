@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 
 const handleLogout = () => {
     Cookies.remove('jwt-token');
-	localStorage.removeItem('currentUser');
+	//localStorage.removeItem('currentUser');
 };
 
 const Navbar = () => {
@@ -13,7 +13,7 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            <NavLink to="/home" className="nav-link">Home</NavLink>
+            <NavLink to="/" className="nav-link">Home</NavLink>
             <NavLink to="/profile" className="nav-link">Profile</NavLink>
             {Cookies.get('jwt-token') && location.pathname !== '/login' && (
                 <NavLink to="/login" className="nav-link logout-button" onClick={handleLogout}> Log Out </NavLink>

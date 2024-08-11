@@ -24,18 +24,6 @@ function Register() {
 		reader.readAsDataURL(file);
 	}
 
-    // Function to convert array buffer to base64 string with header
-	const arrayBufferToBase64 = (buffer, mimeType) => {
-		let binary = '';
-		const bytes = new Uint8Array(buffer);
-		const len = bytes.byteLength;
-		for (let i = 0; i < len; i++) {
-			binary += String.fromCharCode(bytes[i]);
-		}
-		const base64String = btoa(binary);
-		return `data:${mimeType};base64,${base64String}`;
-	};
-	
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const userData = {
@@ -48,20 +36,19 @@ function Register() {
             Username: username,
 			Password: password,
             ConfirmPassword: password2,
-			PhoroUrl: image,
+			PhotoUrl: image,
 		};
 
-        // login je rutiran na /
 		try {
 			const response = await axiosInstance.post("auth/register", {...userData});
-			navigate("/")
+			navigate("/login")
 		} catch (error) {
 			console.error("There was an error!", error);
 		}
-	};  
+	};
 	
 	const navigateToLogin = () => {
-		navigate('/');
+		navigate('/login');
 	};
     
     return (
@@ -94,7 +81,10 @@ function Register() {
 				<input type="date" placeholder='Enter your date of birth' value={dob} onChange={(e) => setDob(e.target.value)} id="dob" />
 
                 <label htmlFor="usertype">User role</label>
-				<input value={usertype} onChange={(e) => setType(e.target.value)} id="usertype" placeholder="Driver/Cusomer" />
+				<select value={usertype} onChange={(e) => setType(e.target.value)} id="usertype" >
+					<option value="Customer">Customer</option>
+					<option value="Driver">Driver</option>
+				</select>
 
 				<label htmlFor="image">Image</label>
 				<input type="file" onChange={handleImageUploaded} />

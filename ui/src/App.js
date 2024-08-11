@@ -9,6 +9,7 @@ import './Assets/Styles/App.css';
 import Login from './Views/Auth/Login';
 import Register from './Views/Auth/Register';
 import Navbar from './Components/Navbar';
+import MyProfile from './Views/Profile/MyProfile';
 
 function App() {
 
@@ -34,6 +35,7 @@ const checkAuth = () => {
 			<Routes>
 				<Route path="/register" element={<Register />} />
 				<Route path="/login" element={<Login />} />
+				<Route path="/profile" element={<ProtectedRoute><MyProfile/></ProtectedRoute>}/>
 			</Routes>
 		</Router>
 	);

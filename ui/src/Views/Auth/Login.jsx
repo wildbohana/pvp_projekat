@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from "../../Utils/axiosInstance";
+import axiosInstance from '../../Utils/axiosInstance';
 import Cookies from 'js-cookie';
 
 function Login() {
@@ -19,7 +19,7 @@ function Login() {
 			.then(response => {
 				const token = response.data;
 				Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
-				localStorage.setItem('currentUser', email);
+				//localStorage.setItem('currentUser', email);
 				navigate('/');
 			})
 			.catch(error => {
