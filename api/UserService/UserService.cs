@@ -60,7 +60,7 @@ namespace UserService
                 {
                     var user = new User(entities.Current);
                     await userDictionary.TryAddAsync(tx, user.Email, user);
-                }
+                }                
 
                 await tx.CommitAsync();
             }

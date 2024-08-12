@@ -17,9 +17,10 @@ function Login() {
 		};
 		axiosInstance.post("/auth/login", loginData)
 			.then(response => {
-				const token = response.data;
+				const token = response.data.accessToken;
+				const usertype = response.data.usertype;
 				Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
-				//localStorage.setItem('currentUser', email);
+				localStorage.setItem('usertype', usertype);
 				navigate('/');
 			})
 			.catch(error => {

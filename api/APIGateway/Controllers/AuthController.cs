@@ -59,8 +59,12 @@ namespace APIGateway.Controllers
                     var userType = await proxy.GetUserTypeFromEmail(data.Email);
                     var token = GenerateAccessToken(data.Email, userType);
 
-                    //return Ok(new { AccessToken = new JwtSecurityTokenHandler().WriteToken(token) });
-                    return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                    return Ok(new 
+                    { 
+                        AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+                        Usertype = userType
+                    });
+                    //return Ok(new JwtSecurityTokenHandler().WriteToken(token));
                 }
                 else
                 {

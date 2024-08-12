@@ -13,7 +13,7 @@ namespace APIGateway.Controllers
     public class RideController : ControllerBase
     {
         // svi
-        [HttpGet]
+        [HttpGet("ride-info")]
         public async Task<IActionResult> GetRideInfo([FromBody] string rideId)
         {
             try
