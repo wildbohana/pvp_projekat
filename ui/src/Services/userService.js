@@ -7,7 +7,7 @@ export const RegisterAsync = async (requestBody) => {
 			`${process.env.REACT_APP_API_URL}/auth/register`,
 			requestBody
 		);
-		return response.data;
+		return response;
 	}
 	catch (error) {
 		throw new Error(error.response.data.error);
@@ -21,7 +21,7 @@ export const LoginAsync = async (requestBody) => {
 			`${process.env.REACT_APP_API_URL}/auth/login`, 
 			requestBody
 		);
-		return response.data;
+		return response;
 	}
 	catch (error) {
 		throw new Error(error.response.data.error);
@@ -43,7 +43,7 @@ export const GetUserProfileAsync = async () => {
 		const response = await axiosClient.get(
 			`${process.env.REACT_APP_API_URL}/users/profile`
 		);
-		return response.data;
+		return response;
 	}
 	catch (error) {
 		throw new Error(error.response.data.error);
@@ -53,11 +53,11 @@ export const GetUserProfileAsync = async () => {
 // Update profile
 export const UpdateUserAsync = async (requestBody) => {
 	try {
-		const response = await axiosClient.get(
+		const response = await axiosClient.post(
 			`${process.env.REACT_APP_API_URL}/users/update`,
 			requestBody
 		);
-		return response.data;
+		return response;
 	}
 	catch (error) {
 		throw new Error(error.response.data.error);
@@ -71,7 +71,7 @@ export const GetBusyStatusAsync = async () => {
 		const response = await axiosClient.get(
 			`${process.env.REACT_APP_API_URL}/users/busy`
 		);
-		return response.data;
+		return response;
 	}
 	catch (error) {
 		throw new Error(error.response.data.error);
@@ -84,7 +84,7 @@ export const GetVerificationStatusAsync = async (id) => {
 		const response = await axiosClient.get(
 			`${process.env.REACT_APP_API_URL}/users/verified-check/${id}`
 		);
-		return response.data;
+		return response;
 	}
 	catch (error) {
 		throw new Error(error.response.data.error);

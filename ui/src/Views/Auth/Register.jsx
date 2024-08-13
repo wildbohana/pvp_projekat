@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { RegisterAsync } from "../../Services/userService";
 
 function Register() {
@@ -41,7 +42,7 @@ function Register() {
 
 		try {
 			const response = await RegisterAsync(userData);
-			if (response == '')
+			if (response === '')
 			{
 				console.log("That username has allready been taken!");
 			}

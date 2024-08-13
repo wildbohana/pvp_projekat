@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { LoginAsync } from '../../Services/userService';
 import Cookies from 'js-cookie';
+import { LoginAsync } from '../../Services/userService';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -17,10 +17,10 @@ function Login() {
 		};
 
 		const response = await LoginAsync(loginData);
-		if (response.accessToken != "")
+		if (response.accessToken !== "")
 		{
-			const token = response.accessToken;
-			const userType = response.usertype;
+			const token = response.data.accessToken;
+			const userType = response.data.usertype;
 			Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
 			localStorage.setItem('usertype', userType);
 			navigate('/');

@@ -187,7 +187,9 @@ namespace UserService
                         ConfirmOldPassword = "",
                         NewPassword = "",
                         Role = user.UserType.ToString(),
-                        PhotoUrl = user.PhotoUrl
+                        PhotoUrl = user.PhotoUrl,
+                        VerificationStatus = user.VerificationStatus.ToString(),
+                        IsBlocked = user.IsBlocked,
                     };
 
                     return userInfo;

@@ -14,6 +14,7 @@
 
 .form-group {
     margin-bottom: 15px;
+    margin-right: 20px;
 }
 
 .form-group label {
@@ -45,7 +46,7 @@
 }
 
 .profile-image {
-    max-width: 60%; 
-    height: 200px; 
+    max-width: 90%; 
+    height: 300px; 
     margin-top: 20px; 
 }

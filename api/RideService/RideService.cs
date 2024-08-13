@@ -114,7 +114,7 @@ namespace RideService
             {
                 var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
 
-                if (rideResult.HasValue)
+                if (rideResult.HasValue || rideResult.Value.CustomerId.Equals(customerId))
                 {
                     RideEstimateDTO rideInfo = new RideEstimateDTO(rideResult.Value);
                     return rideInfo;
@@ -122,6 +122,26 @@ namespace RideService
 
                 return null;
             }
+        }
+
+        public async Task<RideEstimateDTO?> GetRideEstimationForUserAsync(string customerId)
+        {
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var enumerator = (await rideDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(CancellationToken.None))
+                {
+                    var tmp = enumerator.Current.Value;
+                    if (tmp.Status != ERideStatus.Completed && tmp.CustomerId.Equals(customerId))
+                    {
+                        var ride = new RideEstimateDTO(tmp);
+                        return ride;
+                    }
+                }
+            }
+
+            return null;
         }
 
         public async Task<bool> ConfirmRideRequestAsync(string rideId, string customerId)

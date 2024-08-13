@@ -27,5 +27,9 @@ namespace Common.DTOs
         public string? Role { get; set; }
         [DataMember]
         public string? PhotoUrl { get; set; }
+        [DataMember]
+        public string? VerificationStatus { get; set; }
+        [DataMember]
+        public bool? IsBlocked { get; set; }
     }
 }

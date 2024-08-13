@@ -4,9 +4,13 @@ import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 
 import './Assets/App.css';
+import Navbar from "./Components/Navbar";
+
 import Login from './Views/Auth/Login';
 import Register from './Views/Auth/Register';
-import Navbar from "./Components/Navbar";
+import MyProfile from './Views/Profile/MyProfile';
+import Dashboard from './Views/Dashboard/Dashboard';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
@@ -28,10 +32,13 @@ function App() {
 
 	return (
 		<Router>
+		<ToastContainer position="top-right" autoClose={1600} hideProgressBar={false} />
 		<Navbar />
 			<Routes>
 				<Route path="/login" element={<Login />} />	
-				<Route path="/register" element={<Register />} />	
+				<Route path="/register" element={<Register />} />
+				<Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+				<Route path="/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
 			</Routes>
 		</Router>
 	);

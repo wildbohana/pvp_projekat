@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../Services/axiosInstance';
+import { GetUserProfileAsync, UpdateUserAsync } from '../../Services/userService';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../../Assets/Styles/MyProfile.css';
+import '../../Assets/MyProfile.css';
+
+import { axiosClient } from '../../Services/axiosClient';
 
 function MyProfile() {
     const [profile, setProfile] = useState({
@@ -17,13 +19,14 @@ function MyProfile() {
         DateOfBirth: '',
         Role: '',
 		PhotoUrl: '',
+        VerificationStatus: '',
+        IsBlocked: false
     });
     
     useEffect(() => {
-        axiosInstance.get('/users/profile').then(response => {
+        axiosClient.get(`${process.env.REACT_APP_API_URL}/users/profile`).then(response => {
             setProfile(response.data);
             console.log(response.data);
-            //const usrRole = response.data.role;
         }).catch(error => {
             console.error("Error fetching profile: ", error);
             toast("Error fetching profile");
@@ -61,9 +64,10 @@ function MyProfile() {
             })
 
             console.log(profile);
-            const response = await axiosInstance.post('/users/update', profile);
+            const response = await UpdateUserAsync(profile);
             if (response.status === 200) {
                 toast("Profile updated successfully");
+                setTimeout(`window.location.reload()`, 2000);   // dobra fora (ali mora se izmeniti)
             }
         } catch (error) {
             toast("Error updating profile");
@@ -83,12 +87,13 @@ function MyProfile() {
         dateOfBirth: 'Date of birth',
 		role: 'User type',
         photoUrl: 'Image',
+        verificationStatus: 'Verification status',
+        isBlocked: 'Blocked?',
     };
 
     return (		
         <div className="profile-container">
-            <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} />
-			
+            {/* <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} /> */}
             <h1>Edit Profile</h1>
             <form onSubmit={handleSubmit} className="profile-form">
                 {Object.entries(labelMap).map(([labelKey, labelValue]) => (
@@ -101,22 +106,28 @@ function MyProfile() {
                             </div>
                         ) : labelKey === 'confirmOldPassword' || labelKey === 'confirmNewPassword' || labelKey === 'newPassword' ? (
                             <input
-                                type="password"
-                                id={labelKey}
-                                name={labelKey}
-                                value={profile[labelKey]}
-                                onChange={handleInputChange}
-                                className="form-control"
+                                type = "password"
+                                id = {labelKey}
+                                name = {labelKey}
+                                value = {profile[labelKey]}
+                                onChange = {handleInputChange}
+                                className = "form-control"
                             />
                         ) : (
                             <input
-                                type="text"
-                                id={labelKey}
-                                name={labelKey}
-                                value={profile[labelKey]}
-                                onChange={handleInputChange}
-                                className="form-control"
-                                disabled={labelKey === "Id" || labelKey === "userId" }
+                                type = "text"
+                                id = {labelKey}
+                                name = {labelKey}
+                                value = {profile[labelKey]}
+                                onChange = {handleInputChange}
+                                className = "form-control"
+                                disabled = {
+                                    labelKey === "Id" || 
+                                    labelKey === "userId" || 
+                                    labelKey === "isBlocked" || 
+                                    labelKey === "verificationStatus" || 
+                                    labelKey === "role" 
+                                }
                             />
                         )}
                     </div>

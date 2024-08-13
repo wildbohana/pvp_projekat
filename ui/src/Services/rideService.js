@@ -40,6 +40,21 @@ export const GetRideEstimateAsync = async (id) => {
 	}
 };
 
+// Get ride estimate for user
+// Takođe služi za proveru da li je već poslat zahtev
+// Ako jeste, onemogućava se pravljenje novog zahteva za vožnju
+export const GetRideEstimateUserAsync = async () => {
+	try {
+		const response =  await axiosClient.get(
+			`${process.env.REACT_APP_API_URL}/ride/ride-estimate-user`
+		);
+		return response.data;
+	}
+	catch (error) {
+		throw new Error(error.response.data.error);
+	}
+};
+
 // Confirm ride request
 export const ConfirmRideRequestAsync = async (id) => {
 	try {

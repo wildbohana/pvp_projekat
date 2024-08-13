@@ -11,6 +11,7 @@ namespace Common.Interfaces
         // Korisnici
         Task<RideEstimateDTO?> CreateRideRequestAsync(RideNewDTO data, string customerId);
         Task<RideEstimateDTO?> GetRideEstimationAsync(string rideId, string customerId);
+        Task<RideEstimateDTO?> GetRideEstimationForUserAsync(string customerId);
         Task<bool> ConfirmRideRequestAsync(string rideId, string customerId);
         Task<bool> DeleteRideRequestAsync(string rideId, string customerId);
         Task<IEnumerable<RideInfoDTO>> GetPreviousRidesCustomerAsync(string customerId);

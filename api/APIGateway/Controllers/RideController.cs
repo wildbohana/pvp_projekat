@@ -56,6 +56,7 @@ namespace APIGateway.Controllers
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.CreateRideRequestAsync(data, emailFromToken);
+                //var temp2 = await proxyUser.ChangeBusyStatusAsync(emailFromToken, true);
 
                 return Ok(temp);
             }
@@ -91,6 +92,41 @@ namespace APIGateway.Controllers
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetRideEstimationAsync(rideId, emailFromToken);
+
+                return Ok(temp);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return BadRequest(message);
+            }
+        }
+
+        [HttpGet("ride-estimate-user")]
+        public async Task<IActionResult> GetRideEstimateForUser()
+        {
+            try
+            {
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("Driver can't request a ride!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
+
+                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
+                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
+
+                if (!isBusy) return BadRequest();
+
+                IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
+                var temp = await proxy.GetRideEstimationForUserAsync(emailFromToken);
 
                 return Ok(temp);
             }
