@@ -14,7 +14,7 @@ namespace APIGateway.Controllers
     {
         // svi
         [HttpGet("ride-info")]
-        public async Task<IActionResult> GetRideInfo([FromBody] string rideId)
+        public async Task<IActionResult> GetRideInfo(string rideId)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpGet("ride-estimate")]
-        public async Task<IActionResult> GetRideEstimation([FromBody] string rideId)
+        public async Task<IActionResult> GetRideEstimation(string rideId)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("confirm-request")]
-        public async Task<IActionResult> ConfirmRideRequest([FromBody] string data)
+        public async Task<IActionResult> ConfirmRideRequest(string rideId)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace APIGateway.Controllers
                 if (isBusy) return Unauthorized();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.ConfirmRideRequestAsync(data, emailFromToken);
+                var temp = await proxy.ConfirmRideRequestAsync(rideId, emailFromToken);
 
                 return Ok(temp);
             }
@@ -137,7 +137,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("delete-request")]
-        public async Task<IActionResult> DeleteRideRequest([FromBody] string data)
+        public async Task<IActionResult> DeleteRideRequest(string rideId)
         {
             try
             {
@@ -160,7 +160,7 @@ namespace APIGateway.Controllers
                 if (isBusy) return BadRequest();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
-                var temp = await proxy.DeleteRideRequestAsync(data, emailFromToken);
+                var temp = await proxy.DeleteRideRequestAsync(rideId, emailFromToken);
 
                 return Ok(temp);
             }
@@ -203,7 +203,7 @@ namespace APIGateway.Controllers
 
         // vozač
         [HttpPost("accept-ride")]
-        public async Task<IActionResult> AcceptRide([FromBody] string rideId)
+        public async Task<IActionResult> AcceptRide(string rideId)
         {
             try
             {
@@ -250,7 +250,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("complete-ride")]
-        public async Task<IActionResult> CompleteRide([FromBody] string rideId)
+        public async Task<IActionResult> CompleteRide(string rideId)
         {
             try
             {
@@ -295,7 +295,7 @@ namespace APIGateway.Controllers
             }
         }
 
-        [HttpGet("pending-requests")]
+        [HttpGet("pending-rides")]
         public async Task<IActionResult> GetAllPendingRequests()
         {
             try

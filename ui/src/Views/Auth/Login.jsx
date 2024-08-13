@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../Utils/axiosInstance';
+import { LoginAsync } from '../../Services/userService';
 import Cookies from 'js-cookie';
 
 function Login() {
@@ -15,17 +15,16 @@ function Login() {
 			Email: email,
 			Password: password
 		};
-		axiosInstance.post("/auth/login", loginData)
-			.then(response => {
-				const token = response.data.accessToken;
-				const usertype = response.data.usertype;
-				Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
-				localStorage.setItem('usertype', usertype);
-				navigate('/');
-			})
-			.catch(error => {
-				console.error('Error during login:', error);
-			});
+
+		const response = await LoginAsync(loginData);
+		if (response.accessToken != "")
+		{
+			const token = response.accessToken;
+			const userType = response.usertype;
+			Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
+			localStorage.setItem('usertype', userType);
+			navigate('/');
+		}
 	}
 
 	const navigateToRegister = () => {

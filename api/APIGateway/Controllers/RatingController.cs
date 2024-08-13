@@ -44,7 +44,7 @@ namespace APIGateway.Controllers
 
         // Samo admin
         [HttpGet("get-rating")]
-        public async Task<IActionResult> GetDriverRatingAsync([FromBody] string driverId)
+        public async Task<IActionResult> GetDriverRatingAsync(string driverId)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpGet("rated-check")]
-        public async Task<IActionResult> RatedCheckAsync([FromBody] string rideId)
+        public async Task<IActionResult> RatedCheckAsync(string rideId)
         {
             try
             {

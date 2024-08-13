@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from "../../Utils/axiosInstance";
+import { RegisterAsync } from "../../Services/userService";
 
 function Register() {
     const [firstname, setFirstName] = useState('');
@@ -40,7 +40,11 @@ function Register() {
 		};
 
 		try {
-			const response = await axiosInstance.post("auth/register", {...userData});
+			const response = await RegisterAsync(userData);
+			if (response == '')
+			{
+				console.log("That username has allready been taken!");
+			}
 			navigate("/login")
 		} catch (error) {
 			console.error("There was an error!", error);

@@ -12,7 +12,7 @@ namespace APIGateway.Controllers
     public class AdminController : ControllerBase
     {
         [HttpPost("verify-approve")]
-        public async Task<IActionResult> VerifyApproveAsync([FromBody] string driverId)
+        public async Task<IActionResult> VerifyApproveAsync(string driverId)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("verify-deny")]
-        public async Task<IActionResult> VerifyDenyAsync([FromBody] string driverId)
+        public async Task<IActionResult> VerifyDenyAsync(string driverId)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpPost("block")]
-        public async Task<IActionResult> BlockAsync([FromBody] string driverId)
+        public async Task<IActionResult> BlockAsync(string driverId)
         {
             try
             {

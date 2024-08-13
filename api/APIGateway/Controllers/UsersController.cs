@@ -88,7 +88,7 @@ namespace APIGateway.Controllers
         }
 
         [HttpGet("verified-check")]
-        public async Task<IActionResult> GetDriverVerifiedCheck([FromBody] string driverId)
+        public async Task<IActionResult> GetDriverVerifiedCheck(string driverId)
         {
             try
             {
