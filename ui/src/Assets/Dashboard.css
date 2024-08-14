@@ -1,0 +1,43 @@
+body {
+	background-image: linear-gradient(79deg, #7439db, #C66FBC 48%, #F7944D);
+	margin: 0;
+	padding: 0;
+	font-family: 'Maiandra GD', sans-serif;
+}
+
+.dashboard-container {
+	background-color: white;
+	color: black;
+	text-align: center;
+	padding: 50px;
+	border-radius: 10px;
+	width: 24%;
+	margin: 100px auto;
+	border: 2px solid #1cc49d;
+}
+  
+.dashboard-links {
+	margin-top: 20px;
+}
+  
+.dashboard-links a {
+	font-size: 1.5rem;
+	color: #1cc49d;
+	background-color: #d9dedf;
+	padding: 10px 20px;
+	border-radius: 5px;
+	text-decoration: none;
+	margin: 10px;
+	display: inline-block;
+}
+  
+.dashboard-links a:hover {
+	background-color: #a1a199;
+}
+  
+.admin-section,
+.user-section,
+.driver-section {
+	margin-top: 10px;
+}
+  

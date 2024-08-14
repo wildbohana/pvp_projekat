@@ -22,8 +22,8 @@ function MyProfile() {
         VerificationStatus: '',
         IsBlocked: false
     });
-    
-    useEffect(() => {
+
+    useEffect(() => {  
         axiosClient.get(`${process.env.REACT_APP_API_URL}/users/profile`).then(response => {
             setProfile(response.data);
             console.log(response.data);
@@ -91,7 +91,7 @@ function MyProfile() {
         isBlocked: 'Blocked?',
     };
 
-    return (		
+    return (	
         <div className="profile-container">
             {/* <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} /> */}
             <h1>Edit Profile</h1>
