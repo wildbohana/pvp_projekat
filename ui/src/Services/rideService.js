@@ -2,159 +2,87 @@ import { axiosClient } from "./axiosClient";
 
 // Get ride info
 export const GetRideInfoAsync = async (id) => {
-	try {
-		const response =  await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/ride/ride-info/${id}`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/ride/ride-info/${id}`
+	);
 };
 
 // New ride
 export const NewRideRequestAsync = async (data) => {
-	try {
-		const response =  await axiosClient.post(
-			`${process.env.REACT_APP_API_URL}/ride/new-ride`,
-			data
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.post(
+		`${process.env.REACT_APP_API_URL}/ride/new-ride`,
+		data
+	);
 };
 
 // Get ride estimate
 export const GetRideEstimateAsync = async (id) => {
-	try {
-		const response =  await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/ride/ride-estimate/${id}`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/ride/ride-estimate/${id}`
+	);
 };
 
 // Get ride estimate for user
 // Takođe služi za proveru da li je već poslat zahtev
 // Ako jeste, onemogućava se pravljenje novog zahteva za vožnju
 export const GetRideEstimateUserAsync = async () => {
-	try {
-		const response =  await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/ride/ride-estimate-user`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/ride/ride-estimate-user`
+	);
 };
 
 // Confirm ride request
 export const ConfirmRideRequestAsync = async (id) => {
-	try {
-		const response =  await axiosClient.post(
-			`${process.env.REACT_APP_API_URL}/ride/confirm-request/${id}`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.post(
+		`${process.env.REACT_APP_API_URL}/ride/confirm-request/${id}`
+	);
 };
 
 // Delete ride request
 export const DeleteRideRequestAsync = async (id) => {
-	try {
-		const response =  await axiosClient.post(
-			`${process.env.REACT_APP_API_URL}/ride/delete-request/${id}`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.post(
+		`${process.env.REACT_APP_API_URL}/ride/delete-request/${id}`
+	);
 };
 
 // Previous rides customer
 export const GetPreviousRidesCustomerAsync = async () => {
-	try {
-		const response =  await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/ride/previous-rides`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/ride/previous-rides`
+	);
 };
 
 // Accept ride (driver)
 export const AcceptRideAsync = async (id) => {
-	try {
-		const response =  await axiosClient.post(
-			`${process.env.REACT_APP_API_URL}/ride/accept-ride/${id}`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.post(
+		`${process.env.REACT_APP_API_URL}/ride/accept-ride/${id}`
+	);
 };
 
 // Complete ride (driver)
 export const CompleteRideAsync = async (id) => {
-	try {
-		const response =  await axiosClient.post(
-			`${process.env.REACT_APP_API_URL}/ride/complete-ride/${id}`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.post(
+		`${process.env.REACT_APP_API_URL}/ride/complete-ride/${id}`
+	);
 };
 
 // Get all pending rides (driver)
 export const GetAllPendingRidesAsync = async () => {
-	try {
-		const response =  await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/ride/pending-rides`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/ride/pending-rides`
+	);
 };
 
 // Get all completed rides (driver)
 export const GetAllCompletedRidesAsync = async () => {
-	try {
-		const response =  await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/ride/completed-rides`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/ride/completed-rides`
+	);
 };
 
 // Get all rides (admin)
 export const GetAllRidesAsync = async () => {
-	try {
-		const response =  await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/ride/all-rides}`
-		);
-		return response.data;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/ride/all-rides}`
+	);
 };

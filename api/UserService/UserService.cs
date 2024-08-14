@@ -6,6 +6,7 @@ using Common.Interfaces;
 using Common.Models;
 using Common.TableEntites;
 using Microsoft.ServiceFabric.Data.Collections;
+using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
@@ -383,6 +384,7 @@ namespace UserService
         #region Admin actions
         public async Task<IEnumerable<DriverDTO>> GetAllDriversAsync()
         {
+            IRatingService proxy = ServiceProxy.Create<IRatingService>(new Uri("fabric:/api/RatingService"), new ServicePartitionKey(1));
             var drivers = new List<DriverDTO>();
 
             using (var tx = StateManager.CreateTransaction())
@@ -394,7 +396,10 @@ namespace UserService
                     var tmp = enumerator.Current.Value;
                     if (tmp.UserType == EUserType.Driver)
                     {
-                        drivers.Add(new DriverDTO(tmp));
+                        var avg = await proxy.GetAverageDriverRateAsync(tmp.Email);
+                        DriverDTO driverInfo = new DriverDTO(tmp);
+                        driverInfo.AverageRating = avg;
+                        drivers.Add(driverInfo);
                     }
                 }
             }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { RegisterAsync } from "../../Services/userService";
 
@@ -42,13 +43,19 @@ function Register() {
 
 		try {
 			const response = await RegisterAsync(userData);
-			if (response === '')
+			console.log(response);
+			if (response.data)
 			{
-				console.log("That username has allready been taken!");
+				navigate("/login");
 			}
-			navigate("/login")
+			else
+			{
+				console.log("That email has allready been taken!");
+				toast("That email has allready been taken!");
+			}
 		} catch (error) {
 			console.error("There was an error!", error);
+			toast(error.message);
 		}
 	};
 	

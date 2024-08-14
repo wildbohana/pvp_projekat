@@ -2,30 +2,18 @@ import { axiosClient } from "./axiosClient";
 
 // Register
 export const RegisterAsync = async (requestBody) => {
-	try {
-		const response = await axiosClient.post(
-			`${process.env.REACT_APP_API_URL}/auth/register`,
-			requestBody
-		);
-		return response;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.post(
+		`${process.env.REACT_APP_API_URL}/auth/register`,
+		requestBody
+	);
 };
 
 // Login
 export const LoginAsync = async (requestBody) => {
-	try {
-		const response = await axiosClient.post(
-			`${process.env.REACT_APP_API_URL}/auth/login`, 
-			requestBody
-		);
-		return response;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.post(
+		`${process.env.REACT_APP_API_URL}/auth/login`, 
+		requestBody
+	);
 };
 
 // Google login
@@ -39,54 +27,30 @@ export const LoginAsync = async (requestBody) => {
 
 // MyProfile
 export const GetUserProfileAsync = async () => {
-	try {
-		const response = await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/users/profile`
-		);
-		return response;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/users/profile`
+	);
 };
 
 // Update profile
 export const UpdateUserAsync = async (requestBody) => {
-	try {
-		const response = await axiosClient.post(
-			`${process.env.REACT_APP_API_URL}/users/update`,
-			requestBody
-		);
-		return response;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.post(
+		`${process.env.REACT_APP_API_URL}/users/update`,
+		requestBody
+	);
 };
 
 // Get busy status
 // UserId se čita iz tokena
 export const GetBusyStatusAsync = async () => {
-	try {
-		const response = await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/users/busy`
-		);
-		return response;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/users/busy`
+	);
 };
 
 // Get verification status
 export const GetVerificationStatusAsync = async (id) => {
-	try {
-		const response = await axiosClient.get(
-			`${process.env.REACT_APP_API_URL}/users/verified-check/${id}`
-		);
-		return response;
-	}
-	catch (error) {
-		throw new Error(error.response.data.error);
-	}
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/users/verified-check/${id}`
+	);
 };

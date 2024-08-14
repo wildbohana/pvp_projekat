@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 import { LoginAsync } from '../../Services/userService';
 
 function Login() {
@@ -16,14 +17,22 @@ function Login() {
 			Password: password
 		};
 
-		const response = await LoginAsync(loginData);
-		if (response.accessToken !== "")
+		try 
 		{
-			const token = response.data.accessToken;
-			const userType = response.data.usertype;
-			Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
-			localStorage.setItem('usertype', userType);
-			navigate('/');
+			const response = await LoginAsync(loginData);
+			if (response.status === 200)
+			{
+				const token = response.data.accessToken;
+				const userType = response.data.usertype;
+				Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
+				localStorage.setItem('usertype', userType);
+				navigate('/');
+			}
+		}
+		catch (error)
+		{
+			console.log(error.message);
+			toast(error.message);
 		}
 	}
 

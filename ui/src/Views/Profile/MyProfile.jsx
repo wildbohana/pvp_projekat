@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GetUserProfileAsync, UpdateUserAsync } from '../../Services/userService';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../Assets/MyProfile.css';
 

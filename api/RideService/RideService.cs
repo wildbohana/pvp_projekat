@@ -87,6 +87,13 @@ namespace RideService
         #region Customer methods
         public async Task<RideEstimateDTO?> CreateRideRequestAsync(RideNewDTO data, string customerId)
         {
+            // Ako je korisnik već poslao zahtev, ne može da zahteva novu vožnju
+            RideEstimateDTO pendingRideCheck = await GetRideEstimationForUserAsync(customerId);
+            if (pendingRideCheck != null)
+            {
+                return null;
+            }
+
             using (var tx = StateManager.CreateTransaction())
             {
                 Random rand = new Random();
@@ -101,8 +108,7 @@ namespace RideService
                 catch (Exception)
                 {
                     tx.Abort();
-                }
-                
+                }                
             }
 
             return null;

@@ -56,7 +56,10 @@ namespace APIGateway.Controllers
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.CreateRideRequestAsync(data, emailFromToken);
-                //var temp2 = await proxyUser.ChangeBusyStatusAsync(emailFromToken, true);
+                if (temp == null)
+                {
+                    return BadRequest("You can't request multiple rides at once!");
+                }
 
                 return Ok(temp);
             }
