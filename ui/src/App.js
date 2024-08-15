@@ -54,7 +54,7 @@ function App() {
 				<Route path="/user/completed-rides" element={<CompletedRides />} />	
 				<Route path="/user/create-ride" element={<CreateRide />} />	
 				<Route path="/driver/my-rides"element={<MyRides />} />	
-				<Route path="/user/rate-driver/:rideId" element={<RateRide />} />	
+				<Route path="/user/rate-ride/:rideId" element={<RateRide />} />	
 
 			</Routes>
 		</Router>

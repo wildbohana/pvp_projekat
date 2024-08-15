@@ -3,14 +3,14 @@ import { axiosClient } from "./axiosClient";
 // Average driver rating (admin only)
 export const GetAverageRatingAsync = async (id) => {
 	return await axiosClient.get(
-		`${process.env.REACT_APP_API_URL}/rating/get-rating/${id}`
+		`${process.env.REACT_APP_API_URL}/rating/get-rating?driverId=${id}`
 	);
 };
 
 // Check if ride has been rated
 export const RatedCheckAsync = async (id) => {
 	return await axiosClient.get(
-		`${process.env.REACT_APP_API_URL}/rating/rated-check/${id}`
+		`${process.env.REACT_APP_API_URL}/rating/rated-check?rideId=${id}`
 	);
 };
 

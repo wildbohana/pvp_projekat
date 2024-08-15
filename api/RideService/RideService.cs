@@ -249,11 +249,12 @@ namespace RideService
                 {
                     var ride = rideResult.Value;
 
-                    if (rideResult.Value.Status == ERideStatus.ConfirmedByCustomer && ride.DriverId.Equals(driverId))
+                    if (rideResult.Value.Status == ERideStatus.ConfirmedByCustomer && String.IsNullOrEmpty(rideResult.Value.DriverId))
                     {
                         var acceptedRide = ride;
                         acceptedRide.Status = ERideStatus.InProgress;
                         acceptedRide.StartTime = DateTime.UtcNow;
+                        acceptedRide.DriverId = driverId;
 
                         try
                         {
@@ -307,6 +308,26 @@ namespace RideService
             }
 
             return status;
+        }
+
+        public async Task<RideInfoDTO?> GetAcceptedRideForDriverAsync(string driverId)
+        {
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var enumerator = (await rideDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(CancellationToken.None))
+                {
+                    var tmp = enumerator.Current.Value;
+                    if (tmp.Status != ERideStatus.Completed && tmp.DriverId.Equals(driverId))
+                    {
+                        var ride = new RideInfoDTO(tmp);
+                        return ride;
+                    }
+                }
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<RideInfoDTO>> GetAllPendingRidesAsync()

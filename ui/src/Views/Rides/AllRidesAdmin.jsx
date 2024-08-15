@@ -15,54 +15,56 @@ const AllRides = () => {
     const fetchRides = async () => {
         try {
 			const response = await GetAllRidesAsync();
-            setRides(response);
+            setRides(response.data);
         } catch (error) {
             console.error('Error fetching rides:', error);
 			toast("Error fetching rides");
         }
     };
 
-	// TODO change
-	/*
-    function renderStatus(status) {
-        console.log(status)
-        switch (status) {
-            case RideStatus.Pending:
-                return 'Pending';
-            case RideStatus.InProgress:
-                return 'In Progress';
-            case RideStatus.Completed:
-                return 'Completed';
-            default:
-                return 'Unknown';
-        }
-    };
-	*/
-
     return (
         <div>
 			<div className="grid-container">
-				<div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>Start Address</div>
-				<div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>End Address</div>
-				<div className="grid-item" style={{ gridColumn: 3, gridRow: 1 }}>Price</div>
-				<div className="grid-item" style={{ gridColumn: 4, gridRow: 1 }}>Delivery Time</div>
-				<div className="grid-item" style={{ gridColumn: 5, gridRow: 1 }}>Status</div>
+				<div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>Customer</div>
+				<div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>Driver</div>
+				<div className="grid-item" style={{ gridColumn: 3, gridRow: 1 }}>Start Address</div>
+				<div className="grid-item" style={{ gridColumn: 4, gridRow: 1 }}>Final Address</div>
+				<div className="grid-item" style={{ gridColumn: 5, gridRow: 1 }}>Price</div>
+				<div className="grid-item" style={{ gridColumn: 6, gridRow: 1 }}>Distance</div>
+				<div className="grid-item" style={{ gridColumn: 7, gridRow: 1 }}>Start Time</div>
+				<div className="grid-item" style={{ gridColumn: 8, gridRow: 1 }}>Pickup Time</div>
+				<div className="grid-item" style={{ gridColumn: 9, gridRow: 1 }}>Ride Duration</div>
+				<div className="grid-item" style={{ gridColumn: 10, gridRow: 1 }}>Status</div>
 				{rides.map((ride, index) => (
 					<React.Fragment key={ride.id}>
 						<div className="grid-item" style={{ gridColumn: 1, gridRow: index + 2 }}>
-							{ride.startAddress}
+							{ride.customerId}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 2, gridRow: index + 2 }}>
-							{ride.endAddress}
+							{ride.driverId}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 3, gridRow: index + 2 }}>
-							{ride.price}
+							{ride.startAddress}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 4, gridRow: index + 2 }}>
-						{new Date(ride.deliveryTime).getDate()}/{new Date(ride.deliveryTime).getMonth()}/{new Date(ride.deliveryTime).getFullYear()} {new Date(ride.deliveryTime).getHours()}:{new Date(ride.deliveryTime).getMinutes()}
+							{ride.finalAddress}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
-							{ /*renderStatus(ride.status)*/ }
+							{ride.price}
+						</div>
+						<div className="grid-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
+							{ride.distance}
+						</div>
+						<div className="grid-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
+						{new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
+						</div>
+						<div className="grid-item" style={{ gridColumn: 8, gridRow: index + 2 }}>
+							{ride.pickUpTime}
+						</div>
+						<div className="grid-item" style={{ gridColumn: 9, gridRow: index + 2 }}>
+							{ride.rideDuration}
+						</div>
+						<div className="grid-item" style={{ gridColumn: 10, gridRow: index + 2 }}>
 							{ ride.status }
 						</div>
 					</React.Fragment>

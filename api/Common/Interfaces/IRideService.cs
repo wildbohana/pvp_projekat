@@ -19,6 +19,7 @@ namespace Common.Interfaces
         // Vozači
         Task<bool> AcceptRideAsync(string rideId, string driverId);
         Task<bool> CompleteRideAsync(string rideId, string driverId);
+        Task<RideInfoDTO?>GetAcceptedRideForDriverAsync(string driverId);
         Task<IEnumerable<RideInfoDTO>> GetAllPendingRidesAsync();   // one koje su potvrđene od korisnika
         Task<IEnumerable<RideInfoDTO>> GetPreviousRidesDriverAsync(string driverId);
 

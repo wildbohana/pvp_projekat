@@ -17,7 +17,7 @@ const MyRides = () => {
         try {
 			// userId se iz tokena čita
             const response = await GetAllCompletedRidesAsync();
-            setRides(response);
+            setRides(response.data);
         } catch (error) {
             console.error('Error fetching completed rides:', error);
 			toast("Error fetching rides.");

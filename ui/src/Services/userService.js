@@ -51,6 +51,6 @@ export const GetBusyStatusAsync = async () => {
 // Get verification status
 export const GetVerificationStatusAsync = async (id) => {
 	return await axiosClient.get(
-		`${process.env.REACT_APP_API_URL}/users/verified-check/${id}`
+		`${process.env.REACT_APP_API_URL}/users/verified-check?driverId=${id}`
 	);
 };

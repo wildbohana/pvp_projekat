@@ -17,7 +17,7 @@ namespace Common.TableEntites
         [DataMember]
         public double Distance { get; set; }    // u kilometrima
         [DataMember]
-        public float Price { get; set; }
+        public int Price { get; set; }
         [DataMember]
         public int PickUpTime { get; set; }     // u minutama
         [DataMember]

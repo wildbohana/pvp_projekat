@@ -1,5 +1,4 @@
-﻿using Common.Enums;
-using Common.Models;
+﻿using Common.Models;
 using System.Runtime.Serialization;
 
 namespace Common.DTOs
@@ -16,15 +15,15 @@ namespace Common.DTOs
         [DataMember]
         public double Distance { get; set; }    // u kilometrima
         [DataMember]
-        public float Price { get; set; }
+        public int Price { get; set; }
+        [DataMember]
+        public DateTime StartTime { get; set; }
         [DataMember]
         public int PickUpTime { get; set; }     // u minutama
         [DataMember]
         public int RideDuration { get; set; }   // u minutama
         [DataMember]
-        public DateTime StartTime { get; set; }
-        [DataMember]
-        public ERideStatus Status { get; set; }     // default - Pending
+        public string Status { get; set; }     // default - Pending
         [DataMember]
         public string? CustomerId { get; set; }
         [DataMember]
@@ -40,7 +39,7 @@ namespace Common.DTOs
             PickUpTime = ride.PickUpTime;
             RideDuration = ride.RideDuration;
             StartTime = ride.StartTime;
-            Status = ride.Status;
+            Status = ride.Status.ToString();
             CustomerId = ride.CustomerId;
             DriverId = ride.DriverId;
         }

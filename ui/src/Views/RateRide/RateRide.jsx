@@ -13,8 +13,7 @@ const RateRide = () => {
         try {
 			const request = {
 				RideId: rideId,
-				Rate: rating,
-				DriverId: ''
+				Rate: rating
 			};
 			const response = await RateRideAsync(request);
             navigate('/');

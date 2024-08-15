@@ -18,11 +18,11 @@ namespace Common.Models
         [DataMember]
         public string? DriverId { get; set; }
 
-        public Rating(RatingDTO data, string customerId)
+        public Rating(RatingDTO data, string customerId, string driverId)
         {
             Id = data.RideId;
             Rate = data.Rate;
-            DriverId = data.DriverId;
+            DriverId = DriverId;
             CustomerId = customerId;
         }
 

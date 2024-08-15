@@ -4,17 +4,18 @@ import { toast } from 'react-toastify';
 
 import '../../Assets/Rides.css';
 
-import { GetAllPendingRidesAsync, AcceptRideAsync } from '../../Services/rideService';
+import { GetAllPendingRidesAsync, AcceptRideAsync, GetRideEstimateDriverAsync } from '../../Services/rideService';
 import { GetUserProfileAsync } from '../../Services/userService';
 
 const PendingRides = () => {
     const [rides, setRides] = useState([]);
     const [isDriverBlocked, setIsDriverBlocked] = useState(true);
-	//const { setDeliveryTime, setShowOverlay } = useCountdownContext();
+    const [isDriverBusy, setIsDriverBusy] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchPendingRides();
+        fetchAcceptedRide();
 		checkDriverStatus(); 
     }, []);
 
@@ -22,50 +23,58 @@ const PendingRides = () => {
         try {
 			// userId se iz tokena čita
             const response = await GetAllPendingRidesAsync();
-            setRides(response);
+            setRides(response.data);
         } catch (error) {
             console.error('Error fetching completed rides:', error);
 			toast("Error fetching rides.");
         }
     };
 
+    const fetchAcceptedRide = async () => {
+        try {
+            const response = await GetRideEstimateDriverAsync();
+            if (response.data)
+            {
+                localStorage.setItem('confirmedRide', response.data.id)
+            }
+        }
+        catch (error) {
+            console.error('Error fetching active ride:', error);
+            toast("Error fetching active ride!");
+        } finally {
+            checkBusyStatus();
+        }
+    }
+
     const acceptRide = async (rideId) => {
         try {
             const response = await AcceptRideAsync(rideId);
 
-            if (response) {
-				// TODO promeni ovo ili na BE ili na FE
-                const deliveryDateTime = new Date(response.data);
-                //setDeliveryTime(deliveryDateTime);
-                //setShowOverlay(true);
+            // vraća bool
+            if (response.data) {
+                localStorage.setItem('confirmedRide', rideId);
+                toast("Ride accepted.");
             }
-            navigate('/dashboard');
+            //navigate('/');
             fetchPendingRides();
         } catch (error) {
             console.error('Error accepting ride:', error);
+            toast("Error accepting ride!");
         }
     };
 
-	// TODO promeni
-    /*
-    function renderStatus(status) {
-        console.log(status)
-        switch (status) {
-            case RideStatus.Pending:
-                return 'Pending';
-            case RideStatus.InProgress:
-                return 'In Progress';
-            case RideStatus.Completed:
-                return 'Completed';
-            default:
-                return 'Unknown';
+    const checkBusyStatus = async() => {
+        var ride = localStorage.getItem('confirmedRide');
+        if (ride === null) {
+            setIsDriverBusy(false);
         }
-    };
-    */
+        else {
+            setIsDriverBusy(true);
+        }
+    }
 
     const checkDriverStatus = async () => {
         try {
-
             const response = await GetUserProfileAsync();
             const user = response.data; 
             setIsDriverBlocked(user.isBlocked); 
@@ -76,45 +85,70 @@ const PendingRides = () => {
         }
     };
 
+    // TODO: ako ima aktivnu vožnju, dodati navigaciju do statusa te vožnje?
+    // Ili do odbrojavanja
+    // I tu dodati dugme za MarkRideAsCompleted
+
     return (
         <div>
-			 <div className="grid-container">
-				<div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>
-					Start Address
-				</div>
-				<div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
-					End Address
-				</div>
-				<div className="grid-item" style={{ gridColumn: 3, gridRow: 1 }}>
-					Price
-				</div>
-				<div className="grid-item" style={{ gridColumn: 4, gridRow: 1 }}>
-					Delivery Time
-				</div>
-				<div className="grid-item" style={{ gridColumn: 5, gridRow: 1 }}>
-					Status
-				</div>
-				{rides.map((ride, index) => (
-					<React.Fragment key={ride.id}>
-						<div className="grid-item" style={{ gridColumn: 1, gridRow: index + 2 }}>
-							{ride.startAddress}
-						</div>
-						<div className="grid-item" style={{ gridColumn: 2, gridRow: index + 2 }}>
-							{ride.endAddress}
-						</div>
-						<div className="grid-item" style={{ gridColumn: 3, gridRow: index + 2 }}>
-							{ride.price}
-						</div>
-						<div className="grid-item" style={{ gridColumn: 4, gridRow: index + 2 }}>
-						{new Date(ride.deliveryTime).getDate()}/{new Date(ride.deliveryTime).getMonth()}/{new Date(ride.deliveryTime).getFullYear()} {new Date(ride.deliveryTime).getHours()}:{new Date(ride.deliveryTime).getMinutes()}
-						</div>
-						<div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
-							{ /*renderStatus(ride.status)*/ }
-                            { ride.status }
-						</div>
-					</React.Fragment>
-				))}
-			</div>
+            {isDriverBusy ? (
+                <div className="grid-container">
+                <div className="grid-item"> 
+                    You have allready accepted a ride!
+                </div>
+                </div>
+            ) : (
+                <div className="grid-container">
+                <div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>Customer</div>
+                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>Start Address</div>
+                    <div className="grid-item" style={{ gridColumn: 3, gridRow: 1 }}>Final Address</div>
+                    <div className="grid-item" style={{ gridColumn: 4, gridRow: 1 }}>Price</div>
+                    <div className="grid-item" style={{ gridColumn: 5, gridRow: 1 }}>Distance</div>
+                    <div className="grid-item" style={{ gridColumn: 6, gridRow: 1 }}>Requested at</div>
+                    <div className="grid-item" style={{ gridColumn: 7, gridRow: 1 }}>Pickup Time</div>
+                    <div className="grid-item" style={{ gridColumn: 8, gridRow: 1 }}>Status</div>
+                    <div className="grid-item" style={{ gridColumn: 9, gridRow: 1 }}>Accept ride</div>
+
+                    {rides.map((ride, index) => (
+                        <React.Fragment key={ride.id}>
+                            <div className="grid-item" style={{ gridColumn: 1, gridRow: index + 2 }}>
+                                {ride.customerId}
+                            </div>
+                            <div className="grid-item" style={{ gridColumn: 2, gridRow: index + 2 }}>
+                                {ride.startAddress}
+                            </div>
+                            <div className="grid-item" style={{ gridColumn: 3, gridRow: index + 2 }}>
+                                {ride.finalAddress}
+                            </div>
+                            <div className="grid-item" style={{ gridColumn: 4, gridRow: index + 2 }}>
+                                {ride.price}
+                            </div>
+                            <div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
+                                {ride.distance}
+                            </div>
+                            <div className="grid-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
+                            {new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
+                            </div>
+                            <div className="grid-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
+                                {ride.pickUpTime}
+                            </div>
+                            <div className="grid-item" style={{ gridColumn: 8, gridRow: index + 2 }}>
+                                { ride.status }
+                            </div>
+
+                            <div className="grid-item" style={{ gridColumn: 9, gridRow: index + 2 }}>
+                                {!isDriverBlocked || !isDriverBusy ? ( 
+                                    <button onClick={() => acceptRide(ride.id)} className="action-button">
+                                        Accept Ride
+                                    </button>
+                                ) : (
+                                    <span>Blocked</span>
+                                )}
+                            </div>
+                        </React.Fragment>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

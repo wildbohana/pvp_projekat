@@ -28,6 +28,10 @@ function Login() {
 				localStorage.setItem('usertype', userType);
 				navigate('/');
 			}
+			else
+			{
+				toast("Wrong credentials!");
+			}
 		}
 		catch (error)
 		{

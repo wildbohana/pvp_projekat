@@ -3,33 +3,35 @@
     display: grid;
     padding: 10px;
     border-style: solid;
+    border: 2px solid #1cc49d;
+    border-radius: 10px;
     margin: 10px;
     width: auto;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .grid-item {
     font-family: 'Maiandra GD';
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
     display: inline-grid;
-    background-color: cornflowerblue;
+    background-color: hsl(203, 100%, 80%);
     border-style: solid;
+    border: 2px solid darkblue;
+    border-radius: 10px;
     margin: 1px;
     padding: 10px;
 }
 
 .action-button {
-    color: #1cc49d;
-    background-color: #1b2f31;
-    border-radius: 50px;
+    color: #3fecc4;
+    background-color: #2e5e63;
+    border-radius: 20px;
     justify-content: center;
     align-items: center;
-    height: 3em;
-    width: 8em;
-    font-size: large;
-    font-weight: 600;
-    margin-left: auto;
-    margin-right: auto;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0px 10px;
+    padding: 10px 2px;
 }

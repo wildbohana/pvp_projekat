@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 import '../../Assets/Rides.css';
 
+import { Ride } from '../../Models/Ride';
 import { GetPreviousRidesCustomerAsync } from '../../Services/rideService';
 
 const CompletedRides = () => {
@@ -19,70 +20,55 @@ const CompletedRides = () => {
         try {
             // userId iz tokena dobija
             const response = await GetPreviousRidesCustomerAsync();
-            setRides(response);
+            setRides(response.data);
         } catch (error) {
             console.error('Error fetching rides:', error);
 			toast("Error fetching previous rides.");
         }
     };
 
-	// TODO change
-	/*
-    function renderStatus(status) {
-        switch (status) {
-            case RideStatus.Pending:
-                return 'Pending';
-            case RideStatus.InProgress:
-                return 'In Progress';
-            case RideStatus.Completed:
-                return 'Completed';
-            default:
-                return 'Unknown';
-        }
-    };*/
-
     return (
         <div>
 			<div className="grid-container">
-				<div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>
-					Start Address
-				</div>
-				<div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
-					End Address
-				</div>
-				<div className="grid-item" style={{ gridColumn: 3, gridRow: 1 }}>
-					Price
-				</div>
-				<div className="grid-item" style={{ gridColumn: 4, gridRow: 1 }}>
-					Delivery Time
-				</div>
-				<div className="grid-item" style={{ gridColumn: 5, gridRow: 1 }}>
-					Status
-				</div>
-				<div className="grid-item" style={{ gridColumn: 6, gridRow: 1 }}>
-					Options
-				</div>
+				<div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>Customer</div>
+				<div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>Driver</div>
+				<div className="grid-item" style={{ gridColumn: 3, gridRow: 1 }}>Start Address</div>
+				<div className="grid-item" style={{ gridColumn: 4, gridRow: 1 }}>Final Address</div>
+				<div className="grid-item" style={{ gridColumn: 5, gridRow: 1 }}>Price</div>
+				<div className="grid-item" style={{ gridColumn: 6, gridRow: 1 }}>Distance</div>
+				<div className="grid-item" style={{ gridColumn: 7, gridRow: 1 }}>Requested at</div>
+				<div className="grid-item" style={{ gridColumn: 8, gridRow: 1 }}>Status</div>
+				<div className="grid-item" style={{ gridColumn: 9, gridRow: 1 }}>Rate ride</div>
+
 				{rides.map((ride, index) => (
 					<React.Fragment key={ride.id}>
 						<div className="grid-item" style={{ gridColumn: 1, gridRow: index + 2 }}>
-							{ride.startAddress}
+							{ride.customerId}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 2, gridRow: index + 2 }}>
-							{ride.endAddress}
+							{ride.driverId}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 3, gridRow: index + 2 }}>
-							{ride.price}
+							{ride.startAddress}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 4, gridRow: index + 2 }}>
-						{new Date(ride.deliveryTime).getDate()}/{new Date(ride.deliveryTime).getMonth()}/{new Date(ride.deliveryTime).getFullYear()} {new Date(ride.deliveryTime).getHours()}:{new Date(ride.deliveryTime).getMinutes()}
+							{ride.finalAddress}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
-							{ /*renderStatus(ride.status)*/ }
+							{ride.price}
+						</div>
+						<div className="grid-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
+							{ride.distance}
+						</div>
+						<div className="grid-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
+						{new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
+						</div>
+						<div className="grid-item" style={{ gridColumn: 8, gridRow: index + 2 }}>
 							{ ride.status }
 						</div>
-						{!ride.isRated && (
-							<button className="action-button" onClick={() => navigate(`/user/rate-driver/${ride.id}`)}>Rate Driver</button>
-						)}
+						<div className="grid-item" style={{ gridColumn: 9, gridRow: index + 2 }}>
+							<button className="action-button" onClick={() => navigate(`/user/rate-ride/${ride.id}`)}>Rate ride</button>
+						</div>
 					</React.Fragment>
 				))}
 			</div>

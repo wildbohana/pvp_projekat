@@ -5,29 +5,55 @@ import { NewRideRequestAsync, GetRideEstimateAsync, GetRideEstimateUserAsync, Co
 
 const CreateRide = () => {
 	const [startAddress, setStartAddress] = useState('');
-    const [endAddress, setEndAddress] = useState('');
-    const [price, setPrice] = useState(0);
-    const [predicted, setPredicted] = useState(false);
-	// wtf is this
-	const [pickupTime, setPickupTime] = useState(0);
+    const [finalAddress, setFinalAddress] = useState('');
+    const [isCustomerBusy, setIsCustomerBusy] = useState(false);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        fetchAcceptedRide();
+    }, []);
+    
+    const fetchAcceptedRide = async () => {
+        try {
+            const response = await GetRideEstimateUserAsync();
+            if (response.data)
+            {
+                localStorage.setItem('requestedRide', response.data.id)
+            }
+        }
+        catch (error) {
+            console.error('Error fetching active ride:', error);
+            toast("Error fetching active ride!");
+        } finally {
+            checkBusyStatus();
+        }
+    }
+
+    const checkBusyStatus = async() => {
+        var ride = localStorage.getItem('requestedRide');
+        if (ride === null) {
+            setIsCustomerBusy(false);
+        }
+        else {
+            setIsCustomerBusy(true);
+        }
+    }
+
+    // RequestRide
     const handlePredictRide = async () => {
         try {
             const request = {
                 StartAddress: startAddress,
-                EndAddress: endAddress,
+                FinalAddress: finalAddress,
             };
 			const response = await NewRideRequestAsync(request);
 
             if (response.status === 200) {
-                setPrice(response.price);
-                setPickupTime(response.pickUpTime);	// za X minuta
-                setPredicted(true);
 				localStorage.setItem('requestedRide', response.data.id);
             }
         } catch (error) {
             console.error('Error predicting ride:', error);
+            toast("Error requesting ride.");
         }
     };
 
@@ -58,28 +84,32 @@ const CreateRide = () => {
         }
     };
 
+    // TODO dodati proveru da li ima nešto u requestedRide, i ako ima, dobaviti info o njoj
+
     return (
         <div className="create-ride-container">
-            <h2>Create New Ride</h2>
-            <input
-                type="text"
-                placeholder="Start Address"
-                value={startAddress}
-                onChange={(e) => setStartAddress(e.target.value)}
-            />
-            <input
-                type="text"
-                placeholder="End Address"
-                value={endAddress}
-                onChange={(e) => setEndAddress(e.target.value)}
-            />
-            <button className="submit" onClick={handlePredictRide}>Order</button>
-            {predicted && (
-                <div className="prediction-results">
-                    <p>Price: ${price}</p>
-                    <p>Estimated Arrival: {pickupTime ? pickupTime.getHours() + ":" + pickupTime.getMinutes() : ''}</p>
-                    <button className="submit" onClick={handleConfirmRide}>Confirm</button>
-					<button className="submit" onClick={handleDeleteRide}>Delete</button>
+            {!isCustomerBusy ? (
+                <div>
+                    <h2>Create New Ride</h2>
+                    <input
+                        type="text"
+                        placeholder="Start Address"
+                        value={startAddress}
+                        onChange={(e) => setStartAddress(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="End Address"
+                        value={finalAddress}
+                        onChange={(e) => setFinalAddress(e.target.value)}
+                    />
+                    <button className="submit" onClick={handlePredictRide}>Order</button>
+                </div>
+            ) : (
+                <div className="grid-container">
+                <div className="grid-item"> 
+                    You have allready requested a ride!
+                </div>
                 </div>
             )}
         </div>

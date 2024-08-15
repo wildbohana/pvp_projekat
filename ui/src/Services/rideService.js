@@ -3,7 +3,7 @@ import { axiosClient } from "./axiosClient";
 // Get ride info
 export const GetRideInfoAsync = async (id) => {
 	return await axiosClient.get(
-		`${process.env.REACT_APP_API_URL}/ride/ride-info/${id}`
+		`${process.env.REACT_APP_API_URL}/ride/ride-info?rideId=${id}`
 	);
 };
 
@@ -18,7 +18,7 @@ export const NewRideRequestAsync = async (data) => {
 // Get ride estimate
 export const GetRideEstimateAsync = async (id) => {
 	return await axiosClient.get(
-		`${process.env.REACT_APP_API_URL}/ride/ride-estimate/${id}`
+		`${process.env.REACT_APP_API_URL}/ride/ride-estimate?rideId=${id}`
 	);
 };
 
@@ -34,14 +34,14 @@ export const GetRideEstimateUserAsync = async () => {
 // Confirm ride request
 export const ConfirmRideRequestAsync = async (id) => {
 	return await axiosClient.post(
-		`${process.env.REACT_APP_API_URL}/ride/confirm-request/${id}`
+		`${process.env.REACT_APP_API_URL}/ride/confirm-request?rideId=${id}`
 	);
 };
 
 // Delete ride request
 export const DeleteRideRequestAsync = async (id) => {
 	return await axiosClient.post(
-		`${process.env.REACT_APP_API_URL}/ride/delete-request/${id}`
+		`${process.env.REACT_APP_API_URL}/ride/delete-request?rideId=${id}`
 	);
 };
 
@@ -55,14 +55,21 @@ export const GetPreviousRidesCustomerAsync = async () => {
 // Accept ride (driver)
 export const AcceptRideAsync = async (id) => {
 	return await axiosClient.post(
-		`${process.env.REACT_APP_API_URL}/ride/accept-ride/${id}`
+		`${process.env.REACT_APP_API_URL}/ride/accept-ride?rideId=${id}`
 	);
 };
 
 // Complete ride (driver)
 export const CompleteRideAsync = async (id) => {
 	return await axiosClient.post(
-		`${process.env.REACT_APP_API_URL}/ride/complete-ride/${id}`
+		`${process.env.REACT_APP_API_URL}/ride/complete-ride?rideId=${id}`
+	);
+};
+
+// RideInfo for driver 
+export const GetRideEstimateDriverAsync = async () => {
+	return await axiosClient.get(
+		`${process.env.REACT_APP_API_URL}/ride/accepted-ride-driver`
 	);
 };
 
@@ -83,6 +90,6 @@ export const GetAllCompletedRidesAsync = async () => {
 // Get all rides (admin)
 export const GetAllRidesAsync = async () => {
 	return await axiosClient.get(
-		`${process.env.REACT_APP_API_URL}/ride/all-rides}`
+		`${process.env.REACT_APP_API_URL}/ride/all-rides`
 	);
 };

@@ -75,7 +75,7 @@ function Register() {
 				<input value={lastname} onChange={(e) => setLastName(e.target.value)} id="lastname" placeholder="Last Name" />
 
                 <label htmlFor="username">Username</label>
-				<input value={username} onChange={(e) => setUsername(e.target.value)} id="username" placeholder="First Name" />
+				<input value={username} onChange={(e) => setUsername(e.target.value)} id="username" placeholder="Username" />
 
 				<label htmlFor="email">Email</label>
 				<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" />

@@ -4,7 +4,9 @@ using Common.Interfaces;
 using Common.Models;
 using Common.TableEntites;
 using Microsoft.ServiceFabric.Data.Collections;
+using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Client;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Fabric;
@@ -96,18 +98,24 @@ namespace RatingService
 
                 if (!ratingResult.HasValue)
                 {
-                    Rating newRating = new Rating(data, customerId);
+                    IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
+                    RideInfoDTO ride = await proxy.GetRideInfoAsync(data.RideId);
+                   
+                    if (ride != null)
+                    {
+                        Rating newRating = new Rating(data, ride.CustomerId, ride.DriverId);
 
-                    try
-                    {
-                        await ratingDictionary.AddAsync(tx, data.RideId, newRating);
-                        await tx.CommitAsync();
-                        status = true;
-                    }
-                    catch (Exception)
-                    {
-                        status = false;
-                        tx.Abort();
+                        try
+                        {
+                            await ratingDictionary.AddAsync(tx, data.RideId, newRating);
+                            await tx.CommitAsync();
+                            status = true;
+                        }
+                        catch (Exception)
+                        {
+                            status = false;
+                            tx.Abort();
+                        }
                     }
                 }
             }

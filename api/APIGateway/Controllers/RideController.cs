@@ -123,10 +123,10 @@ namespace APIGateway.Controllers
                     return Unauthorized();
                 }
 
-                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
+                //IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
+                //var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
 
-                if (!isBusy) return BadRequest();
+                //if (!isBusy) return BadRequest();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetRideEstimationForUserAsync(emailFromToken);
@@ -246,7 +246,6 @@ namespace APIGateway.Controllers
         {
             try
             {
-
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
                 var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
                 var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
@@ -274,11 +273,42 @@ namespace APIGateway.Controllers
                 var temp = await proxy.AcceptRideAsync(rideId, emailFromToken);
                 var rideInfo = await proxy.GetRideInfoAsync(rideId);
 
+                // TODO ovo ne radi?
                 if (temp)
                 {
                     await proxyUser.ChangeBusyStatusAsync(rideInfo.DriverId, true);
                     await proxyUser.ChangeBusyStatusAsync(rideInfo.CustomerId, true);
                 }
+                return Ok(temp);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return BadRequest(message);
+            }
+        }
+
+        [HttpGet("accepted-ride-driver")]
+        public async Task<IActionResult> GetAcceptedRideForDriver()
+        {
+            try
+            {
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (role == null || !role.Equals(EUserType.Driver.ToString()))
+                {
+                    return BadRequest("You are not driver!");
+                }
+                else if (emailFromToken == null)
+                {
+                    return Unauthorized();
+                }
+
+                IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
+                var temp = await proxy.GetAcceptedRideForDriverAsync(emailFromToken);
+
                 return Ok(temp);
             }
             catch (Exception ex)
@@ -339,7 +369,6 @@ namespace APIGateway.Controllers
         {
             try
             {
-
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
                 var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
                 var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;

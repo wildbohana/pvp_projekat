@@ -13,11 +13,11 @@ namespace Common.DTOs
         [DataMember]
         public string? FinalAddress { get; set; }
         [DataMember]
+        public DateTime EstimatedArrivalTime { get; set; }      // ovo je UTC, koristi lokalizaciju na FE?
+        [DataMember]
         public double Distance { get; set; }    // u kilometrima
         [DataMember]
-        public float Price { get; set; }
-        [DataMember]
-        public int PickUpTime { get; set; }     // u minutama
+        public int Price { get; set; }
         [DataMember]
         public string? CustomerId { get; set; }
 
@@ -28,7 +28,7 @@ namespace Common.DTOs
             FinalAddress = ride.FinalAddress;
             Distance = ride.Distance;
             Price = ride.Price;
-            PickUpTime = ride.PickUpTime;
+            EstimatedArrivalTime = ride.StartTime.AddMinutes(ride.PickUpTime);
             CustomerId = ride.CustomerId;
         }
     }

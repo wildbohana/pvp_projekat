@@ -11,13 +11,27 @@
 
 .grid-item {
     font-family: 'Maiandra GD';
-    font-size: 24px;
+    font-size: 16px;
     text-align: center;
     display: inline-grid;
-    background-color: cornflowerblue;
+    background-color: rgb(184, 204, 240);
     border-style: solid;
     margin: 1px;
     padding: 5px;
+}
+
+.display-vertical {
+    font-family: 'Maiandra GD';
+    display: flex;
+    margin: 0px;
+    padding: 0px;
+}
+
+.block-status {
+    font-family: 'Maiandra GD';
+    display: flex;
+    margin: auto;
+    padding: auto;
 }
 
 .header {
@@ -26,7 +40,8 @@
 
 .verify-button {
     color: #1cc49d;
-    background-color: #1b2f31;
+    background-color: lemonchiffon;
+    border: 2px solid darkolivegreen;
     border-radius: 10px;
     justify-content: center;
     align-items: center;
@@ -37,7 +52,24 @@
     margin-left: auto;
     margin-right: auto;
     display: block;
-    margin-top: 5px;
+    padding: 1px;
+}
+
+.verify-button-disabled {
+    color: black;
+    background-color: gray;
+    border: 2px solid darkolivegreen;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    height: 2.5em;
+    width: 6em;
+    font-size: medium;
+    font-weight: 600;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    padding: 1px;
 }
 
 .block-button, .unblock-button {
@@ -53,7 +85,23 @@
     margin-left: auto;
     margin-right: auto;
     display: block;
-    margin-top: 5px;
+    padding: 1px;
+}
+
+.block-button-disabled, .unblock-button-disabled {
+    color: black;
+    background-color: gray;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    height: 2.5em;
+    width: 6em;
+    font-size: medium;
+    font-weight: 600;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    padding: 1px;
 }
 
 .verified {
