@@ -1,0 +1,35 @@
+.grid-container {
+    background-color: snow;
+    display: grid;
+    padding: 10px;
+    border-style: solid;
+    margin: 10px;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.grid-item {
+    font-family: 'Maiandra GD';
+    font-size: 20px;
+    text-align: center;
+    display: inline-grid;
+    background-color: cornflowerblue;
+    border-style: solid;
+    margin: 1px;
+    padding: 10px;
+}
+
+.action-button {
+    color: #1cc49d;
+    background-color: #1b2f31;
+    border-radius: 50px;
+    justify-content: center;
+    align-items: center;
+    height: 3em;
+    width: 8em;
+    font-size: large;
+    font-weight: 600;
+    margin-left: auto;
+    margin-right: auto;
+}
