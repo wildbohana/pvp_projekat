@@ -101,7 +101,7 @@ namespace RatingService
                     IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                     RideInfoDTO ride = await proxy.GetRideInfoAsync(data.RideId);
                    
-                    if (ride != null)
+                    if (ride != null && !String.IsNullOrEmpty(ride.DriverId))
                     {
                         Rating newRating = new Rating(data, ride.CustomerId, ride.DriverId);
 

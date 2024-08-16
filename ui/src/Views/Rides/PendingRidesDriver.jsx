@@ -4,18 +4,26 @@ import { toast } from 'react-toastify';
 
 import '../../Assets/Rides.css';
 
-import { GetAllPendingRidesAsync, AcceptRideAsync, GetRideEstimateDriverAsync } from '../../Services/rideService';
-import { GetUserProfileAsync } from '../../Services/userService';
+import { 
+    GetAllPendingRidesAsync, 
+    AcceptRideAsync, 
+    GetRideEstimateDriverAsync,
+    CompleteRideAsync
+} from '../../Services/rideService';
+import { 
+    GetUserProfileAsync 
+} from '../../Services/userService';
 
 const PendingRides = () => {
     const [rides, setRides] = useState([]);
-    const [isDriverBlocked, setIsDriverBlocked] = useState(true);
-    const [isDriverBusy, setIsDriverBusy] = useState(true);
+    const [isDriverBlocked, setIsDriverBlocked] = useState(false);
+    const [isDriverBusy, setIsDriverBusy] = useState(false);
+    const [ride, setActiveRide] = useState();
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchPendingRides();
         fetchAcceptedRide();
+        fetchPendingRides();
 		checkDriverStatus(); 
     }, []);
 
@@ -35,7 +43,8 @@ const PendingRides = () => {
             const response = await GetRideEstimateDriverAsync();
             if (response.data)
             {
-                localStorage.setItem('confirmedRide', response.data.id)
+                localStorage.setItem('confirmedRide', response.data.id);
+                setActiveRide(response.data);
             }
         }
         catch (error) {
@@ -55,8 +64,24 @@ const PendingRides = () => {
                 localStorage.setItem('confirmedRide', rideId);
                 toast("Ride accepted.");
             }
-            //navigate('/');
-            fetchPendingRides();
+            navigate('/driver/new-rides');
+        } catch (error) {
+            console.error('Error accepting ride:', error);
+            toast("Error accepting ride!");
+        }
+    };
+    
+    const completeRide = async () => {
+        try {
+            const rideId = ride.id;
+            const response = await CompleteRideAsync(rideId);
+
+            // vraća bool
+            if (response.data) {
+                localStorage.removeItem('confirmedRide', rideId);
+                toast("Ride completed.");
+            }
+            navigate('/driver/new-rides');
         } catch (error) {
             console.error('Error accepting ride:', error);
             toast("Error accepting ride!");
@@ -92,9 +117,42 @@ const PendingRides = () => {
     return (
         <div>
             {isDriverBusy ? (
-                <div className="grid-container">
-                <div className="grid-item"> 
-                    You have allready accepted a ride!
+                <div className="grid-container-narrow">
+                <div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>Start Address</div>
+                <div className="grid-item" style={{ gridColumn: 1, gridRow: 2 }}>Final Address</div>
+                <div className="grid-item" style={{ gridColumn: 1, gridRow: 3 }}>Price</div>
+                <div className="grid-item" style={{ gridColumn: 1, gridRow: 4 }}>Distance</div>
+                <div className="grid-item" style={{ gridColumn: 1, gridRow: 5 }}>ETA</div>
+                <div className="grid-item" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
+                <div className="grid-item" style={{ gridColumn: 1, gridRow: 8 }}>Accept ride</div>
+                
+                <div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
+                    {ride.startAddress}
+                </div>
+                <div className="grid-item" style={{ gridColumn: 2, gridRow: 2 }}>
+                    {ride.finalAddress}
+                </div>
+                <div className="grid-item" style={{ gridColumn: 2, gridRow: 3 }}>
+                    {ride.price} din
+                </div>
+                <div className="grid-item" style={{ gridColumn: 2, gridRow: 4 }}>
+                    {ride.distance} km
+                </div>
+                <div className="grid-item" style={{ gridColumn: 2, gridRow: 5 }}>
+                {new Date(ride.estimatedArrivalTime).getDate()}/{new Date(ride.estimatedArrivalTime).getMonth()}/{new Date(ride.estimatedArrivalTime).getFullYear()} {new Date(ride.estimatedArrivalTime).getHours()}:{new Date(ride.estimatedArrivalTime).getMinutes()}
+                </div>
+                <div className="grid-item" style={{ gridColumn: 2, gridRow: 7 }}>
+                    { ride.status }
+                </div>
+
+                <div className="grid-item" style={{ gridColumn: 2, gridRow: 8 }}>
+                    { ride.status === 'InProgress' ? ( 
+                        <button onClick={() => completeRide()} className="action-button-narrow">
+                            Complete Ride
+                        </button>
+                    ) : (
+                        <span>Blocked</span>
+                    )}
                 </div>
                 </div>
             ) : (

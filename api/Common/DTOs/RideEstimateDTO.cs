@@ -20,6 +20,8 @@ namespace Common.DTOs
         public int Price { get; set; }
         [DataMember]
         public string? CustomerId { get; set; }
+        [DataMember]
+        public string? Status { get; set; }
 
         public RideEstimateDTO(Ride ride)
         {
@@ -30,6 +32,7 @@ namespace Common.DTOs
             Price = ride.Price;
             EstimatedArrivalTime = ride.StartTime.AddMinutes(ride.PickUpTime);
             CustomerId = ride.CustomerId;
+            Status = ride.Status.ToString();
         }
     }
 }

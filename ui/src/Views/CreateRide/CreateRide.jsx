@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { NewRideRequestAsync, GetRideEstimateAsync, GetRideEstimateUserAsync, ConfirmRideRequestAsync, DeleteRideRequestAsync } from '../../Services/rideService';
+import { 
+    NewRideRequestAsync, 
+    GetRideEstimateAsync, 
+    GetRideEstimateUserAsync, 
+    ConfirmRideRequestAsync, 
+    DeleteRideRequestAsync 
+} from '../../Services/rideService';
+
+import '../../Assets/Rides.css';
 
 const CreateRide = () => {
 	const [startAddress, setStartAddress] = useState('');
     const [finalAddress, setFinalAddress] = useState('');
     const [isCustomerBusy, setIsCustomerBusy] = useState(false);
+    const [ride, setRideRequest] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,7 +27,8 @@ const CreateRide = () => {
             const response = await GetRideEstimateUserAsync();
             if (response.data)
             {
-                localStorage.setItem('requestedRide', response.data.id)
+                localStorage.setItem('requestedRide', response.data.id);
+                setRideRequest(response.data);
             }
         }
         catch (error) {
@@ -40,7 +50,7 @@ const CreateRide = () => {
     }
 
     // RequestRide
-    const handlePredictRide = async () => {
+    const handleRideRequest = async () => {
         try {
             const request = {
                 StartAddress: startAddress,
@@ -57,39 +67,41 @@ const CreateRide = () => {
         }
     };
 
-    const handleConfirmRide = async () => {
+    const confirmRide = async () => {
         try {
-			const rideId = localStorage.getItem('requestedRide');
-			const response = await ConfirmRideRequestAsync(rideId);
-			if (response.status === 200) {
+            const rideId = ride.id;
+            const response = await ConfirmRideRequestAsync(rideId);
+
+            if (response.status === 200) {
 				toast("Ride request confirmed.");
+                fetchAcceptedRide();
 			}
         } catch (error) {
-            console.error('Error occurred', error);
-			toast("Error requesting a ride.");
+            console.error('Error confirming ride:', error);
+            toast("Error confirming ride!");
         }
     };
-
-    const handleDeleteRide = async () => {
+    
+    const deleteRide = async () => {
         try {
-			const rideId = localStorage.getItem('requestedRide');
-			const response = await DeleteRideRequestAsync(rideId);
-			if (response.status === 200) {
+            const rideId = ride.id;
+            const response = await DeleteRideRequestAsync(rideId);
+
+            if (response.status === 200) {
 				toast("Ride request deleted.");
-				localStorage.removeItem('requestedRide');
+                localStorage.removeItem('requestedRide');
+                fetchAcceptedRide();
 			}
         } catch (error) {
-            console.error('Error occurred', error);
-			toast("Error requesting a ride.");
+            console.error('Error deleting request:', error);
+            toast("Error deleting request!");
         }
     };
-
-    // TODO dodati proveru da li ima nešto u requestedRide, i ako ima, dobaviti info o njoj
-
+    
     return (
-        <div className="create-ride-container">
+        <div>
             {!isCustomerBusy ? (
-                <div>
+                <div className="grid-container-narrow">
                     <h2>Create New Ride</h2>
                     <input
                         type="text"
@@ -103,13 +115,51 @@ const CreateRide = () => {
                         value={finalAddress}
                         onChange={(e) => setFinalAddress(e.target.value)}
                     />
-                    <button className="submit" onClick={handlePredictRide}>Order</button>
+                    <button className="action-button-narrow" onClick={handleRideRequest}>Order</button>
                 </div>
             ) : (
-                <div className="grid-container">
-                <div className="grid-item"> 
-                    You have allready requested a ride!
-                </div>
+                <div className="grid-container-narrow">
+                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>Start Address</div>
+                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 2 }}>Final Address</div>
+                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 3 }}>Price</div>
+                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 4 }}>Distance</div>
+                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 5 }}>ETA</div>
+                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
+                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 8 }}>Accept ride</div>
+                 
+                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
+                        {ride.startAddress}
+                    </div>
+                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 2 }}>
+                        {ride.finalAddress}
+                    </div>
+                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 3 }}>
+                        {ride.price} din
+                    </div>
+                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 4 }}>
+                        {ride.distance} km
+                    </div>
+                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 5 }}>
+                    {new Date(ride.estimatedArrivalTime).getDate()}/{new Date(ride.estimatedArrivalTime).getMonth()}/{new Date(ride.estimatedArrivalTime).getFullYear()} {new Date(ride.estimatedArrivalTime).getHours()}:{new Date(ride.estimatedArrivalTime).getMinutes()}
+                    </div>
+                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 7 }}>
+                        { ride.status }
+                    </div>
+
+                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 8 }}>
+                        { ride.status === 'Pending' ? ( 
+                            <div>
+                                <button onClick={() => confirmRide()} className="action-button-narrow">
+                                    Accept Ride
+                                </button>
+                                <button onClick={() => deleteRide()} className="action-button-narrow">
+                                Delete Ride
+                                </button>
+                            </div>
+                        ) : (
+                            <span>Blocked</span>
+                        )}
+                    </div>
                 </div>
             )}
         </div>

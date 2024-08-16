@@ -319,6 +319,7 @@ namespace RideService
                 while (await enumerator.MoveNextAsync(CancellationToken.None))
                 {
                     var tmp = enumerator.Current.Value;
+                    if (String.IsNullOrEmpty(tmp.DriverId)) continue;
                     if (tmp.Status != ERideStatus.Completed && tmp.DriverId.Equals(driverId))
                     {
                         var ride = new RideInfoDTO(tmp);

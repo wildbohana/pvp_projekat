@@ -11,6 +11,19 @@
     margin-right: 50px;
 }
 
+.grid-container-narrow {
+    background-color: snow;
+    display: grid;
+    padding: 10px;
+    border-style: solid;
+    border: 2px solid #1cc49d;
+    border-radius: 10px;
+    margin: 20px;
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .grid-item {
     font-family: 'Maiandra GD';
     font-size: 18px;
@@ -34,4 +47,22 @@
     font-weight: 500;
     margin: 0px 10px;
     padding: 10px 2px;
+}
+
+.action-button-narrow {
+    color: white;
+    background-color: #af5ca8;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0px auto;
+    padding: 10px 2px;
+    width: 30%;
+}
+
+.action-button-narrow:hover {
+    color: darkmagenta;
+    background-color: plum;
 }

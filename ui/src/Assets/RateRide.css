@@ -1,0 +1,64 @@
+.driver-rating-page {
+	background-color: white;
+	color: #b61cc4;
+	text-align: center;
+	padding: 50px;
+	border-radius: 10px;
+	width: 50%;
+	margin: 100px auto;
+	border: 2px solid #1cc49d;
+}
+  
+.driver-rating-page h2 {
+	color: #1a2d30;
+	margin-bottom: 10px;
+}
+ 
+.rating-container {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 10px;
+}
+  
+.star {
+	font-size: 5rem; 
+	color: grey;
+	cursor: pointer;
+	position: relative;
+	margin: 0 6px;
+	transition: color 0.3s ease;  
+}
+  
+.star.active {
+	color: #c452ab;
+}
+  
+.star:hover,
+.star.active:hover {
+	color: gold; 
+}
+  
+.star::after {
+	content: attr(data-star);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 1rem;
+	color: white;
+}
+  
+button {
+	font-size: 1.2rem;
+	color: white;
+    background-color: #af5ca8;
+	padding: 10px 20px;
+	border-radius: 5px;
+	border: none;
+	cursor: pointer;
+}
+  
+button:hover {
+	color: darkmagenta;
+    background-color: plum;
+}

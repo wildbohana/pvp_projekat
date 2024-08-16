@@ -24,23 +24,6 @@ const MyRides = () => {
         }
     };
 
-	// TODO change
-	/*
-    function renderStatus(status) {
-        console.log(status)
-        switch (status) {
-            case RideStatus.Pending:
-                return 'Pending';
-            case RideStatus.InProgress:
-                return 'In Progress';
-            case RideStatus.Completed:
-                return 'Completed';
-            default:
-                return 'Unknown';
-        }
-    };
-	*/
-
     return (
         <div>
 			 <div className="grid-container">
@@ -48,7 +31,7 @@ const MyRides = () => {
 					Start Address
 				</div>
 				<div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
-					End Address
+					Final Address
 				</div>
 				<div className="grid-item" style={{ gridColumn: 3, gridRow: 1 }}>
 					Price
@@ -65,16 +48,15 @@ const MyRides = () => {
 							{ride.startAddress}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 2, gridRow: index + 2 }}>
-							{ride.endAddress}
+							{ride.finalAddress}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 3, gridRow: index + 2 }}>
 							{ride.price}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 4, gridRow: index + 2 }}>
-						{new Date(ride.deliveryTime).getDate()}/{new Date(ride.deliveryTime).getMonth()}/{new Date(ride.deliveryTime).getFullYear()} {new Date(ride.deliveryTime).getHours()}:{new Date(ride.deliveryTime).getMinutes()}
+						{new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
-							{ /*renderStatus(ride.status)*/ }
 							{ ride.status }
 						</div>
 					</React.Fragment>
