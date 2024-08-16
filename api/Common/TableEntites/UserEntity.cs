@@ -8,18 +8,17 @@ namespace Common.TableEntites
     public class UserEntity : ITableEntity
     {
         // Email je ID korisnika (ne menja se)
-        public string? Email { get; set; }
-        public string? Username { get; set; }
-        public string? Password { get; set; }
-        public string? Firstname { get; set; }
-        public string? Lastname { get; set; }
-        public string? DateOfBirth { get; set; }
-        public string? Address { get; set; }
+        public string Email { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
+        public string DateOfBirth { get; set; }
+        public string Address { get; set; }
         public EUserType UserType { get; set; }
-        public string? PhotoUrl { get; set; }
+        public string PhotoUrl { get; set; }
         public EVerificationStatus VerificationStatus { get; set; }
         public bool IsBlocked { get; set; }
-        public bool Busy { get; set; }
 
         // ITableEntity implementation
         public string PartitionKey { get; set; } = "User";
@@ -49,7 +48,6 @@ namespace Common.TableEntites
             PhotoUrl = user.PhotoUrl;
             VerificationStatus = user.VerificationStatus;
             IsBlocked = user.IsBlocked;
-            Busy = user.Busy;
         }
     }
 }

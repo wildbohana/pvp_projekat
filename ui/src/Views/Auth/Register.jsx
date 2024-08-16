@@ -69,28 +69,28 @@ function Register() {
 			<h1>Register</h1>
 			<form className="register-form" onSubmit={handleSubmit}>
 				<label htmlFor="firstname">First Name</label>
-				<input value={firstname} onChange={(e) => setFirstName(e.target.value)} id="firstname" placeholder="First Name" />
+				<input value={firstname} onChange={(e) => setFirstName(e.target.value)} id="firstname" placeholder="First Name" required />
 
 				<label htmlFor="lastname">Last Name</label>
-				<input value={lastname} onChange={(e) => setLastName(e.target.value)} id="lastname" placeholder="Last Name" />
+				<input value={lastname} onChange={(e) => setLastName(e.target.value)} id="lastname" placeholder="Last Name" required />
 
                 <label htmlFor="username">Username</label>
-				<input value={username} onChange={(e) => setUsername(e.target.value)} id="username" placeholder="Username" />
+				<input value={username} onChange={(e) => setUsername(e.target.value)} id="username" placeholder="Username" required />
 
 				<label htmlFor="email">Email</label>
-				<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" />
+				<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" required />
 
 				<label htmlFor="password">Password</label>
-				<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="********" id="password" />
+				<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="********" id="password" required />
 
 				<label htmlFor="password">Confirm Password</label>
-				<input value={password2} onChange={(e) => setPassword2(e.target.value)} type="password" placeholder="********" id="password2" />
+				<input value={password2} onChange={(e) => setPassword2(e.target.value)} type="password" placeholder="********" id="password2" required />
 
 				<label htmlFor="address">Address</label>
-				<input value={address} onChange={(e) => setAddress(e.target.value)} id="address" placeholder="Address" />
+				<input value={address} onChange={(e) => setAddress(e.target.value)} id="address" placeholder="Address" required />
 
                 <label htmlFor="dob">Date of Birth</label>
-				<input type="date" placeholder='Enter your date of birth' value={dob} onChange={(e) => setDob(e.target.value)} id="dob" />
+				<input type="date" placeholder='Enter your date of birth' value={dob} onChange={(e) => setDob(e.target.value)} id="dob" required />
 
                 <label htmlFor="usertype">User role</label>
 				<select value={usertype} onChange={(e) => setType(e.target.value)} id="usertype" >
@@ -99,11 +99,10 @@ function Register() {
 				</select>
 
 				<label htmlFor="image">Image</label>
-				<input type="file" onChange={handleImageUploaded} />
+				<input type="file" onChange={handleImageUploaded} required />
 
 				<button type="submit" className="register-button">Register</button>
-			</form>
-			
+			</form>			
 			<button className="link-btn" onClick={navigateToLogin}>Already have an account? Login here.</button>
 		</div>
 		</div>

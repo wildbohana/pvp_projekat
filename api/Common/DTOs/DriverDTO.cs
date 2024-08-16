@@ -9,17 +9,17 @@ namespace Common.DTOs
     public class DriverDTO
     {
         [DataMember]
-        public string? Email { get; set; }
+        public string Email { get; set; }
         [DataMember]
-        public string? Username { get; set; }
+        public string Username { get; set; }
         [DataMember]
-        public string? Firstname { get; set; }
+        public string Firstname { get; set; }
         [DataMember]
-        public string? Lastname { get; set; }
+        public string Lastname { get; set; }
         [DataMember]
-        public string? VerificationStatus { get; set; }
+        public string VerificationStatus { get; set; }
         [DataMember]
-        public bool? IsBlocked { get; set; }
+        public bool IsBlocked { get; set; }
         [DataMember]
         public double AverageRating { get; set; }
 

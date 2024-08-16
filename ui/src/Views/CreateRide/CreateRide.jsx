@@ -60,6 +60,8 @@ const CreateRide = () => {
 
             if (response.status === 200) {
 				localStorage.setItem('requestedRide', response.data.id);
+                toast("Ride sucessfully requested.");
+                setTimeout(`window.location.reload()`, 2000);
             }
         } catch (error) {
             console.error('Error predicting ride:', error);
@@ -74,7 +76,7 @@ const CreateRide = () => {
 
             if (response.status === 200) {
 				toast("Ride request confirmed.");
-                fetchAcceptedRide();
+                setTimeout(`window.location.reload()`, 2000);
 			}
         } catch (error) {
             console.error('Error confirming ride:', error);
@@ -90,7 +92,7 @@ const CreateRide = () => {
             if (response.status === 200) {
 				toast("Ride request deleted.");
                 localStorage.removeItem('requestedRide');
-                fetchAcceptedRide();
+                setTimeout(`window.location.reload()`, 2000);
 			}
         } catch (error) {
             console.error('Error deleting request:', error);
@@ -108,12 +110,14 @@ const CreateRide = () => {
                         placeholder="Start Address"
                         value={startAddress}
                         onChange={(e) => setStartAddress(e.target.value)}
+                        required 
                     />
                     <input
                         type="text"
                         placeholder="End Address"
                         value={finalAddress}
                         onChange={(e) => setFinalAddress(e.target.value)}
+                        required 
                     />
                     <button className="action-button-narrow" onClick={handleRideRequest}>Order</button>
                 </div>

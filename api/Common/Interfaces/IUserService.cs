@@ -10,8 +10,6 @@ namespace Common.Interfaces
         Task<UserDTO?> GetUserDataAsync(string email);
         Task<bool> UpdateProfileAsync(UserDTO credentials);
         Task<bool> UserExistsAsync(string email);
-        Task<bool> GetBusyStatusAsync(string email);
-        Task<bool> ChangeBusyStatusAsync(string email, bool value);
         Task<bool> IsDriverVerifiedCheckAsync(string email);
         Task<bool> IsDriverBlockedCheckAsync(string email);
         Task<string?> GetUserTypeFromEmail(string email);

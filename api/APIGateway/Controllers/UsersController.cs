@@ -61,32 +61,6 @@ namespace APIGateway.Controllers
             }
         }
 
-        [HttpGet("busy")]
-        public async Task<IActionResult> GetBusyStatus()
-        {
-            try
-            {
-                var claimsIdentity = this.User.Identity as ClaimsIdentity;
-                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
-
-                if (emailFromToken == null)
-                {
-                    return Unauthorized();
-                }
-
-                // I za vozače i za korisnike kad se voze busy je true
-                IUserService proxy = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var temp = await proxy.GetBusyStatusAsync(emailFromToken);
-
-                return Ok(temp);
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-                return BadRequest(message);
-            }
-        }
-
         [HttpGet("verified-check")]
         public async Task<IActionResult> GetDriverVerifiedCheck(string driverId)
         {

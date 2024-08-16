@@ -35,6 +35,8 @@ const AllRides = () => {
 				<div className="grid-item" style={{ gridColumn: 8, gridRow: 1 }}>Pickup Time</div>
 				<div className="grid-item" style={{ gridColumn: 9, gridRow: 1 }}>Ride Duration</div>
 				<div className="grid-item" style={{ gridColumn: 10, gridRow: 1 }}>Status</div>
+				<div className="grid-item" style={{ gridColumn: 11, gridRow: 1 }}>Rating</div>
+
 				{rides.map((ride, index) => (
 					<React.Fragment key={ride.id}>
 						<div className="grid-item" style={{ gridColumn: 1, gridRow: index + 2 }}>
@@ -50,22 +52,25 @@ const AllRides = () => {
 							{ride.finalAddress}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
-							{ride.price}
+							{ride.price} din
 						</div>
 						<div className="grid-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
-							{ride.distance}
+							{ride.distance} km
 						</div>
 						<div className="grid-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
 						{new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 8, gridRow: index + 2 }}>
-							{ride.pickUpTime}
+							{ride.pickUpTime} min
 						</div>
 						<div className="grid-item" style={{ gridColumn: 9, gridRow: index + 2 }}>
-							{ride.rideDuration}
+							{ride.rideDuration} min
 						</div>
 						<div className="grid-item" style={{ gridColumn: 10, gridRow: index + 2 }}>
 							{ ride.status }
+						</div>
+						<div className="grid-item" style={{ gridColumn: 11, gridRow: index + 2 }}>
+							{ ride.rating }
 						</div>
 					</React.Fragment>
 				))}

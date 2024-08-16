@@ -4,6 +4,7 @@
     {
         Pending,
         ConfirmedByCustomer,
+        DeletedByCustomer,
         InProgress,
         Completed
     }

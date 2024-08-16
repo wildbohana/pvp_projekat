@@ -51,7 +51,7 @@ const MyRides = () => {
 							{ride.finalAddress}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 3, gridRow: index + 2 }}>
-							{ride.price}
+							{ride.price} din
 						</div>
 						<div className="grid-item" style={{ gridColumn: 4, gridRow: index + 2 }}>
 						{new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}

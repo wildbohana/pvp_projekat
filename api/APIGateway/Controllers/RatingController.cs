@@ -30,7 +30,7 @@ namespace APIGateway.Controllers
                     return Unauthorized();
                 }
 
-                IRatingService proxy = ServiceProxy.Create<IRatingService>(new Uri("fabric:/api/RatingService"), new ServicePartitionKey(1));
+                IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.RateRideAsync(data, emailFromToken);
 
                 return Ok(temp);
@@ -56,25 +56,8 @@ namespace APIGateway.Controllers
                     return Unauthorized("You are not administrator!");
                 }
 
-                IRatingService proxy = ServiceProxy.Create<IRatingService>(new Uri("fabric:/api/RatingService"), new ServicePartitionKey(1));
+                IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetAverageDriverRateAsync(driverId);
-
-                return Ok(temp);
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-                return BadRequest(message);
-            }
-        }
-
-        [HttpGet("rated-check")]
-        public async Task<IActionResult> RatedCheckAsync(string rideId)
-        {
-            try
-            {
-                IRatingService proxy = ServiceProxy.Create<IRatingService>(new Uri("fabric:/api/RatingService"), new ServicePartitionKey(1));
-                var temp = await proxy.HasBeenRatedCheckAsync(rideId);
 
                 return Ok(temp);
             }

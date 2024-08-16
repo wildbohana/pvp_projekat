@@ -49,11 +49,6 @@ namespace APIGateway.Controllers
                     return Unauthorized();
                 }
 
-                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
-
-                if (isBusy) return BadRequest();
-
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.CreateRideRequestAsync(data, emailFromToken);
                 if (temp == null)
@@ -88,11 +83,6 @@ namespace APIGateway.Controllers
                     return Unauthorized();
                 }
 
-                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
-
-                if (isBusy) return BadRequest();
-
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetRideEstimationAsync(rideId, emailFromToken);
 
@@ -122,11 +112,6 @@ namespace APIGateway.Controllers
                 {
                     return Unauthorized();
                 }
-
-                //IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                //var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
-
-                //if (!isBusy) return BadRequest();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetRideEstimationForUserAsync(emailFromToken);
@@ -158,11 +143,6 @@ namespace APIGateway.Controllers
                     return Unauthorized();
                 }
 
-                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
-
-                if (isBusy) return Unauthorized();
-
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.ConfirmRideRequestAsync(rideId, emailFromToken);
 
@@ -192,11 +172,6 @@ namespace APIGateway.Controllers
                 {
                     return Unauthorized();
                 }
-
-                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
-
-                if (isBusy) return BadRequest();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.DeleteRideRequestAsync(rideId, emailFromToken);
@@ -262,23 +237,15 @@ namespace APIGateway.Controllers
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var verified = await proxyUser.IsDriverVerifiedCheckAsync(emailFromToken);
                 var blocked = await proxyUser.IsDriverBlockedCheckAsync(emailFromToken);
-                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
 
-                if (!verified || blocked || isBusy)
+                if (!verified || blocked)
                 {
                     return Unauthorized();
                 }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.AcceptRideAsync(rideId, emailFromToken);
-                var rideInfo = await proxy.GetRideInfoAsync(rideId);
-
-                // TODO ovo ne radi?
-                if (temp)
-                {
-                    await proxyUser.ChangeBusyStatusAsync(rideInfo.DriverId, true);
-                    await proxyUser.ChangeBusyStatusAsync(rideInfo.CustomerId, true);
-                }
+                
                 return Ok(temp);
             }
             catch (Exception ex)
@@ -347,13 +314,6 @@ namespace APIGateway.Controllers
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.CompleteRideAsync(rideId, emailFromToken);
-                var rideInfo = await proxy.GetRideInfoAsync(rideId);
-
-                if (temp)
-                {
-                    await proxyUser.ChangeBusyStatusAsync(rideInfo.DriverId, false);
-                    await proxyUser.ChangeBusyStatusAsync(rideInfo.CustomerId, false);
-                }
 
                 return Ok(temp);
             }
@@ -381,11 +341,6 @@ namespace APIGateway.Controllers
                 {
                     return Unauthorized();
                 }
-
-                IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
-                var isBusy = await proxyUser.GetBusyStatusAsync(emailFromToken);
-
-                if (isBusy) return BadRequest();
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetAllPendingRidesAsync();
@@ -435,7 +390,6 @@ namespace APIGateway.Controllers
         }
 
         // admin
-
         [HttpGet("all-rides")]
         public async Task<IActionResult> GetAllRides()
         {

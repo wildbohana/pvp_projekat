@@ -9,11 +9,11 @@ namespace Common.TableEntites
     public class RideEntity : ITableEntity
     {
         [DataMember]
-        public string? Id { get; set; }
+        public string Id { get; set; }
         [DataMember]
-        public string? StartAddress { get; set; }
+        public string StartAddress { get; set; }
         [DataMember]
-        public string? FinalAddress { get; set; }
+        public string FinalAddress { get; set; }
         [DataMember]
         public double Distance { get; set; }    // u kilometrima
         [DataMember]
@@ -27,9 +27,11 @@ namespace Common.TableEntites
         [DataMember]
         public ERideStatus Status { get; set; }     // default - Pending
         [DataMember]
-        public string? CustomerId { get; set; }
+        public string CustomerId { get; set; }
         [DataMember]
-        public string? DriverId { get; set; } = null;
+        public string? DriverId { get; set; }
+        [DataMember]
+        public int Rating { get; set; }
 
         // ITableEntity implementation
         public string PartitionKey { get; set; } = "Ride";
@@ -59,6 +61,7 @@ namespace Common.TableEntites
             Status = ride.Status;
             CustomerId = ride.CustomerId;
             DriverId = ride.DriverId;
+            Rating = ride.Rating;
         }
     }
 }

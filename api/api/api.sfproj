@@ -40,7 +40,6 @@
       <ServiceLaunchUrl>http://localhost:{ServicePort}/swagger</ServiceLaunchUrl>
     </ProjectReference>
     <ProjectReference Include="..\EmailService\EmailService.csproj" />
-    <ProjectReference Include="..\RatingService\RatingService.csproj" />
     <ProjectReference Include="..\RideService\RideService.csproj" />
     <ProjectReference Include="..\UserService\UserService.csproj" />
   </ItemGroup>

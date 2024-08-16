@@ -63,8 +63,8 @@ const PendingRides = () => {
             if (response.data) {
                 localStorage.setItem('confirmedRide', rideId);
                 toast("Ride accepted.");
+                setTimeout(`window.location.reload()`, 2000);
             }
-            navigate('/driver/new-rides');
         } catch (error) {
             console.error('Error accepting ride:', error);
             toast("Error accepting ride!");
@@ -80,8 +80,8 @@ const PendingRides = () => {
             if (response.data) {
                 localStorage.removeItem('confirmedRide', rideId);
                 toast("Ride completed.");
+                setTimeout(`window.location.reload()`, 2000);
             }
-            navigate('/driver/new-rides');
         } catch (error) {
             console.error('Error accepting ride:', error);
             toast("Error accepting ride!");
@@ -139,7 +139,7 @@ const PendingRides = () => {
                     {ride.distance} km
                 </div>
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 5 }}>
-                {new Date(ride.estimatedArrivalTime).getDate()}/{new Date(ride.estimatedArrivalTime).getMonth()}/{new Date(ride.estimatedArrivalTime).getFullYear()} {new Date(ride.estimatedArrivalTime).getHours()}:{new Date(ride.estimatedArrivalTime).getMinutes()}
+                {new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
                 </div>
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 7 }}>
                     { ride.status }
@@ -179,16 +179,16 @@ const PendingRides = () => {
                                 {ride.finalAddress}
                             </div>
                             <div className="grid-item" style={{ gridColumn: 4, gridRow: index + 2 }}>
-                                {ride.price}
+                                {ride.price} din
                             </div>
                             <div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
-                                {ride.distance}
+                                {ride.distance} km
                             </div>
                             <div className="grid-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
                             {new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
                             </div>
                             <div className="grid-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
-                                {ride.pickUpTime}
+                                {ride.pickUpTime} min
                             </div>
                             <div className="grid-item" style={{ gridColumn: 8, gridRow: index + 2 }}>
                                 { ride.status }

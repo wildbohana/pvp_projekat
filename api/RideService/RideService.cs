@@ -96,7 +96,6 @@ namespace RideService
 
             using (var tx = StateManager.CreateTransaction())
             {
-                Random rand = new Random();
                 Ride newRide = new Ride(data.StartAddress, data.FinalAddress, customerId);
 
                 try
@@ -139,7 +138,7 @@ namespace RideService
                 while (await enumerator.MoveNextAsync(CancellationToken.None))
                 {
                     var tmp = enumerator.Current.Value;
-                    if (tmp.Status != ERideStatus.Completed && tmp.CustomerId.Equals(customerId))
+                    if (tmp.Status != ERideStatus.Completed && tmp.Status != ERideStatus.DeletedByCustomer && tmp.CustomerId.Equals(customerId))
                     {
                         var ride = new RideEstimateDTO(tmp);
                         return ride;
@@ -195,16 +194,24 @@ namespace RideService
 
                 if (rideResult.HasValue)
                 {
-                    try
+                    var ride = rideResult.Value;
+
+                    if (rideResult.Value.Status == ERideStatus.Pending && ride.CustomerId.Equals(customerId))
                     {
-                        await rideDictionary.TryRemoveAsync(tx, rideId);
-                        await tx.CommitAsync();
-                        status = true;
-                    }
-                    catch (Exception)
-                    {
-                        status = false;
-                        tx.Abort();
+                        var acceptedRide = ride;
+                        acceptedRide.Status = ERideStatus.DeletedByCustomer;
+
+                        try
+                        {
+                            await rideDictionary.TryUpdateAsync(tx, rideId, acceptedRide, ride);
+                            await tx.CommitAsync();
+                            status = true;
+                        }
+                        catch (Exception)
+                        {
+                            status = false;
+                            tx.Abort();
+                        }
                     }
                 }
             }
@@ -287,7 +294,7 @@ namespace RideService
                 {
                     var ride = rideResult.Value;
 
-                    if (rideResult.Value.Status == ERideStatus.InProgress && ride.DriverId.Equals(driverId))
+                    if (rideResult.Value.Status == ERideStatus.InProgress && !String.IsNullOrEmpty(ride.DriverId) && ride.DriverId.Equals(driverId))
                     {
                         var completedRide = ride;
                         completedRide.Status = ERideStatus.Completed;
@@ -412,5 +419,62 @@ namespace RideService
             return rides;
         }
         #endregion Admin methods
+
+        #region Rating methods
+        public async Task<bool> RateRideAsync(RatingDTO data, string customerId)
+        {
+            bool status = false;
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var rideResult = await rideDictionary.TryGetValueAsync(tx, data.RideId);
+
+                if (rideResult.HasValue)
+                {
+                    Ride ratedRide = rideResult.Value;
+                    ratedRide.Rating = data.Rate;
+                        
+                    try
+                    {
+                        await rideDictionary.AddAsync(tx, data.RideId, ratedRide);
+                        await tx.CommitAsync();
+                        status = true;
+                    }
+                    catch (Exception)
+                    {
+                        status = false;
+                        tx.Abort();
+                    }
+                }
+            }
+
+            return status;
+        }
+
+        public async Task<double> GetAverageDriverRateAsync(string driverId)
+        {
+            double suma = 0;
+            double broj = 0;
+            double prosek = 0;  // Ako ne postoje ocene, vraća se 0
+
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var enumerator = (await rideDictionary.CreateEnumerableAsync(tx)).GetAsyncEnumerator();
+
+                while (await enumerator.MoveNextAsync(CancellationToken.None))
+                {
+                    var tmp = enumerator.Current.Value;
+                    if (!String.IsNullOrEmpty(tmp.DriverId) && tmp.DriverId.Equals(driverId))
+                    {
+                        suma += tmp.Rating;
+                        broj++;
+                    }
+                }
+            }
+
+            if (broj > 0) prosek = suma / broj;
+            return prosek;
+        }
+        #endregion Rating methods
     }
 }

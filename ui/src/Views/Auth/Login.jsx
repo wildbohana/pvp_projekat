@@ -50,9 +50,9 @@ function Login() {
 			<h2>Login</h2>
 			<form className="login-form" onSubmit={handleSubmit}>
 				<label htmlFor="email">email</label>
-				<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" name="email" />
+				<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" name="email" required />
 				<label htmlFor="password">password</label>
-				<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="********" id="password" name="password" />
+				<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="********" id="password" name="password" required />
 				<button type="submit">Log In</button>
 			</form>
 			<button className="link-btn" onClick={navigateToRegister}>Don't have an account? Register here.</button>

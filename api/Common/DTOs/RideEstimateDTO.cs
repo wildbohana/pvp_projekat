@@ -7,11 +7,11 @@ namespace Common.DTOs
     public class RideEstimateDTO
     {
         [DataMember]
-        public string? Id { get; set; }
+        public string Id { get; set; }
         [DataMember]
-        public string? StartAddress { get; set; }
+        public string StartAddress { get; set; }
         [DataMember]
-        public string? FinalAddress { get; set; }
+        public string FinalAddress { get; set; }
         [DataMember]
         public DateTime EstimatedArrivalTime { get; set; }      // ovo je UTC, koristi lokalizaciju na FE?
         [DataMember]
@@ -19,9 +19,9 @@ namespace Common.DTOs
         [DataMember]
         public int Price { get; set; }
         [DataMember]
-        public string? CustomerId { get; set; }
+        public string CustomerId { get; set; }
         [DataMember]
-        public string? Status { get; set; }
+        public string Status { get; set; }
 
         public RideEstimateDTO(Ride ride)
         {

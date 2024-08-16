@@ -213,18 +213,6 @@ namespace UserService
             }
         }
 
-        public async Task<bool> GetBusyStatusAsync(string email)
-        {
-            using (var tx = StateManager.CreateTransaction())
-            {
-                var userResult = await userDictionary.TryGetValueAsync(tx, email);
-
-                if (userResult.HasValue)
-                    return userResult.Value.Busy;
-                return false;
-            }
-        }
-
         public async Task<bool> IsDriverVerifiedCheckAsync(string email)
         {
             using (var tx = StateManager.CreateTransaction())
@@ -341,50 +329,12 @@ namespace UserService
 
             return status;
         }
-
-        public async Task<bool> ChangeBusyStatusAsync(string email, bool value)
-        {
-            bool status = false;
-
-            using (var tx = StateManager.CreateTransaction())
-            {
-                var userResult = await userDictionary.TryGetValueAsync(tx, email);
-
-                if (!userResult.HasValue)
-                {
-                    status = false;
-                }
-                else if (userResult.Value.VerificationStatus != EVerificationStatus.Pending)
-                {
-                    status = false;
-                }
-                else
-                {
-                    var user = userResult.Value;
-                    user.Busy = value;
-
-                    try
-                    {
-                        await userDictionary.TryUpdateAsync(tx, email, user, user);
-                        await tx.CommitAsync();
-                        status = true;
-                    }
-                    catch (Exception)
-                    {
-                        status = false;
-                        tx.Abort();
-                    }
-                }
-            }
-
-            return status;
-        }
         #endregion User actions
 
         #region Admin actions
         public async Task<IEnumerable<DriverDTO>> GetAllDriversAsync()
         {
-            IRatingService proxy = ServiceProxy.Create<IRatingService>(new Uri("fabric:/api/RatingService"), new ServicePartitionKey(1));
+            IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
             var drivers = new List<DriverDTO>();
 
             using (var tx = StateManager.CreateTransaction())

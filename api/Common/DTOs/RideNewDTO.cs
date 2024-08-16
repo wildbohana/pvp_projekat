@@ -6,8 +6,8 @@ namespace Common.DTOs
     public class RideNewDTO
     {
         [DataMember]
-        public string? StartAddress { get; set; }
+        public string StartAddress { get; set; }
         [DataMember]
-        public string? FinalAddress { get; set; }
+        public string FinalAddress { get; set; }
     }
 }

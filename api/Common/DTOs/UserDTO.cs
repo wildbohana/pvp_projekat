@@ -6,9 +6,9 @@ namespace Common.DTOs
     public class UserDTO
     {
         [DataMember]
-        public string? Email { get; set; }   // Ne može da se menja (jer je ID) 
+        public string Email { get; set; }   // Ne može da se menja (jer je ID) 
         [DataMember]
-        public string? Username { get; set; }
+        public string Username { get; set; }
         [DataMember]
         public string? ConfirmOldPassword { get; set; }
         [DataMember]
@@ -16,20 +16,20 @@ namespace Common.DTOs
         [DataMember]
         public string? ConfirmNewPassword { get; set; }
         [DataMember]
-        public string? Firstname { get; set; }
+        public string Firstname { get; set; }
         [DataMember]
-        public string? Lastname { get; set; }
+        public string Lastname { get; set; }
         [DataMember]
-        public string? Address { get; set; }
+        public string Address { get; set; }
         [DataMember]
-        public string? DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
         [DataMember]
-        public string? Role { get; set; }
+        public string Role { get; set; }
         [DataMember]
         public string? PhotoUrl { get; set; }
         [DataMember]
-        public string? VerificationStatus { get; set; }
+        public string VerificationStatus { get; set; }
         [DataMember]
-        public bool? IsBlocked { get; set; }
+        public bool IsBlocked { get; set; }
     }
 }

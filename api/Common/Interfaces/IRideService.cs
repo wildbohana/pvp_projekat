@@ -25,5 +25,9 @@ namespace Common.Interfaces
 
         // Admin
         Task<IEnumerable<RideInfoDTO>> GetAllRidesAdminAsync();
+
+        // Ocenjivanje
+        Task<bool> RateRideAsync(RatingDTO rate, string customerId);
+        Task<double> GetAverageDriverRateAsync(string rideId);
     }
 }

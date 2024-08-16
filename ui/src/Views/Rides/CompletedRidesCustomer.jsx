@@ -55,10 +55,10 @@ const CompletedRides = () => {
 							{ride.finalAddress}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
-							{ride.price}
+							{ride.price} din
 						</div>
 						<div className="grid-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
-							{ride.distance}
+							{ride.distance} km
 						</div>
 						<div className="grid-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
 						{new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
@@ -67,7 +67,11 @@ const CompletedRides = () => {
 							{ ride.status }
 						</div>
 						<div className="grid-item" style={{ gridColumn: 9, gridRow: index + 2 }}>
-							<button className="action-button" onClick={() => navigate(`/user/rate-ride/${ride.id}`)}>Rate ride</button>
+							{ ride.rating === 0 ? (
+								<button className="action-button" onClick={() => navigate(`/user/rate-ride/${ride.id}`)}>Rate ride</button>
+							) : (
+								ride.rating
+							)}
 						</div>
 					</React.Fragment>
 				))}

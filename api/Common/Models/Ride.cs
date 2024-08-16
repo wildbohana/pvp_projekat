@@ -10,11 +10,11 @@ namespace Common.Models
     public class Ride
     {
         [DataMember]
-        public string? Id { get; set; }
+        public string Id { get; set; }
         [DataMember]
-        public string? StartAddress { get; set; }
+        public string StartAddress { get; set; }
         [DataMember]
-        public string? FinalAddress { get; set; }
+        public string FinalAddress { get; set; }
         [DataMember]
         public double Distance { get; set; }        // u kilometrima
         [DataMember]
@@ -28,9 +28,11 @@ namespace Common.Models
         [DataMember]
         public ERideStatus Status { get; set; }     // default - Pending
         [DataMember]
-        public string? CustomerId { get; set; }
+        public string CustomerId { get; set; }
         [DataMember]
-        public string? DriverId { get; set; } = null;
+        public string? DriverId { get; set; }
+        [DataMember]
+        public int Rating { get; set; }
 
         public Ride(RideEntity entity)
         {
@@ -45,6 +47,7 @@ namespace Common.Models
             Status = entity.Status;
             CustomerId = entity.CustomerId;
             DriverId = entity.DriverId;
+            Rating = entity.Rating;
         }
 
         public Ride(string? startAddress, string? finalAddress, string? customerId)

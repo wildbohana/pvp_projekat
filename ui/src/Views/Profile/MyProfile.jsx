@@ -104,7 +104,17 @@ function MyProfile() {
                             <img src={profile[labelKey]} alt="profile image" className="profile-image" />
                             <input type="file" id={labelKey} name={labelKey} onChange={handleImageUploaded} />
                             </div>
-                        ) : labelKey === 'confirmOldPassword' || labelKey === 'confirmNewPassword' || labelKey === 'newPassword' ? (
+                        ) : labelKey === 'confirmOldPassword' ? (
+                            <input
+                                type = "password"
+                                id = {labelKey}
+                                name = {labelKey}
+                                value = {profile[labelKey]}
+                                onChange = {handleInputChange}
+                                className = "form-control"
+                                required
+                            />
+                        ) : labelKey === 'confirmNewPassword' || labelKey === 'newPassword' ? (
                             <input
                                 type = "password"
                                 id = {labelKey}
@@ -128,6 +138,7 @@ function MyProfile() {
                                     labelKey === "verificationStatus" || 
                                     labelKey === "role" 
                                 }
+                                required
                             />
                         )}
                     </div>
