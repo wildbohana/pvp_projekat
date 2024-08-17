@@ -1,47 +1,57 @@
-.grid-container {
+.driver-container {
     background-color: snow;
     display: grid;
     padding: 10px;
     border-style: solid;
-    margin: 10px;
+	border: 2px solid #b33f9f;
+    border-radius: 10px;
+    margin: 20px auto;
     width: auto;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
-.grid-item {
-    font-family: 'Maiandra GD';
-    font-size: 16px;
+.driver-item {
+    font-size: 18px;
     text-align: center;
     display: inline-grid;
-    background-color: rgb(184, 204, 240);
+    background-color: #feffd7;
     border-style: solid;
+	border: 2px solid #b33f9f;
+    border-radius: 10px;
     margin: 1px;
-    padding: 5px;
+    padding: 10px 2px;
+}
+
+.header {
+    font-size: 20px;
+    text-align: center;
+    display: inline-grid;
+    background-color: #d66eab;
+    border-style: solid;
+	border: 2px solid #b33f9f;
+    border-radius: 10px;
+    margin: 1px;
+    padding: 10px;
+    font-weight: bold;
 }
 
 .display-vertical {
-    font-family: 'Maiandra GD';
     display: flex;
     margin: 0px;
     padding: 0px;
 }
 
 .block-status {
-    font-family: 'Maiandra GD';
     display: flex;
     margin: auto;
     padding: auto;
 }
 
-.header {
-    font-weight: bold;
-}
-
 .verify-button {
-    color: #1cc49d;
-    background-color: lemonchiffon;
-    border: 2px solid darkolivegreen;
+    color: white;
+    background-color: #af5ca8;
+    border: 2px solid #b33f9f;
     border-radius: 10px;
     justify-content: center;
     align-items: center;
@@ -53,6 +63,11 @@
     margin-right: auto;
     display: block;
     padding: 1px;
+}
+
+.verify-button:hover {
+    color: darkmagenta;
+    background-color: plum;
 }
 
 .verify-button-disabled {
@@ -81,7 +96,7 @@
     height: 2.5em;
     width: 6em;
     font-size: medium;
-    font-weight: 600;
+    font-weight: 400;
     margin-left: auto;
     margin-right: auto;
     display: block;
@@ -97,7 +112,7 @@
     height: 2.5em;
     width: 6em;
     font-size: medium;
-    font-weight: 600;
+    font-weight: 400;
     margin-left: auto;
     margin-right: auto;
     display: block;

@@ -2,7 +2,12 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import { jwtDecode } from "jwt-decode";
+
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { LoginAsync } from '../../Services/userService';
+
+import '../../Assets/App.css';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -39,6 +44,38 @@ function Login() {
 			toast(error.message);
 		}
 	}
+	
+	const handleGoogleSuccess = async (response) => {
+		const { email, name, picture } = jwtDecode(response.credential);
+	
+		try {
+			const loginData = {
+				Email: email,
+				Password: "/"
+			};
+
+			await LoginAsync(loginData)
+				.then(response => {
+					const token = response.data;
+					Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
+					localStorage.setItem('currentUser', email);
+					navigate('/');
+				})
+				.catch(error => {
+					console.error('Error during login:', error);
+					alert('You must register first.');
+				});
+
+			// Optionally navigate or handle success
+			//navigate("/login");
+		} catch (error) {
+			console.error('Error fetching image or registering user:', error);
+		}
+	};
+	const handleGoogleFailure = (response) => {
+        console.error("Google login failed!", response);
+    };
+
 
 	const navigateToRegister = () => {
 		navigate('/register');
@@ -53,8 +90,19 @@ function Login() {
 				<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="youremail@gmail.com" id="email" name="email" required />
 				<label htmlFor="password">password</label>
 				<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="********" id="password" name="password" required />
-				<button type="submit">Log In</button>
+				<button type="submit" className="auth-button">Log In</button>
 			</form>
+
+			{/**
+			<div className="google-button-container">
+				<GoogleLogin
+					onSuccess={handleGoogleSuccess}
+					onFailure={handleGoogleFailure}
+					buttonText="Register with Google"
+				/>
+            </div>
+			*/}
+
 			<button className="link-btn" onClick={navigateToRegister}>Don't have an account? Register here.</button>
 		</div>
 		</div>

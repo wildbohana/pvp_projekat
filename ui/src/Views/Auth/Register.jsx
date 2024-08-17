@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 import { RegisterAsync } from "../../Services/userService";
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 function Register() {
     const [firstname, setFirstName] = useState('');
@@ -63,6 +66,68 @@ function Register() {
 		navigate('/login');
 	};
     
+	// TODO promeni da odgovara mom
+	const handleGoogleSuccess = async (response) => {
+		const { email, name, picture } = jwtDecode(response.credential);
+		console.log(jwtDecode(response.credential));
+
+		try {
+			// Fetch the image data as array buffer
+			const imageResponse = await axios.get(picture, {
+				responseType: 'arraybuffer',
+			});
+	
+			// Convert array buffer to base64 string with header
+			const base64Image = arrayBufferToBase64(imageResponse.data, 'image/jpeg');
+			
+			const fullName = name.trim().split(' ');
+			const firstName = fullName[0];
+			const lastName = fullName.length > 1 ? fullName[fullName.length - 1] : '';
+
+			const userData = {
+				Email: email,
+				Password: "123",
+				ConfirmPassword: "123",
+				Username: fullName,
+				Firstname: firstName,
+				Lastname: lastName,
+				DateOfBirth: "01-01-1999",		// TODO get from OAuth
+				Address: "/",
+				Role: "Customer",
+				PhotoUrl: base64Image,  // Assign base64 encoded image data with header
+			};
+
+			console.log(userData);
+	
+			// Make a POST request to your backend API
+			const response1 = await RegisterAsync(userData);
+			console.log(response1.data);
+	
+			// Optionally navigate or handle success
+			navigate("/login");
+	
+		} catch (error) {
+			console.error('Error fetching image or registering user:', error);
+		}
+	};
+	
+	// Function to convert array buffer to base64 string with header
+	const arrayBufferToBase64 = (buffer, mimeType) => {
+		let binary = '';
+		const bytes = new Uint8Array(buffer);
+		const len = bytes.byteLength;
+		for (let i = 0; i < len; i++) {
+			binary += String.fromCharCode(bytes[i]);
+		}
+		const base64String = btoa(binary);
+		return `data:${mimeType};base64,${base64String}`;
+	};
+	
+    const handleGoogleFailure = (response) => {
+        console.error("Google login failed!", response);
+    };
+
+	// TODO  dodati GoogleOAuthProvider? kao u index.js
     return (
         <div className="App">
 		<div className="auth-form-container">
@@ -101,9 +166,21 @@ function Register() {
 				<label htmlFor="image">Image</label>
 				<input type="file" onChange={handleImageUploaded} required />
 
-				<button type="submit" className="register-button">Register</button>
-			</form>			
+				<button type="submit" className="auth-button">Register</button>
+			</form>
+
+			{/*
+			<div className="google-button-container">
+				<GoogleLogin
+					onSuccess={handleGoogleSuccess}
+					onFailure={handleGoogleFailure}
+					buttonText="Register with Google"
+				/>
+			</div>
+			*/}
+
 			<button className="link-btn" onClick={navigateToLogin}>Already have an account? Login here.</button>
+
 		</div>
 		</div>
     );

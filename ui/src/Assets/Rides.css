@@ -3,12 +3,12 @@
     display: grid;
     padding: 10px;
     border-style: solid;
-    border: 2px solid #1cc49d;
+	border: 2px solid #b33f9f;
     border-radius: 10px;
-    margin: 10px;
+    margin: 20px auto;
     width: auto;
-    margin-left: 50px;
-    margin-right: 50px;
+    margin-left: 1%;
+    margin-right: 1%;
 }
 
 .grid-container-narrow {
@@ -16,7 +16,7 @@
     display: grid;
     padding: 10px;
     border-style: solid;
-    border: 2px solid #1cc49d;
+	border: 2px solid #b33f9f;
     border-radius: 10px;
     margin: 20px;
     width: 600px;
@@ -24,23 +24,60 @@
     margin-right: auto;
 }
 
+.grid-container-narrow h2 {
+    display: flex;
+    margin: 20px auto 10px auto;
+}
+
 .grid-item {
-    font-family: 'Maiandra GD';
     font-size: 18px;
     text-align: center;
     display: inline-grid;
-    background-color: hsl(203, 100%, 80%);
+    background-color: #feffd7;
     border-style: solid;
-    border: 2px solid darkblue;
+	border: 2px solid #b33f9f;
+    border-radius: 10px;
+    margin: 4px;
+    padding: 10px 2px;
+}
+
+.header {
+    font-size: 20px;
+    text-align: center;
+    display: inline-grid;
+    background-color: #d66eab;
+    border-style: solid;
+	border: 2px solid #b33f9f;
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.header2 {
+    font-size: 20px;
+    text-align: center;
+    display: inline-grid;
+    background-color: #d66eab;
+    border-style: solid;
+	border: 2px solid #b33f9f;
     border-radius: 10px;
     margin: 1px;
+    margin-right: 20px;
     padding: 10px;
+    font-weight: bold;
+}
+
+.new-ride-form {
+	display: flex;
+	flex-direction: column;
+    padding: 20px;
 }
 
 .action-button {
-    color: #3fecc4;
-    background-color: #2e5e63;
-    border-radius: 20px;
+    color: white;
+    background-color: #af5ca8;
+    border: 2px solid #b33f9f;
+    border-radius: 16px;
     justify-content: center;
     align-items: center;
     font-size: 16px;
@@ -52,6 +89,7 @@
 .action-button-narrow {
     color: white;
     background-color: #af5ca8;
+    border: 2px solid #b33f9f;
     border-radius: 20px;
     justify-content: center;
     align-items: center;

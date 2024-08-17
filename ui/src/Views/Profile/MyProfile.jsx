@@ -78,17 +78,17 @@ function MyProfile() {
     const labelMap = {
         firstname: 'First Name',
         lastname: 'Last Name',
-        confirmOldPassword: 'Old password',
-		newPassword: 'New password',
-        confirmNewPassword: 'Confirm new password',
-		username: 'Userame',
-		email: 'Email',
+        username: 'Userame',
+        email: 'Email',
+        photoUrl: 'Image',
         address: 'Address',
         dateOfBirth: 'Date of birth',
 		role: 'User type',
-        photoUrl: 'Image',
         verificationStatus: 'Verification status',
         isBlocked: 'Blocked?',
+        confirmOldPassword: 'Old password',
+		newPassword: 'New password',
+        confirmNewPassword: 'Confirm new password',
     };
 
     return (	
@@ -132,11 +132,12 @@ function MyProfile() {
                                 onChange = {handleInputChange}
                                 className = "form-control"
                                 disabled = {
-                                    labelKey === "Id" || 
-                                    labelKey === "userId" || 
+                                    labelKey === "id" || 
+                                    labelKey === "email" || 
                                     labelKey === "isBlocked" || 
                                     labelKey === "verificationStatus" || 
-                                    labelKey === "role" 
+                                    labelKey === "role" ||
+                                    labelKey === "dateOfBirth"
                                 }
                                 required
                             />

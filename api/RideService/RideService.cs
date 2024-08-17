@@ -464,6 +464,8 @@ namespace RideService
                 while (await enumerator.MoveNextAsync(CancellationToken.None))
                 {
                     var tmp = enumerator.Current.Value;
+                    // Ako je ocena 0, samo preskoči (jer nije ocenjeno još)
+                    if (tmp.Rating == 0) continue;
                     if (!String.IsNullOrEmpty(tmp.DriverId) && tmp.DriverId.Equals(driverId))
                     {
                         suma += tmp.Rating;

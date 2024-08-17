@@ -65,6 +65,7 @@ namespace Common.Models
             Status = ERideStatus.Pending;
             CustomerId = customerId;
             DriverId = null;
+            Rating = 0;
         }
 
         // RideDTO -> Ride manuelno pravi (šta je sigurno sigurno je)

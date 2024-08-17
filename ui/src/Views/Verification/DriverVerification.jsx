@@ -34,7 +34,7 @@ export default function DriverVerification() {
 			if (response.data)
 			{
 				toast("Driver verified!");
-				fetchDrivers();
+				setTimeout(`window.location.reload()`, 2000);
 			}
 			else
 			{
@@ -52,7 +52,7 @@ export default function DriverVerification() {
 			if (response.data)
 			{
 				toast("Driver verification denied.");
-				fetchDrivers();
+				setTimeout(`window.location.reload()`, 2000);
 			}
 			else
 			{
@@ -70,7 +70,7 @@ export default function DriverVerification() {
 			if (response.data)
 			{
 				toast("Success!")
-				fetchDrivers();
+				setTimeout(`window.location.reload()`, 2000);
 			}
 			else
 			{
@@ -92,33 +92,33 @@ export default function DriverVerification() {
 
     return (
         <div>
-			<div className="grid-container">
-				<div className="grid-item header" style={{ gridColumn: 1, gridRow: 1 }}>Email</div>
-				<div className="grid-item header" style={{ gridColumn: 2, gridRow: 1 }}>First Name</div>
-				<div className="grid-item header" style={{ gridColumn: 3, gridRow: 1 }}>Last Name</div>
-				<div className="grid-item header" style={{ gridColumn: 4, gridRow: 1 }}>Average Rating</div>
-				<div className="grid-item header" style={{ gridColumn: 5, gridRow: 1 }}>Status</div>
-				<div className="grid-item header" style={{ gridColumn: 6, gridRow: 1 }}>Verify</div>
-				<div className="grid-item header" style={{ gridColumn: 7, gridRow: 1 }}>Block status</div>
+			<div className="driver-container">
+				<div className="driver-item header" style={{ gridColumn: 1, gridRow: 1 }}>Email</div>
+				<div className="driver-item header" style={{ gridColumn: 2, gridRow: 1 }}>First Name</div>
+				<div className="driver-item header" style={{ gridColumn: 3, gridRow: 1 }}>Last Name</div>
+				<div className="driver-item header" style={{ gridColumn: 4, gridRow: 1 }}>Average Rating</div>
+				<div className="driver-item header" style={{ gridColumn: 5, gridRow: 1 }}>Status</div>
+				<div className="driver-item header" style={{ gridColumn: 6, gridRow: 1 }}>Verify</div>
+				<div className="driver-item header" style={{ gridColumn: 7, gridRow: 1 }}>Block status</div>
 
 				{drivers.map((driver, index) => (
 					<React.Fragment key={driver.id}>
-						<div className="grid-item" style={{ gridColumn: 1, gridRow: index + 2 }}>
+						<div className="driver-item" style={{ gridColumn: 1, gridRow: index + 2 }}>
 							{driver.email}
 						</div>
-						<div className="grid-item" style={{ gridColumn: 2, gridRow: index + 2 }}>
+						<div className="driver-item" style={{ gridColumn: 2, gridRow: index + 2 }}>
 							{driver.firstname}
 						</div>
-						<div className="grid-item" style={{ gridColumn: 3, gridRow: index + 2 }}>
+						<div className="driver-item" style={{ gridColumn: 3, gridRow: index + 2 }}>
 							{driver.lastname}
 						</div>
-						<div className="grid-item" style={{ gridColumn: 4, gridRow: index + 2 }}>
-							{driver.averageRating}
+						<div className="driver-item" style={{ gridColumn: 4, gridRow: index + 2 }}>
+							{Math.round((driver.averageRating + Number.EPSILON) * 100) / 100}
 						</div>
-						<div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
+						<div className="driver-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
 							{driver.verificationStatus}
 						</div>
-						<div className="grid-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
+						<div className="driver-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
 							<div className="display-vertical" >
 								<button
 									onClick={() => handleVerifyApprove(driver.email)}
@@ -134,7 +134,7 @@ export default function DriverVerification() {
 								</button>
 							</div>
 						</div>
-						<div className="grid-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
+						<div className="driver-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
 							<div className="display-vertical" >
 								<span className="block-status">
 									{driver.isBlocked ? 'Blocked' : 'Unblocked'}

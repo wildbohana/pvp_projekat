@@ -46,16 +46,13 @@ function App() {
 				<Route path="/register" element={<Register />} />
 				<Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 				<Route path="/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-
-				{ /* TODO dodaj protected route! */}
-				<Route path="/admin/drivers" element={<DriverVerification />} />	
-				<Route path="/admin/rides" element={<AllRides />} />	
-				<Route path="/driver/new-rides" element={<PendingRides />} />	
-				<Route path="/user/completed-rides" element={<CompletedRides />} />	
-				<Route path="/user/create-ride" element={<CreateRide />} />	
-				<Route path="/driver/my-rides"element={<MyRides />} />	
-				<Route path="/user/rate-ride/:rideId" element={<RateRide />} />	
-
+				<Route path="/admin/drivers" element={<ProtectedRoute><DriverVerification /></ProtectedRoute>} />
+				<Route path="/admin/rides" element={<ProtectedRoute><AllRides /></ProtectedRoute>} />
+				<Route path="/driver/new-rides" element={<ProtectedRoute><PendingRides /></ProtectedRoute>} />
+				<Route path="/user/completed-rides" element={<ProtectedRoute><CompletedRides /></ProtectedRoute>} />
+				<Route path="/user/create-ride" element={<ProtectedRoute><CreateRide /></ProtectedRoute>} />
+				<Route path="/driver/my-rides" element={<ProtectedRoute><MyRides /></ProtectedRoute>} />
+				<Route path="/user/rate-ride/:rideId" element={<ProtectedRoute><RateRide /></ProtectedRoute>} />
 			</Routes>
 		</Router>
 	);

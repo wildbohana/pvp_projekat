@@ -89,8 +89,8 @@ const PendingRides = () => {
     };
 
     const checkBusyStatus = async() => {
-        var ride = localStorage.getItem('confirmedRide');
-        if (ride === null) {
+        var rideLocal = localStorage.getItem('confirmedRide');
+        if (rideLocal === null) {
             setIsDriverBusy(false);
         }
         else {
@@ -118,13 +118,13 @@ const PendingRides = () => {
         <div>
             {isDriverBusy ? (
                 <div className="grid-container-narrow">
-                <div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>Start Address</div>
-                <div className="grid-item" style={{ gridColumn: 1, gridRow: 2 }}>Final Address</div>
-                <div className="grid-item" style={{ gridColumn: 1, gridRow: 3 }}>Price</div>
-                <div className="grid-item" style={{ gridColumn: 1, gridRow: 4 }}>Distance</div>
-                <div className="grid-item" style={{ gridColumn: 1, gridRow: 5 }}>ETA</div>
-                <div className="grid-item" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
-                <div className="grid-item" style={{ gridColumn: 1, gridRow: 8 }}>Accept ride</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 1 }}>Start Address</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 2 }}>Final Address</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 3 }}>Price</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 4 }}>Distance</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 5 }}>ETA</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 8 }}>Accept ride</div>
                 
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
                     {ride.startAddress}
@@ -139,7 +139,7 @@ const PendingRides = () => {
                     {ride.distance} km
                 </div>
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 5 }}>
-                {new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
+                {new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth() + 1}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
                 </div>
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 7 }}>
                     { ride.status }
@@ -157,15 +157,15 @@ const PendingRides = () => {
                 </div>
             ) : (
                 <div className="grid-container">
-                <div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>Customer</div>
-                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>Start Address</div>
-                    <div className="grid-item" style={{ gridColumn: 3, gridRow: 1 }}>Final Address</div>
-                    <div className="grid-item" style={{ gridColumn: 4, gridRow: 1 }}>Price</div>
-                    <div className="grid-item" style={{ gridColumn: 5, gridRow: 1 }}>Distance</div>
-                    <div className="grid-item" style={{ gridColumn: 6, gridRow: 1 }}>Requested at</div>
-                    <div className="grid-item" style={{ gridColumn: 7, gridRow: 1 }}>Pickup Time</div>
-                    <div className="grid-item" style={{ gridColumn: 8, gridRow: 1 }}>Status</div>
-                    <div className="grid-item" style={{ gridColumn: 9, gridRow: 1 }}>Accept ride</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 1 }}>Customer</div>
+                    <div className="grid-item header" style={{ gridColumn: 2, gridRow: 1 }}>Start Address</div>
+                    <div className="grid-item header" style={{ gridColumn: 3, gridRow: 1 }}>Final Address</div>
+                    <div className="grid-item header" style={{ gridColumn: 4, gridRow: 1 }}>Price</div>
+                    <div className="grid-item header" style={{ gridColumn: 5, gridRow: 1 }}>Distance</div>
+                    <div className="grid-item header" style={{ gridColumn: 6, gridRow: 1 }}>Requested at</div>
+                    <div className="grid-item header" style={{ gridColumn: 7, gridRow: 1 }}>Pickup Time</div>
+                    <div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>Status</div>
+                    <div className="grid-item header" style={{ gridColumn: 9, gridRow: 1 }}>Accept ride</div>
 
                     {rides.map((ride, index) => (
                         <React.Fragment key={ride.id}>
@@ -185,7 +185,7 @@ const PendingRides = () => {
                                 {ride.distance} km
                             </div>
                             <div className="grid-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
-                            {new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth()}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
+                            {new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth() + 1}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
                             </div>
                             <div className="grid-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
                                 {ride.pickUpTime} min

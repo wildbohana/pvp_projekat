@@ -51,6 +51,12 @@ const CreateRide = () => {
 
     // RequestRide
     const handleRideRequest = async () => {
+        if (startAddress === '' || finalAddress === '')
+        {
+            //toast("Please fill out both fields.");
+            return;
+        }
+
         try {
             const request = {
                 StartAddress: startAddress,
@@ -105,31 +111,33 @@ const CreateRide = () => {
             {!isCustomerBusy ? (
                 <div className="grid-container-narrow">
                     <h2>Create New Ride</h2>
-                    <input
-                        type="text"
-                        placeholder="Start Address"
-                        value={startAddress}
-                        onChange={(e) => setStartAddress(e.target.value)}
-                        required 
-                    />
-                    <input
-                        type="text"
-                        placeholder="End Address"
-                        value={finalAddress}
-                        onChange={(e) => setFinalAddress(e.target.value)}
-                        required 
-                    />
-                    <button className="action-button-narrow" onClick={handleRideRequest}>Order</button>
+                    <form className="new-ride-form">
+                        <input
+                            type="text"
+                            placeholder="Start Address"
+                            value={startAddress}
+                            onChange={(e) => setStartAddress(e.target.value)}
+                            required 
+                        />
+                        <input
+                            type="text"
+                            placeholder="End Address"
+                            value={finalAddress}
+                            onChange={(e) => setFinalAddress(e.target.value)}
+                            required 
+                        />
+                        <button className="action-button-narrow" onClick={handleRideRequest}>Order</button>
+                    </form>
                 </div>
             ) : (
                 <div className="grid-container-narrow">
-                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 1 }}>Start Address</div>
-                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 2 }}>Final Address</div>
-                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 3 }}>Price</div>
-                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 4 }}>Distance</div>
-                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 5 }}>ETA</div>
-                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
-                    <div className="grid-item" style={{ gridColumn: 1, gridRow: 8 }}>Accept ride</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 1 }}>Start Address</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 2 }}>Final Address</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 3 }}>Price</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 4 }}>Distance</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 5 }}>ETA</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 8 }}>Accept ride</div>
                  
                     <div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
                         {ride.startAddress}
@@ -144,7 +152,7 @@ const CreateRide = () => {
                         {ride.distance} km
                     </div>
                     <div className="grid-item" style={{ gridColumn: 2, gridRow: 5 }}>
-                    {new Date(ride.estimatedArrivalTime).getDate()}/{new Date(ride.estimatedArrivalTime).getMonth()}/{new Date(ride.estimatedArrivalTime).getFullYear()} {new Date(ride.estimatedArrivalTime).getHours()}:{new Date(ride.estimatedArrivalTime).getMinutes()}
+                    {new Date(ride.estimatedArrivalTime).getDate()}/{new Date(ride.estimatedArrivalTime).getMonth() + 1}/{new Date(ride.estimatedArrivalTime).getFullYear()} {new Date(ride.estimatedArrivalTime).getHours()}:{new Date(ride.estimatedArrivalTime).getMinutes()}
                     </div>
                     <div className="grid-item" style={{ gridColumn: 2, gridRow: 7 }}>
                         { ride.status }

@@ -5,7 +5,7 @@
 	padding: 50px;
 	border-radius: 10px;
 	width: 50%;
-	margin: 100px auto;
+	margin: 20px auto;
 	border: 2px solid #1cc49d;
 }
   
@@ -47,8 +47,8 @@
 	font-size: 1rem;
 	color: white;
 }
-  
-button {
+
+.rate-button {
 	font-size: 1.2rem;
 	color: white;
     background-color: #af5ca8;
@@ -58,7 +58,7 @@ button {
 	cursor: pointer;
 }
   
-button:hover {
+.rate-button:hover {
 	color: darkmagenta;
     background-color: plum;
 }

@@ -44,7 +44,7 @@ const RateRide = () => {
                     </span>
                 ))}
             </div>
-            <button onClick={handleSubmitRating}>Submit Rating</button>
+            <button onClick={handleSubmitRating} className='rate-button'>Submit Rating</button>
         </div>
     );
 };
