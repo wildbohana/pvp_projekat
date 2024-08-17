@@ -6,7 +6,7 @@ namespace Common.DTOs
     public class RatingDTO
     {
         [DataMember]
-        public string? RideId { get; set; }
+        public string RideId { get; set; }
         [DataMember]
         public int Rate { get; set; } 
     }

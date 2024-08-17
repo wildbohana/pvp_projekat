@@ -10,7 +10,7 @@ namespace Common.DTOs
         [DataMember]
         public string Username { get; set; }
         [DataMember]
-        public string? ConfirmOldPassword { get; set; }
+        public string ConfirmOldPassword { get; set; }
         [DataMember]
         public string? NewPassword { get; set; }
         [DataMember]

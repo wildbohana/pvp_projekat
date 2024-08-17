@@ -32,10 +32,9 @@ const AllRides = () => {
 				<div className="grid-item header" style={{ gridColumn: 5, gridRow: 1 }}>Price</div>
 				<div className="grid-item header" style={{ gridColumn: 6, gridRow: 1 }}>Distance</div>
 				<div className="grid-item header" style={{ gridColumn: 7, gridRow: 1 }}>Start Time</div>
-				<div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>Pickup Time</div>
-				<div className="grid-item header" style={{ gridColumn: 9, gridRow: 1 }}>Ride Duration</div>
-				<div className="grid-item header" style={{ gridColumn: 10, gridRow: 1 }}>Status</div>
-				<div className="grid-item header" style={{ gridColumn: 11, gridRow: 1 }}>Rating</div>
+				<div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>Arrival Time</div>
+				<div className="grid-item header" style={{ gridColumn: 9, gridRow: 1 }}>Status</div>
+				<div className="grid-item header" style={{ gridColumn: 10, gridRow: 1 }}>Rating</div>
 
 				{rides.map((ride, index) => (
 					<React.Fragment key={ride.id}>
@@ -61,15 +60,12 @@ const AllRides = () => {
 						{new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth() + 1}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 8, gridRow: index + 2 }}>
-							{ride.pickUpTime} min
-						</div>
+						{new Date(ride.arrivalTime).getDate()}/{new Date(ride.arrivalTime).getMonth() + 1}/{new Date(ride.arrivalTime).getFullYear()} {new Date(ride.arrivalTime).getHours()}:{new Date(ride.arrivalTime).getMinutes()}
+						</div>						
 						<div className="grid-item" style={{ gridColumn: 9, gridRow: index + 2 }}>
-							{ride.rideDuration} min
-						</div>
-						<div className="grid-item" style={{ gridColumn: 10, gridRow: index + 2 }}>
 							{ ride.status }
 						</div>
-						<div className="grid-item" style={{ gridColumn: 11, gridRow: index + 2 }}>
+						<div className="grid-item" style={{ gridColumn: 10, gridRow: index + 2 }}>
 							{ ride.rating }
 						</div>
 					</React.Fragment>

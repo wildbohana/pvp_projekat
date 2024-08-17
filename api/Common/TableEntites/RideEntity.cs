@@ -15,15 +15,13 @@ namespace Common.TableEntites
         [DataMember]
         public string FinalAddress { get; set; }
         [DataMember]
-        public double Distance { get; set; }    // u kilometrima
+        public int Distance { get; set; }    // u kilometrima
         [DataMember]
         public int Price { get; set; }
         [DataMember]
-        public int PickUpTime { get; set; }     // u minutama
-        [DataMember]
-        public int RideDuration { get; set; }   // u minutama
-        [DataMember]
         public DateTime StartTime { get; set; }
+        [DataMember]
+        public DateTime ArrivalTime { get; set; }
         [DataMember]
         public ERideStatus Status { get; set; }     // default - Pending
         [DataMember]
@@ -55,9 +53,8 @@ namespace Common.TableEntites
             FinalAddress = ride.FinalAddress;
             Distance = ride.Distance;
             Price = ride.Price;
-            PickUpTime = ride.PickUpTime;
-            RideDuration = ride.RideDuration;
             StartTime = ride.StartTime;
+            ArrivalTime = ride.ArrivalTime;
             Status = ride.Status;
             CustomerId = ride.CustomerId;
             DriverId = ride.DriverId;

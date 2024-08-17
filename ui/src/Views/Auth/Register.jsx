@@ -53,8 +53,8 @@ function Register() {
 			}
 			else
 			{
-				console.log("That email has allready been taken!");
-				toast("That email has allready been taken!");
+				console.log("That email has already been taken!");
+				toast("That email has already been taken!");
 			}
 		} catch (error) {
 			console.error("There was an error!", error);
@@ -101,8 +101,8 @@ function Register() {
 			}
 			else
 			{
-				toast("That email address has allready been taken.");
-				console.log("Email is allready taken.");
+				toast("That email address has already been taken.");
+				console.log("Email is already taken.");
 			}
 		} catch (error) {
 			console.error('Error fetching image or registering user:', error);
@@ -113,7 +113,6 @@ function Register() {
         console.error("Google login failed!", response);
     };
 
-	// TODO  dodati GoogleOAuthProvider? kao u index.js
     return (
 		<GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENTID}>
         <div className="App">

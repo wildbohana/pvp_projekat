@@ -17,8 +17,9 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
+                
                 var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
-
                 if (role == null || !role.Equals(EUserType.Administrator.ToString()))
                 {
                     return Unauthorized("You are not administrator!");
@@ -42,8 +43,9 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
-                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
 
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
                 if (role == null || !role.Equals(EUserType.Administrator.ToString()))
                 {
                     return Unauthorized("You are not administrator!");
@@ -67,8 +69,9 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
+                
                 var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
-
                 if (role == null || !role.Equals(EUserType.Administrator.ToString()))
                 {
                     return Unauthorized("You are not administrator!");
@@ -92,8 +95,9 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
-                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
 
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
                 if (role == null || !role.Equals(EUserType.Administrator.ToString()))
                 {
                     return Unauthorized("You are not administrator!");

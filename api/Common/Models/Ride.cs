@@ -16,15 +16,13 @@ namespace Common.Models
         [DataMember]
         public string FinalAddress { get; set; }
         [DataMember]
-        public double Distance { get; set; }        // u kilometrima
+        public int Distance { get; set; }           // u kilometrima
         [DataMember]
         public int Price { get; set; }
         [DataMember]
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; }     // Prvi unos kada se zatraži vožnja, drugi unos kada vozač započne vožnju
         [DataMember]
-        public int PickUpTime { get; set; }         // u minutama
-        [DataMember]
-        public int RideDuration { get; set; }       // u minutama
+        public DateTime ArrivalTime { get; set; }   // Prvi unos je procenjeno vreme dolaska vozača, drugi unos kada vozač završi vožnju
         [DataMember]
         public ERideStatus Status { get; set; }     // default - Pending
         [DataMember]
@@ -41,27 +39,27 @@ namespace Common.Models
             FinalAddress = entity.FinalAddress;
             Distance = entity.Distance;
             Price = entity.Price;
-            PickUpTime = entity.PickUpTime;
-            RideDuration = entity.RideDuration;
             StartTime = entity.StartTime;
+            ArrivalTime = entity.ArrivalTime;
             Status = entity.Status;
             CustomerId = entity.CustomerId;
             DriverId = entity.DriverId;
             Rating = entity.Rating;
         }
 
-        public Ride(string? startAddress, string? finalAddress, string? customerId)
+        public Ride(string startAddress, string finalAddress, string customerId)
         {
             Random rand = new Random();
+            int waitTime = rand.Next(4, 12);
+            int kilometers = rand.Next(1, 10);
 
             Id = Guid.NewGuid().ToString();
             StartAddress = startAddress;
             FinalAddress = finalAddress;
-            Distance = rand.Next(1, 10);
-            Price = rand.Next(300, 1000);
-            PickUpTime = rand.Next(4, 12);
-            RideDuration = rand.Next(5, 15);
-            StartTime = DateTime.UtcNow.AddMinutes(PickUpTime);    // ažuriraj još jednom kada vozač potvrdi vožnju
+            Distance = kilometers;
+            Price = kilometers * 60;
+            StartTime = DateTime.UtcNow;                           // ažuriraj još jednom kada vozač potvrdi vožnju
+            ArrivalTime = DateTime.UtcNow.AddMinutes(waitTime);    // ažuriraj još jednom kada vozač potvrdi vožnju
             Status = ERideStatus.Pending;
             CustomerId = customerId;
             DriverId = null;

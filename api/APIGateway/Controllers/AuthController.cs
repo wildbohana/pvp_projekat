@@ -8,8 +8,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-// TODO OAuth registracija/login (samo na frontu)
-
 namespace APIGateway.Controllers
 {
     [ApiController]
@@ -57,6 +55,8 @@ namespace APIGateway.Controllers
                 if (temp)
                 {
                     var userType = await proxy.GetUserTypeFromEmail(data.Email);
+                    if (String.IsNullOrEmpty(userType)) return BadRequest("Something's not adding up.");
+
                     var token = GenerateAccessToken(data.Email, userType);
 
                     return Ok(new 
@@ -64,7 +64,6 @@ namespace APIGateway.Controllers
                         AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                         Usertype = userType
                     });
-                    //return Ok(new JwtSecurityTokenHandler().WriteToken(token));
                 }
                 else
                 {

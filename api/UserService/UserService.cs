@@ -106,7 +106,6 @@ namespace UserService
                     }
                 }
             }
-
             return status;
         }
 
@@ -123,7 +122,7 @@ namespace UserService
                 {
                     if (!credentials.Password.Equals(credentials.ConfirmPassword))
                     {
-                        status = false;
+                        return false;
                     }
                     else
                     {
@@ -161,7 +160,6 @@ namespace UserService
                     }
                 }
             }
-
             return status;
         }
         #endregion Auth actions
@@ -199,7 +197,7 @@ namespace UserService
             }
         }
 
-        public async Task<string?> GetUserTypeFromEmail(string email)
+        public async Task<string> GetUserTypeFromEmail(string email)
         {
             using (var tx = StateManager.CreateTransaction())
             {
@@ -209,7 +207,7 @@ namespace UserService
                 {
                     return userResult.Value.UserType.ToString();
                 }
-                return null;
+                return "";
             }
         }
 
@@ -265,7 +263,9 @@ namespace UserService
                         status = false;
                     }
                     // Ako je promenjena i lozinka, ali nije dobro uneta drugi put
-                    else if (!string.IsNullOrEmpty(credentials.ConfirmNewPassword) && !credentials.NewPassword.Equals(credentials.ConfirmNewPassword))
+                    else if (!string.IsNullOrEmpty(credentials.ConfirmNewPassword) 
+                          && !string.IsNullOrEmpty(credentials.NewPassword) 
+                          && !credentials.NewPassword.Equals(credentials.ConfirmNewPassword))
                     {
                         status = false;
                     }
@@ -277,7 +277,7 @@ namespace UserService
                         newUser.Lastname = credentials.Lastname ?? newUser.Lastname;
                         newUser.Address = credentials.Address ?? newUser.Address;
                         newUser.Username = credentials.Username ?? newUser.Username;
-                        newUser.DateOfBirth = credentials.DateOfBirth ?? newUser.DateOfBirth;
+                        //newUser.DateOfBirth = credentials.DateOfBirth ?? newUser.DateOfBirth;
 
                         // Promena lozinke
                         if (!string.IsNullOrEmpty(credentials.ConfirmNewPassword))
@@ -316,6 +316,7 @@ namespace UserService
             return status;
         }
 
+        // Not used
         public async Task<bool> UserExistsAsync(string email)
         {
             bool status = false;
@@ -367,25 +368,21 @@ namespace UserService
 
                 if (!userResult.HasValue)
                 {
-                    status = false;
+                    return false;
                 }
                 else if (userResult.Value.UserType != EUserType.Driver)
                 {
-                    status = false;
+                    return false;
                 }
                 else
                 {
                     var oldUser = userResult.Value;
                     var updatedUser = userResult.Value;
 
-                    if (!oldUser.IsBlocked)
-                    {
+                    if (!oldUser.IsBlocked) 
                         updatedUser.IsBlocked = true;
-                    }
-                    else
-                    {
+                    else 
                         updatedUser.IsBlocked = false;
-                    }
 
                     try
                     {
@@ -414,20 +411,21 @@ namespace UserService
 
                 if (!userResult.HasValue)
                 {
-                    status = false;
+                    return false;
                 }
                 else if (userResult.Value.VerificationStatus != EVerificationStatus.Pending)
                 {
-                    status = false;
+                    return false;
                 }
                 else
                 {
-                    var user = userResult.Value;
-                    user.VerificationStatus = EVerificationStatus.Approved;
+                    var user1 = userResult.Value;
+                    var user2 = userResult.Value;
+                    user2.VerificationStatus = EVerificationStatus.Approved;
 
                     try
                     {
-                        await userDictionary.TryUpdateAsync(tx, driverId, user, user);
+                        await userDictionary.TryUpdateAsync(tx, driverId, user2, user1);
                         await tx.CommitAsync();
                         status = true;
                     }
@@ -458,20 +456,21 @@ namespace UserService
 
                 if (!userResult.HasValue)
                 {
-                    status = false;
+                    return false;
                 }
                 else if (userResult.Value.VerificationStatus != EVerificationStatus.Pending)
                 {
-                    status = false;
+                    return false;
                 }
                 else
                 {
-                    var user = userResult.Value;
-                    user.VerificationStatus = EVerificationStatus.Denied;
+                    var user1 = userResult.Value;
+                    var user2 = userResult.Value;
+                    user2.VerificationStatus = EVerificationStatus.Denied;
 
                     try
                     {
-                        await userDictionary.TryUpdateAsync(tx, driverId, user, user);
+                        await userDictionary.TryUpdateAsync(tx, driverId, user2, user1);
                         await tx.CommitAsync();
                         status = true;
                     }

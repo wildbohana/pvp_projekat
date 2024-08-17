@@ -85,10 +85,10 @@ namespace RideService
         #endregion RunAsync
 
         #region Customer methods
-        public async Task<RideEstimateDTO?> CreateRideRequestAsync(RideNewDTO data, string customerId)
+        public async Task<RideInfoDTO?> CreateRideRequestAsync(RideNewDTO data, string customerId)
         {
             // Ako je korisnik već poslao zahtev, ne može da zahteva novu vožnju
-            RideEstimateDTO pendingRideCheck = await GetRideEstimationForUserAsync(customerId);
+            var pendingRideCheck = await GetRideEstimationForUserAsync(customerId);
             if (pendingRideCheck != null)
             {
                 return null;
@@ -102,34 +102,32 @@ namespace RideService
                 {
                     await rideDictionary.AddAsync(tx, newRide.Id, newRide);
                     await tx.CommitAsync();
-                    return new RideEstimateDTO(newRide);
+                    return new RideInfoDTO(newRide);
                 }
                 catch (Exception)
                 {
                     tx.Abort();
                 }                
             }
-
             return null;
         }
 
-        public async Task<RideEstimateDTO?> GetRideEstimationAsync(string rideId, string customerId)
+        public async Task<RideInfoDTO?> GetRideEstimationAsync(string rideId, string customerId)
         {
             using (var tx = StateManager.CreateTransaction())
             {
                 var rideResult = await rideDictionary.TryGetValueAsync(tx, rideId);
 
-                if (rideResult.HasValue || rideResult.Value.CustomerId.Equals(customerId))
+                if (rideResult.HasValue && rideResult.Value.CustomerId.Equals(customerId))
                 {
-                    RideEstimateDTO rideInfo = new RideEstimateDTO(rideResult.Value);
+                    RideInfoDTO rideInfo = new RideInfoDTO(rideResult.Value);
                     return rideInfo;
                 }
-
-                return null;
             }
+            return null;
         }
 
-        public async Task<RideEstimateDTO?> GetRideEstimationForUserAsync(string customerId)
+        public async Task<RideInfoDTO?> GetRideEstimationForUserAsync(string customerId)
         {
             using (var tx = StateManager.CreateTransaction())
             {
@@ -140,12 +138,11 @@ namespace RideService
                     var tmp = enumerator.Current.Value;
                     if (tmp.Status != ERideStatus.Completed && tmp.Status != ERideStatus.DeletedByCustomer && tmp.CustomerId.Equals(customerId))
                     {
-                        var ride = new RideEstimateDTO(tmp);
+                        var ride = new RideInfoDTO(tmp);
                         return ride;
                     }
                 }
             }
-
             return null;
         }
 
@@ -180,7 +177,6 @@ namespace RideService
                     }
                 }
             }
-            
             return status;
         }
 
@@ -215,12 +211,9 @@ namespace RideService
                     }
                 }
             }
-
             return status;
         }
 
-        // Na frontu prikazati listu gotovih vožnji, i pored njih dugme "OCENI"
-        // Ako je vožnja već ocenjena, prikazati ocenu (ili broj zvezdica, svejedno)
         public async Task<IEnumerable<RideInfoDTO>> GetPreviousRidesCustomerAsync(string customerId)
         {
             var rides = new List<RideInfoDTO>();
@@ -238,7 +231,6 @@ namespace RideService
                     }
                 }
             }
-
             return rides;
         }
         #endregion Customer methods
@@ -258,9 +250,13 @@ namespace RideService
 
                     if (rideResult.Value.Status == ERideStatus.ConfirmedByCustomer && String.IsNullOrEmpty(rideResult.Value.DriverId))
                     {
+                        Random rand = new Random();
+                        int rideDuration = rand.Next(4, 12);
+
                         var acceptedRide = ride;
                         acceptedRide.Status = ERideStatus.InProgress;
                         acceptedRide.StartTime = DateTime.UtcNow;
+                        acceptedRide.ArrivalTime = DateTime.UtcNow.AddMinutes(rideDuration);
                         acceptedRide.DriverId = driverId;
 
                         try
@@ -277,7 +273,6 @@ namespace RideService
                     }
                 }
             }
-
             return status;
         }
 
@@ -298,6 +293,7 @@ namespace RideService
                     {
                         var completedRide = ride;
                         completedRide.Status = ERideStatus.Completed;
+                        completedRide.ArrivalTime = DateTime.UtcNow;
 
                         try
                         {
@@ -313,7 +309,6 @@ namespace RideService
                     }
                 }
             }
-
             return status;
         }
 
@@ -327,14 +322,14 @@ namespace RideService
                 {
                     var tmp = enumerator.Current.Value;
                     if (String.IsNullOrEmpty(tmp.DriverId)) continue;
-                    if (tmp.Status != ERideStatus.Completed && tmp.DriverId.Equals(driverId))
+
+                    if (tmp.Status != ERideStatus.Completed && tmp.Status != ERideStatus.DeletedByCustomer && tmp.DriverId.Equals(driverId))
                     {
                         var ride = new RideInfoDTO(tmp);
                         return ride;
                     }
                 }
             }
-
             return null;
         }
 
@@ -355,7 +350,6 @@ namespace RideService
                     }
                 }
             }
-
             return rides;
         }
 
@@ -370,13 +364,12 @@ namespace RideService
                 while (await enumerator.MoveNextAsync(CancellationToken.None))
                 {
                     var tmp = enumerator.Current.Value;
-                    if (tmp.Status == ERideStatus.Completed && tmp.DriverId.Equals(driverId))
+                    if (tmp.Status == ERideStatus.Completed && !String.IsNullOrEmpty(tmp.DriverId) && tmp.DriverId.Equals(driverId))
                     {
                         rides.Add(new RideInfoDTO(tmp));
                     }
                 }
             }
-
             return rides;
         }
         #endregion Driver methods
@@ -395,9 +388,8 @@ namespace RideService
 
                     return rideInfo;
                 }
-
-                return null;
             }
+            return null;
         }
 
         public async Task<IEnumerable<RideInfoDTO>> GetAllRidesAdminAsync()
@@ -415,7 +407,6 @@ namespace RideService
                     rides.Add(ride);
                 }
             }
-
             return rides;
         }
         #endregion Admin methods

@@ -37,11 +37,21 @@ const MyRides = () => {
 					Price
 				</div>
 				<div className="grid-item header" style={{ gridColumn: 4, gridRow: 1 }}>
-					Delivery Time
+					Start Time
 				</div>
 				<div className="grid-item header" style={{ gridColumn: 5, gridRow: 1 }}>
+					Arrival Time
+				</div>
+				<div className="grid-item header" style={{ gridColumn: 6, gridRow: 1 }}>
 					Status
 				</div>
+				<div className="grid-item header" style={{ gridColumn: 7, gridRow: 1 }}>
+					Customer
+				</div>
+				<div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>
+					Rate
+				</div>
+
 				{rides.map((ride, index) => (
 					<React.Fragment key={ride.id}>
 						<div className="grid-item" style={{ gridColumn: 1, gridRow: index + 2 }}>
@@ -57,7 +67,16 @@ const MyRides = () => {
 						{new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth() + 1}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 5, gridRow: index + 2 }}>
+						{new Date(ride.arrivalTime).getDate()}/{new Date(ride.arrivalTime).getMonth() + 1}/{new Date(ride.arrivalTime).getFullYear()} {new Date(ride.arrivalTime).getHours()}:{new Date(ride.arrivalTime).getMinutes()}
+						</div>
+						<div className="grid-item" style={{ gridColumn: 6, gridRow: index + 2 }}>
 							{ ride.status }
+						</div>
+						<div className="grid-item" style={{ gridColumn: 7, gridRow: index + 2 }}>
+							{ ride.customerId }
+						</div>
+						<div className="grid-item" style={{ gridColumn: 8, gridRow: index + 2 }}>
+							{ ride.rating }
 						</div>
 					</React.Fragment>
 				))}

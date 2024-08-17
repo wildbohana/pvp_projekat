@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { 
     NewRideRequestAsync, 
-    GetRideEstimateAsync, 
     GetRideEstimateUserAsync, 
     ConfirmRideRequestAsync, 
     DeleteRideRequestAsync 
@@ -135,7 +134,7 @@ const CreateRide = () => {
                     <div className="grid-item header" style={{ gridColumn: 1, gridRow: 2 }}>Final Address</div>
                     <div className="grid-item header" style={{ gridColumn: 1, gridRow: 3 }}>Price</div>
                     <div className="grid-item header" style={{ gridColumn: 1, gridRow: 4 }}>Distance</div>
-                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 5 }}>ETA</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 5 }}>Driver arrival</div>
                     <div className="grid-item header" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
                     <div className="grid-item header" style={{ gridColumn: 1, gridRow: 8 }}>Accept ride</div>
                  
@@ -152,7 +151,7 @@ const CreateRide = () => {
                         {ride.distance} km
                     </div>
                     <div className="grid-item" style={{ gridColumn: 2, gridRow: 5 }}>
-                    {new Date(ride.estimatedArrivalTime).getDate()}/{new Date(ride.estimatedArrivalTime).getMonth() + 1}/{new Date(ride.estimatedArrivalTime).getFullYear()} {new Date(ride.estimatedArrivalTime).getHours()}:{new Date(ride.estimatedArrivalTime).getMinutes()}
+                    {new Date(ride.arrivalTime).getDate()}/{new Date(ride.arrivalTime).getMonth() + 1}/{new Date(ride.arrivalTime).getFullYear()} {new Date(ride.arrivalTime).getHours()}:{new Date(ride.arrivalTime).getMinutes()}
                     </div>
                     <div className="grid-item" style={{ gridColumn: 2, gridRow: 7 }}>
                         { ride.status }

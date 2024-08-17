@@ -19,9 +19,7 @@ namespace Common.DTOs
         [DataMember]
         public DateTime StartTime { get; set; }
         [DataMember]
-        public int PickUpTime { get; set; }     // u minutama
-        [DataMember]
-        public int RideDuration { get; set; }   // u minutama
+        public DateTime ArrivalTime { get; set; }
         [DataMember]
         public string Status { get; set; }     // default - Pending
         [DataMember]
@@ -38,9 +36,8 @@ namespace Common.DTOs
             FinalAddress = ride.FinalAddress;
             Distance = ride.Distance;
             Price = ride.Price;
-            PickUpTime = ride.PickUpTime;
-            RideDuration = ride.RideDuration;
             StartTime = ride.StartTime;
+            ArrivalTime = ride.ArrivalTime;
             Status = ride.Status.ToString();
             CustomerId = ride.CustomerId;
             DriverId = ride.DriverId;

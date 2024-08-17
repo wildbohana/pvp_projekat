@@ -222,14 +222,16 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
+                
                 var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
-                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
-
                 if (role == null || !role.Equals(EUserType.Driver.ToString()))
                 {
                     return BadRequest("You are not a driver!");
                 }
-                else if (emailFromToken == null)
+
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+                if (emailFromToken == null)
                 {
                     return Unauthorized();
                 }
@@ -240,7 +242,7 @@ namespace APIGateway.Controllers
 
                 if (!verified || blocked)
                 {
-                    return Unauthorized();
+                    return BadRequest("This account isn't verified, or it's been blocked by administrator.");
                 }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
@@ -261,14 +263,16 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
+                
                 var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
-                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
-
                 if (role == null || !role.Equals(EUserType.Driver.ToString()))
                 {
                     return BadRequest("You are not driver!");
                 }
-                else if (emailFromToken == null)
+                
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+                if (emailFromToken == null)
                 {
                     return Unauthorized();
                 }
@@ -291,14 +295,16 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
-                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
-                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
 
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
                 if (role == null || !role.Equals(EUserType.Driver.ToString()))
                 {
                     return BadRequest("You are not a  driver!");
                 }
-                else if (emailFromToken == null)
+
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+                if (emailFromToken == null)
                 {
                     return Unauthorized();
                 }
@@ -309,7 +315,7 @@ namespace APIGateway.Controllers
 
                 if (!verified || blocked)
                 {
-                    return Unauthorized();
+                    return BadRequest("This account isn't verified, or it's been blocked by administrator.");
                 }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
@@ -330,14 +336,16 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
-                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
-                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
 
+                var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
                 if (role == null || !role.Equals(EUserType.Driver.ToString()))
                 {
                     return BadRequest("You are not a driver!");
                 }
-                else if (emailFromToken == null)
+
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+                if (emailFromToken == null)
                 {
                     return Unauthorized();
                 }
@@ -360,22 +368,26 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
+                
                 var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
-                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
-
                 if (role == null || !role.Equals(EUserType.Driver.ToString()))
                 {
                     return BadRequest("You are not a driver!");
                 }
-                else if (emailFromToken == null)
+
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+                if (emailFromToken == null)
                 {
                     return Unauthorized();
                 }
 
                 IUserService proxyUser = ServiceProxy.Create<IUserService>(new Uri("fabric:/api/UserService"), new ServicePartitionKey(1));
                 var verified = await proxyUser.IsDriverVerifiedCheckAsync(emailFromToken);
-
-                if (!verified) return Unauthorized();
+                if (!verified)
+                {
+                    return Unauthorized();
+                }
 
                 IRideService proxy = ServiceProxy.Create<IRideService>(new Uri("fabric:/api/RideService"), new ServicePartitionKey(1));
                 var temp = await proxy.GetPreviousRidesDriverAsync(emailFromToken);
@@ -396,8 +408,9 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
+                
                 var role = claimsIdentity.FindFirst(ClaimTypes.Role)?.Value;
-
                 if (role == null || !role.Equals(EUserType.Administrator.ToString()))
                 {
                     return Unauthorized("You are not admin!");

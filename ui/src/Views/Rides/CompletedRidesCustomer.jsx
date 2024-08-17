@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 
 import '../../Assets/Rides.css';
 
-import { Ride } from '../../Models/Ride';
 import { GetPreviousRidesCustomerAsync } from '../../Services/rideService';
 
 const CompletedRides = () => {
@@ -36,9 +35,10 @@ const CompletedRides = () => {
 				<div className="grid-item header" style={{ gridColumn: 4, gridRow: 1 }}>Final Address</div>
 				<div className="grid-item header" style={{ gridColumn: 5, gridRow: 1 }}>Price</div>
 				<div className="grid-item header" style={{ gridColumn: 6, gridRow: 1 }}>Distance</div>
-				<div className="grid-item header" style={{ gridColumn: 7, gridRow: 1 }}>Requested at</div>
-				<div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>Status</div>
-				<div className="grid-item header" style={{ gridColumn: 9, gridRow: 1 }}>Rate ride</div>
+				<div className="grid-item header" style={{ gridColumn: 7, gridRow: 1 }}>Start time</div>
+				<div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>Arrival time</div>
+				<div className="grid-item header" style={{ gridColumn: 9, gridRow: 1 }}>Status</div>
+				<div className="grid-item header" style={{ gridColumn: 10, gridRow: 1 }}>Rate ride</div>
 
 				{rides.map((ride, index) => (
 					<React.Fragment key={ride.id}>
@@ -64,9 +64,12 @@ const CompletedRides = () => {
 						{new Date(ride.startTime).getDate()}/{new Date(ride.startTime).getMonth() + 1}/{new Date(ride.startTime).getFullYear()} {new Date(ride.startTime).getHours()}:{new Date(ride.startTime).getMinutes()}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 8, gridRow: index + 2 }}>
-							{ ride.status }
+						{new Date(ride.arrivalTime).getDate()}/{new Date(ride.arrivalTime).getMonth() + 1}/{new Date(ride.arrivalTime).getFullYear()} {new Date(ride.arrivalTime).getHours()}:{new Date(ride.arrivalTime).getMinutes()}
 						</div>
 						<div className="grid-item" style={{ gridColumn: 9, gridRow: index + 2 }}>
+							{ ride.status }
+						</div>
+						<div className="grid-item" style={{ gridColumn: 10, gridRow: index + 2 }}>
 							{ ride.rating === 0 ? (
 								<button className="action-button" onClick={() => navigate(`/user/rate-ride/${ride.id}`)}>Rate ride</button>
 							) : (

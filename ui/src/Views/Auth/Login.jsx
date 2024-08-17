@@ -84,6 +84,7 @@ function Login() {
 	};
     
 	return (
+		<GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENTID}>
 		<div className="App">
 		<div className="auth-form-container">
 			<h2>Login</h2>
@@ -107,6 +108,7 @@ function Login() {
 			<button className="link-btn" onClick={navigateToRegister}>Don't have an account? Register here.</button>
 		</div>
 		</div>
+		</GoogleOAuthProvider>
 	)
 }
 

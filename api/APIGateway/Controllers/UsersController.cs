@@ -17,8 +17,9 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
-                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
                 
+                var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
                 if (emailFromToken == null)
                 {
                     return Unauthorized();
@@ -42,8 +43,9 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
+                
                 var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
-
                 if (emailFromToken == null || !emailFromToken.Equals(data.Email))
                 {
                     return Unauthorized();
@@ -67,8 +69,9 @@ namespace APIGateway.Controllers
             try
             {
                 var claimsIdentity = this.User.Identity as ClaimsIdentity;
+                if (claimsIdentity == null) return Unauthorized("You need to log in.");
+                
                 var emailFromToken = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value;
-
                 if (emailFromToken == null)
                 {
                     return Unauthorized();

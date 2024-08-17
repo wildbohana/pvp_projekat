@@ -75,7 +75,6 @@ button {
 }
   
 .google-button-container {
-	margin-bottom: 20px; 
-	margin-top: 20px;
+	margin: 20px 30px 0px 30px;
 	border-radius: 10px;
 }
