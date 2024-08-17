@@ -66,35 +66,27 @@ function Register() {
 		navigate('/login');
 	};
     
-	// TODO promeni da odgovara mom
 	const handleGoogleSuccess = async (response) => {
 		const { email, name, picture } = jwtDecode(response.credential);
-		console.log(jwtDecode(response.credential));
+		//console.log(jwtDecode(response.credential));
 
 		try {
-			// Fetch the image data as array buffer
-			const imageResponse = await axios.get(picture, {
-				responseType: 'arraybuffer',
-			});
-	
-			// Convert array buffer to base64 string with header
-			const base64Image = arrayBufferToBase64(imageResponse.data, 'image/jpeg');
-			
 			const fullName = name.trim().split(' ');
 			const firstName = fullName[0];
-			const lastName = fullName.length > 1 ? fullName[fullName.length - 1] : '';
+			const lastName = fullName.length > 1 ? fullName[fullName.length - 1] : '/';
 
 			const userData = {
 				Email: email,
 				Password: "123",
 				ConfirmPassword: "123",
-				Username: fullName,
+				Username: firstName,
 				Firstname: firstName,
 				Lastname: lastName,
-				DateOfBirth: "01-01-1999",		// TODO get from OAuth
+				DateOfBirth: "01-01-1999",
 				Address: "/",
 				Role: "Customer",
-				PhotoUrl: base64Image,  // Assign base64 encoded image data with header
+				PhotoUrl: "",  
+				// https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=
 			};
 
 			console.log(userData);
@@ -102,25 +94,19 @@ function Register() {
 			// Make a POST request to your backend API
 			const response1 = await RegisterAsync(userData);
 			console.log(response1.data);
-	
-			// Optionally navigate or handle success
-			navigate("/login");
-	
+
+			if (response1.data)
+			{
+				navigate("/login");
+			}
+			else
+			{
+				toast("That email address has allready been taken.");
+				console.log("Email is allready taken.");
+			}
 		} catch (error) {
 			console.error('Error fetching image or registering user:', error);
 		}
-	};
-	
-	// Function to convert array buffer to base64 string with header
-	const arrayBufferToBase64 = (buffer, mimeType) => {
-		let binary = '';
-		const bytes = new Uint8Array(buffer);
-		const len = bytes.byteLength;
-		for (let i = 0; i < len; i++) {
-			binary += String.fromCharCode(bytes[i]);
-		}
-		const base64String = btoa(binary);
-		return `data:${mimeType};base64,${base64String}`;
 	};
 	
     const handleGoogleFailure = (response) => {
@@ -129,6 +115,7 @@ function Register() {
 
 	// TODO  dodati GoogleOAuthProvider? kao u index.js
     return (
+		<GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENTID}>
         <div className="App">
 		<div className="auth-form-container">
 			<h1>Register</h1>
@@ -169,7 +156,6 @@ function Register() {
 				<button type="submit" className="auth-button">Register</button>
 			</form>
 
-			{/*
 			<div className="google-button-container">
 				<GoogleLogin
 					onSuccess={handleGoogleSuccess}
@@ -177,12 +163,13 @@ function Register() {
 					buttonText="Register with Google"
 				/>
 			</div>
-			*/}
 
 			<button className="link-btn" onClick={navigateToLogin}>Already have an account? Login here.</button>
 
 		</div>
 		</div>
+		</GoogleOAuthProvider>
+
     );
 };
 

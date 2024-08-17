@@ -51,21 +51,23 @@ function Login() {
 		try {
 			const loginData = {
 				Email: email,
-				Password: "/"
+				Password: "123"
 			};
 
-			await LoginAsync(loginData)
-				.then(response => {
-					const token = response.data;
-					Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
-					localStorage.setItem('currentUser', email);
-					navigate('/');
-				})
-				.catch(error => {
-					console.error('Error during login:', error);
-					alert('You must register first.');
-				});
-
+			const response = await LoginAsync(loginData);
+			if (response.status === 200)
+			{
+				const token = response.data.accessToken;
+				const userType = response.data.usertype;
+				Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
+				localStorage.setItem('usertype', userType);
+				navigate('/');
+			}
+			else
+			{
+				console.error('Error during login');
+				alert('You must register first.');
+			}
 			// Optionally navigate or handle success
 			//navigate("/login");
 		} catch (error) {
@@ -93,7 +95,6 @@ function Login() {
 				<button type="submit" className="auth-button">Log In</button>
 			</form>
 
-			{/**
 			<div className="google-button-container">
 				<GoogleLogin
 					onSuccess={handleGoogleSuccess}
@@ -101,7 +102,7 @@ function Login() {
 					buttonText="Register with Google"
 				/>
             </div>
-			*/}
+			
 
 			<button className="link-btn" onClick={navigateToRegister}>Don't have an account? Register here.</button>
 		</div>
