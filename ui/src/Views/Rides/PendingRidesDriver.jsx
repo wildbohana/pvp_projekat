@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Countdown from 'react-countdown';
 
 import '../../Assets/Rides.css';
 
@@ -20,6 +21,7 @@ const PendingRides = () => {
     const [isDriverBusy, setIsDriverBusy] = useState(false);
     const [ride, setActiveRide] = useState();
     const navigate = useNavigate();
+    const Completionist = () => <span>Better hurry up!</span>;
 
     useEffect(() => {
         fetchAcceptedRide();
@@ -112,6 +114,7 @@ const PendingRides = () => {
 
     return (
         <div>
+            {/* Kada vozač ima aktivnu vožnju */}
             {isDriverBusy ? (
                 <div className="grid-container-narrow">
                 <div className="grid-item header" style={{ gridColumn: 1, gridRow: 1 }}>Start Address</div>
@@ -121,7 +124,8 @@ const PendingRides = () => {
                 <div className="grid-item header" style={{ gridColumn: 1, gridRow: 5 }}>Start time</div>
                 <div className="grid-item header" style={{ gridColumn: 1, gridRow: 6 }}>Expected arrival</div>
                 <div className="grid-item header" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
-                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 8 }}>Ride action</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 8 }}>Countdown</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 9 }}>Ride action</div>
                 
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
                     {ride.startAddress}
@@ -144,8 +148,12 @@ const PendingRides = () => {
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 7 }}>
                     { ride.status }
                 </div>
-
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 8 }}>
+                    <Countdown date={ride.arrivalTime}>
+                        <Completionist />
+                    </Countdown>
+                </div>
+                <div className="grid-item" style={{ gridColumn: 2, gridRow: 9 }}>
                     { ride.status === 'InProgress' ? ( 
                         <button onClick={() => completeRide()} className="action-button-table">
                             Complete Ride

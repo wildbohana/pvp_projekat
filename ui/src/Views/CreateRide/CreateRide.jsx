@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Countdown from 'react-countdown';
+
 import { 
     NewRideRequestAsync, 
     GetRideEstimateUserAsync, 
@@ -16,6 +18,7 @@ const CreateRide = () => {
     const [isCustomerBusy, setIsCustomerBusy] = useState(false);
     const [ride, setRideRequest] = useState(null);
     const navigate = useNavigate();
+    const Completionist = () => <span>Sorry, it's taking a bit longer!</span>;
 
     useEffect(() => {
         fetchAcceptedRide();
@@ -23,6 +26,7 @@ const CreateRide = () => {
     
     const fetchAcceptedRide = async () => {
         try {
+            //localStorage.removeItem('requestedRide');
             const response = await GetRideEstimateUserAsync();
             if (response.data)
             {
@@ -100,9 +104,16 @@ const CreateRide = () => {
             toast("Error deleting request!");
         }
     };
-    
+
+    const refreshRide = async () => {
+        localStorage.removeItem('requestedRide');
+        fetchAcceptedRide();
+        //window.location.reload();
+    };
+
     return (
         <div>
+            {/* If customer hasn't made ride request */}
             {!isCustomerBusy ? (
                 <div className="grid-container-narrow">
                     <h2>Create New Ride</h2>
@@ -132,7 +143,8 @@ const CreateRide = () => {
                     <div className="grid-item header" style={{ gridColumn: 1, gridRow: 4 }}>Distance</div>
                     <div className="grid-item header" style={{ gridColumn: 1, gridRow: 5 }}>Driver arrival</div>
                     <div className="grid-item header" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
-                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 8 }}>Ride action</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 8 }}>Countdown</div>
+                    <div className="grid-item header" style={{ gridColumn: 1, gridRow: 9 }}>Ride action</div>
                  
                     <div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
                         {ride.startAddress}
@@ -152,8 +164,12 @@ const CreateRide = () => {
                     <div className="grid-item" style={{ gridColumn: 2, gridRow: 7 }}>
                         { ride.status }
                     </div>
-
                     <div className="grid-item" style={{ gridColumn: 2, gridRow: 8 }}>
+                        <Countdown date={ride.arrivalTime}>
+                            <Completionist />
+                        </Countdown>
+                    </div>
+                    <div className="grid-item" style={{ gridColumn: 2, gridRow: 9 }}>
                         { ride.status === 'Pending' ? ( 
                             <div>
                                 <button onClick={() => confirmRide()} className="action-button-narrow-two">
@@ -164,7 +180,9 @@ const CreateRide = () => {
                                 </button>
                             </div>
                         ) : (
-                            <span>/</span>
+                            <button onClick={() => refreshRide()} className="action-button-narrow">
+                                Refresh
+                            </button>
                         )}
                     </div>
                 </div>
