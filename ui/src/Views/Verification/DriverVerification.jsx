@@ -122,14 +122,14 @@ export default function DriverVerification() {
 							<div className="display-vertical" >
 								<button
 									onClick={() => handleVerifyApprove(driver.email)}
-									disabled = {driver.verificationStatus === 'Approved'}
-									className={driver.verificationStatus === 'Approved' ? "verify-button-disabled" : "verify-button"}>
+									disabled = {driver.verificationStatus === 'Approved' || driver.verificationStatus === 'Denied' }
+									className={driver.verificationStatus === 'Approved' || driver.verificationStatus === 'Denied' ? "verify-button-disabled" : "verify-button"}>
 									Verify
 								</button>
 								<button
 									onClick={() => handleVerifyDeny(driver.email)}
-									disabled = {driver.verificationStatus === 'Approved'}
-									className={driver.verificationStatus === 'Approved' ? "verify-button-disabled" : "verify-button"}>
+									disabled = {driver.verificationStatus === 'Approved' || driver.verificationStatus === 'Denied' }
+									className={driver.verificationStatus === 'Approved' || driver.verificationStatus === 'Denied' ? "verify-button-disabled" : "verify-button"}>
 									Deny
 								</button>
 							</div>

@@ -55,7 +55,11 @@ function MyProfile() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            console.log(profile);
+            if (profile.NewPassword !== profile.ConfirmNewPassword) {
+                console.log("New password doesn't match confimed new password.");
+                toast("New passwords don't match.");
+                return;
+            }
 
             Object.keys(profile).forEach(field => {
                 if (profile[field] === '' || profile[field] === undefined) {
@@ -63,7 +67,6 @@ function MyProfile() {
                 }
             })
 
-            console.log(profile);
             const response = await UpdateUserAsync(profile);
             if (response.status === 200) {
                 toast("Profile updated successfully");
@@ -93,7 +96,6 @@ function MyProfile() {
 
     return (	
         <div className="profile-container">
-            {/* <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} /> */}
             <h1>Edit Profile</h1>
             <form onSubmit={handleSubmit} className="profile-form">
                 {Object.entries(labelMap).map(([labelKey, labelValue]) => (

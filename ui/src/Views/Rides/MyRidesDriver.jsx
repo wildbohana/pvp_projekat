@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import '../../Assets/Rides.css';
@@ -27,30 +26,14 @@ const MyRides = () => {
     return (
         <div>
 			 <div className="grid-container">
-				<div className="grid-item header" style={{ gridColumn: 1, gridRow: 1 }}>
-					Start Address
-				</div>
-				<div className="grid-item header" style={{ gridColumn: 2, gridRow: 1 }}>
-					Final Address
-				</div>
-				<div className="grid-item header" style={{ gridColumn: 3, gridRow: 1 }}>
-					Price
-				</div>
-				<div className="grid-item header" style={{ gridColumn: 4, gridRow: 1 }}>
-					Start Time
-				</div>
-				<div className="grid-item header" style={{ gridColumn: 5, gridRow: 1 }}>
-					Arrival Time
-				</div>
-				<div className="grid-item header" style={{ gridColumn: 6, gridRow: 1 }}>
-					Status
-				</div>
-				<div className="grid-item header" style={{ gridColumn: 7, gridRow: 1 }}>
-					Customer
-				</div>
-				<div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>
-					Rate
-				</div>
+				<div className="grid-item header" style={{ gridColumn: 1, gridRow: 1 }}>Start Address</div>
+				<div className="grid-item header" style={{ gridColumn: 2, gridRow: 1 }}>Final Address</div>
+				<div className="grid-item header" style={{ gridColumn: 3, gridRow: 1 }}>Price</div>
+				<div className="grid-item header" style={{ gridColumn: 4, gridRow: 1 }}>Start Time</div>
+				<div className="grid-item header" style={{ gridColumn: 5, gridRow: 1 }}>Arrival Time</div>
+				<div className="grid-item header" style={{ gridColumn: 6, gridRow: 1 }}>Status</div>
+				<div className="grid-item header" style={{ gridColumn: 7, gridRow: 1 }}>Customer</div>
+				<div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>Rate</div>
 
 				{rides.map((ride, index) => (
 					<React.Fragment key={ride.id}>

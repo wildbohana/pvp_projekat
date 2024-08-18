@@ -22,24 +22,20 @@ function Login() {
 			Password: password
 		};
 
-		try 
-		{
+		try {
 			const response = await LoginAsync(loginData);
-			if (response.status === 200)
-			{
+			if (response.status === 200) {
 				const token = response.data.accessToken;
 				const userType = response.data.usertype;
 				Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
 				localStorage.setItem('usertype', userType);
 				navigate('/');
 			}
-			else
-			{
+			else {
 				toast("Wrong credentials!");
 			}
 		}
-		catch (error)
-		{
+		catch (error) {
 			console.log(error.message);
 			toast(error.message);
 		}
@@ -55,21 +51,17 @@ function Login() {
 			};
 
 			const response = await LoginAsync(loginData);
-			if (response.status === 200)
-			{
+			if (response.status === 200) {
 				const token = response.data.accessToken;
 				const userType = response.data.usertype;
-				Cookies.set('jwt-token', token, { expires: 7, secure: true, sameSite: 'Strict' });
+				Cookies.set('jwt-token', token, { expires: 60, secure: true, sameSite: 'Strict' });
 				localStorage.setItem('usertype', userType);
-				navigate('/');
+				navigate('/login');
 			}
-			else
-			{
+			else {
 				console.error('Error during login');
 				alert('You must register first.');
 			}
-			// Optionally navigate or handle success
-			//navigate("/login");
 		} catch (error) {
 			console.error('Error fetching image or registering user:', error);
 		}
@@ -77,7 +69,6 @@ function Login() {
 	const handleGoogleFailure = (response) => {
         console.error("Google login failed!", response);
     };
-
 
 	const navigateToRegister = () => {
 		navigate('/register');
@@ -102,8 +93,7 @@ function Login() {
 					onFailure={handleGoogleFailure}
 					buttonText="Register with Google"
 				/>
-            </div>
-			
+            </div>			
 
 			<button className="link-btn" onClick={navigateToRegister}>Don't have an account? Register here.</button>
 		</div>

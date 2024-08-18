@@ -71,7 +71,7 @@ const CompletedRides = () => {
 						</div>
 						<div className="grid-item" style={{ gridColumn: 10, gridRow: index + 2 }}>
 							{ ride.rating === 0 ? (
-								<button className="action-button" onClick={() => navigate(`/user/rate-ride/${ride.id}`)}>Rate ride</button>
+								<button className="action-button-table" onClick={() => navigate(`/user/rate-ride/${ride.id}`)}>Rate ride</button>
 							) : (
 								ride.rating
 							)}

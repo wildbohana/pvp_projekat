@@ -86,6 +86,29 @@
     padding: 10px 2px;
 }
 
+.action-button:hover {
+    color: darkmagenta;
+    background-color: plum;
+}
+
+.action-button-table {
+    color: white;
+    background-color: #af5ca8;
+    border: 2px solid #b33f9f;
+    border-radius: 16px;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0px auto;
+    padding: 10px 14px;
+}
+
+.action-button-table:hover {
+    color: darkmagenta;
+    background-color: plum;
+}
+
 .action-button-narrow {
     color: white;
     background-color: #af5ca8;
@@ -101,6 +124,25 @@
 }
 
 .action-button-narrow:hover {
+    color: darkmagenta;
+    background-color: plum;
+}
+
+.action-button-narrow-two {
+    color: white;
+    background-color: #af5ca8;
+    border: 2px solid #b33f9f;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 4px 6px;
+    padding: 10px 8px;
+    width: 36%;
+}
+
+.action-button-narrow-two:hover {
     color: darkmagenta;
     background-color: plum;
 }

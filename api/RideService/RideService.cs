@@ -420,7 +420,8 @@ namespace RideService
             {
                 var rideResult = await rideDictionary.TryGetValueAsync(tx, data.RideId);
 
-                if (rideResult.HasValue)
+                // Ako rating nije 0, onda je vožnja već ocenjena
+                if (rideResult.HasValue && rideResult.Value.Rating == 0)
                 {
                     Ride ratedRide = rideResult.Value;
                     ratedRide.Rating = data.Rate;

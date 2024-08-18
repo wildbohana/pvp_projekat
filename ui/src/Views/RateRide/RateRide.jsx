@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { 
-    GetAverageRatingAsync, 
-    RateRideAsync, 
-    RatedCheckAsync 
-} from '../../Services/ratingService';
+import { RateRideAsync } from '../../Services/ratingService';
 
 import '../../Assets/RateRide.css';
 

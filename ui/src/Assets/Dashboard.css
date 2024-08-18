@@ -4,13 +4,13 @@
 	text-align: center;
 	padding: 20px 50px;
 	border-radius: 10px;
-	width: 28%;
+	width: 460px;
     margin: 20px auto;
 	border: 2px solid #b33f9f;
 }
   
 .dashboard-links {
-	margin: 20px;
+	margin: 40px;
 }
 
 .dashboard-links a {
@@ -19,9 +19,9 @@
 	border: 2px solid #b33f9f;
 	background-color: #d9dedf;
 	padding: 10px 20px;
-	border-radius: 5px;
+	border-radius: 20px;
 	text-decoration: none;
-	margin: 10px;
+	margin: 10px 40px;
 	display: inline-block;
 }
 
@@ -47,11 +47,11 @@
     font-size: 18px;
     text-decoration: none;
     color: white;
-	background-color: #d145ba;
+    background-color: #af5ca8;
 }
 
 .user-section a:hover {
     text-decoration: underline;
-	color: #c243ad;
-	background-color: seashell;
+    color: darkmagenta;
+    background-color: plum;
 }

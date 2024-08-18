@@ -110,10 +110,6 @@ const PendingRides = () => {
         }
     };
 
-    // TODO: ako ima aktivnu vožnju, dodati navigaciju do statusa te vožnje?
-    // Ili do odbrojavanja
-    // I tu dodati dugme za MarkRideAsCompleted
-
     return (
         <div>
             {isDriverBusy ? (
@@ -125,7 +121,7 @@ const PendingRides = () => {
                 <div className="grid-item header" style={{ gridColumn: 1, gridRow: 5 }}>Start time</div>
                 <div className="grid-item header" style={{ gridColumn: 1, gridRow: 6 }}>Expected arrival</div>
                 <div className="grid-item header" style={{ gridColumn: 1, gridRow: 7 }}>Status</div>
-                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 8 }}>Accept ride</div>
+                <div className="grid-item header" style={{ gridColumn: 1, gridRow: 8 }}>Ride action</div>
                 
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 1 }}>
                     {ride.startAddress}
@@ -151,11 +147,11 @@ const PendingRides = () => {
 
                 <div className="grid-item" style={{ gridColumn: 2, gridRow: 8 }}>
                     { ride.status === 'InProgress' ? ( 
-                        <button onClick={() => completeRide()} className="action-button-narrow">
+                        <button onClick={() => completeRide()} className="action-button-table">
                             Complete Ride
                         </button>
                     ) : (
-                        <span>Blocked</span>
+                        <span>/</span>
                     )}
                 </div>
                 </div>
@@ -168,7 +164,7 @@ const PendingRides = () => {
                     <div className="grid-item header" style={{ gridColumn: 5, gridRow: 1 }}>Distance</div>
                     <div className="grid-item header" style={{ gridColumn: 6, gridRow: 1 }}>Requested at</div>
                     <div className="grid-item header" style={{ gridColumn: 7, gridRow: 1 }}>Status</div>
-                    <div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>Accept ride</div>
+                    <div className="grid-item header" style={{ gridColumn: 8, gridRow: 1 }}>Ride action</div>
 
                     {rides.map((ride, index) => (
                         <React.Fragment key={ride.id}>
@@ -196,11 +192,11 @@ const PendingRides = () => {
 
                             <div className="grid-item" style={{ gridColumn: 8, gridRow: index + 2 }}>
                                 {!isDriverBlocked || !isDriverBusy ? ( 
-                                    <button onClick={() => acceptRide(ride.id)} className="action-button">
+                                    <button onClick={() => acceptRide(ride.id)} className="action-button-table">
                                         Accept Ride
                                     </button>
                                 ) : (
-                                    <span>Blocked</span>
+                                    <span>/</span>
                                 )}
                             </div>
                         </React.Fragment>
