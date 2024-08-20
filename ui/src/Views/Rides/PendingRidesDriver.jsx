@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Countdown from 'react-countdown';
 
@@ -20,18 +19,15 @@ const PendingRides = () => {
     const [isDriverBlocked, setIsDriverBlocked] = useState(false);
     const [isDriverBusy, setIsDriverBusy] = useState(false);
     const [ride, setActiveRide] = useState();
-    const navigate = useNavigate();
     const Completionist = () => <span>Better hurry up!</span>;
 
     useEffect(() => {
+        checkDriverStatus(); 
         fetchAcceptedRide();
-        fetchPendingRides();
-		checkDriverStatus(); 
     }, []);
 
     const fetchPendingRides = async () => {
         try {
-			// userId se iz tokena čita
             const response = await GetAllPendingRidesAsync();
             setRides(response.data);
         } catch (error) {
@@ -42,18 +38,18 @@ const PendingRides = () => {
 
     const fetchAcceptedRide = async () => {
         try {
+            localStorage.removeItem('confirmedRide');
             const response = await GetRideEstimateDriverAsync();
             if (response.data)
             {
                 localStorage.setItem('confirmedRide', response.data.id);
                 setActiveRide(response.data);
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Error fetching active ride:', error);
             toast("Error fetching active ride!");
         } finally {
-            checkBusyStatus();
+            await checkBusyStatus();
         }
     }
 
@@ -63,9 +59,9 @@ const PendingRides = () => {
 
             // vraća bool
             if (response.data) {
-                localStorage.setItem('confirmedRide', rideId);
+                //localStorage.setItem('confirmedRide', rideId);
                 toast("Ride accepted.");
-                setTimeout(`window.location.reload()`, 2000);
+                await fetchAcceptedRide();
             }
         } catch (error) {
             console.error('Error accepting ride:', error);
@@ -80,9 +76,9 @@ const PendingRides = () => {
 
             // vraća bool
             if (response.data) {
-                localStorage.removeItem('confirmedRide', rideId);
+                localStorage.removeItem('confirmedRide');
                 toast("Ride completed.");
-                setTimeout(`window.location.reload()`, 2000);
+                await fetchAcceptedRide();
             }
         } catch (error) {
             console.error('Error accepting ride:', error);
@@ -94,6 +90,7 @@ const PendingRides = () => {
         var rideLocal = localStorage.getItem('confirmedRide');
         if (rideLocal === null) {
             setIsDriverBusy(false);
+            await fetchPendingRides();
         }
         else {
             setIsDriverBusy(true);

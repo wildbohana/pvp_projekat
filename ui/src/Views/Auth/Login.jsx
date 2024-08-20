@@ -56,7 +56,7 @@ function Login() {
 				const userType = response.data.usertype;
 				Cookies.set('jwt-token', token, { expires: 60, secure: true, sameSite: 'Strict' });
 				localStorage.setItem('usertype', userType);
-				navigate('/login');
+				navigate('/');
 			}
 			else {
 				console.error('Error during login');
@@ -66,6 +66,7 @@ function Login() {
 			console.error('Error fetching image or registering user:', error);
 		}
 	};
+	
 	const handleGoogleFailure = (response) => {
         console.error("Google login failed!", response);
     };

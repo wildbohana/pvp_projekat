@@ -20,7 +20,6 @@ import MyRides from './Views/Rides/MyRidesDriver';
 import PendingRides from './Views/Rides/PendingRidesDriver';
 
 function App() {
-
 	const checkAuth = () => {
 		const token = Cookies.get('jwt-token');
 		return token && token !== '';

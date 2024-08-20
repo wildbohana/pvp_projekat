@@ -49,8 +49,7 @@ function Register() {
 			console.log(response);
 			if (response.data) {
 				navigate("/login");
-			}
-			else {
+			} else {
 				console.log("That email has already been taken!");
 				toast("That email has already been taken!");
 			}
@@ -84,7 +83,6 @@ function Register() {
 				Address: "/",
 				Role: "Customer",
 				PhotoUrl: "",
-				//https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
 			};
 
 			const response1 = await RegisterAsync(userData);
@@ -92,8 +90,7 @@ function Register() {
 
 			if (response1.data)	{
 				navigate("/login");
-			}
-			else {
+			} else {
 				toast("That email address has already been taken.");
 				console.log("Email is already taken.");
 			}

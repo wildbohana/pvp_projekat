@@ -31,13 +31,10 @@ export default function DriverVerification() {
     const handleVerifyApprove = async (id) => {
         try {
             const response = await VerifyDriverApproveAsync(id);
-			if (response.data)
-			{
+			if (response.data) {
 				toast("Driver verified!");
-				setTimeout(`window.location.reload()`, 2000);
-			}
-			else
-			{
+				await fetchDrivers();
+			} else {
 				toast("Bad request");
 			}
         } catch (error) {
@@ -49,13 +46,10 @@ export default function DriverVerification() {
 	const handleVerifyDeny = async (id) => {
         try {
             const response = await VerifyDriverDenyAsync(id);
-			if (response.data)
-			{
+			if (response.data) {
 				toast("Driver verification denied.");
-				setTimeout(`window.location.reload()`, 2000);
-			}
-			else
-			{
+				fetchDrivers();
+			} else {
 				toast("Bad request!");
 			}			
         } catch (error) {
@@ -67,13 +61,10 @@ export default function DriverVerification() {
     const handleBlock = async (id) => {
         try {
 			const response = await BlockDriverAsync(id);
-			if (response.data)
-			{
-				toast("Success!")
-				setTimeout(`window.location.reload()`, 2000);
-			}
-			else
-			{
+			if (response.data) {
+				toast("Success!");
+				fetchDrivers();
+			} else {
 				toast("Bad request!");
 			}
         } catch (error) {

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Countdown from 'react-countdown';
 
@@ -17,7 +16,6 @@ const CreateRide = () => {
     const [finalAddress, setFinalAddress] = useState('');
     const [isCustomerBusy, setIsCustomerBusy] = useState(false);
     const [ride, setRideRequest] = useState(null);
-    const navigate = useNavigate();
     const Completionist = () => <span>Sorry, it's taking a bit longer!</span>;
 
     useEffect(() => {
@@ -26,7 +24,7 @@ const CreateRide = () => {
     
     const fetchAcceptedRide = async () => {
         try {
-            //localStorage.removeItem('requestedRide');
+            localStorage.removeItem('requestedRide');
             const response = await GetRideEstimateUserAsync();
             if (response.data)
             {
@@ -38,7 +36,7 @@ const CreateRide = () => {
             console.error('Error fetching active ride:', error);
             toast("Error fetching active ride!");
         } finally {
-            checkBusyStatus();
+            await checkBusyStatus();
         }
     }
 
@@ -64,13 +62,14 @@ const CreateRide = () => {
 			const response = await NewRideRequestAsync(request);
 
             if (response.status === 200) {
-				localStorage.setItem('requestedRide', response.data.id);
-                toast("Ride sucessfully requested.");
-                setTimeout(`window.location.reload()`, 2000);
+                localStorage.setItem('requestedRide', response.data.id);
+                //setTimeout(`window.location.reload()`, 2000);
             }
         } catch (error) {
             console.error('Error predicting ride:', error);
             toast("Error requesting ride.");
+        } finally {
+            await fetchAcceptedRide();
         }
     };
 
@@ -81,11 +80,13 @@ const CreateRide = () => {
 
             if (response.status === 200) {
 				toast("Ride request confirmed.");
-                setTimeout(`window.location.reload()`, 2000);
+                //setTimeout(`window.location.reload()`, 2000);
 			}
         } catch (error) {
             console.error('Error confirming ride:', error);
             toast("Error confirming ride!");
+        } finally {
+            await fetchAcceptedRide();
         }
     };
     
@@ -97,18 +98,18 @@ const CreateRide = () => {
             if (response.status === 200) {
 				toast("Ride request deleted.");
                 localStorage.removeItem('requestedRide');
-                setTimeout(`window.location.reload()`, 2000);
+                //setTimeout(`window.location.reload()`, 2000);
 			}
         } catch (error) {
             console.error('Error deleting request:', error);
             toast("Error deleting request!");
+        } finally {
+            await fetchAcceptedRide();
         }
     };
 
     const refreshRide = async () => {
-        localStorage.removeItem('requestedRide');
-        fetchAcceptedRide();
-        //window.location.reload();
+        await fetchAcceptedRide();
     };
 
     return (

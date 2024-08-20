@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { GetUserProfileAsync, UpdateUserAsync } from '../../Services/userService';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../../Assets/MyProfile.css';
 
-import { axiosClient } from '../../Services/axiosClient';
+import { 
+    GetUserProfileAsync, 
+    UpdateUserAsync 
+} from '../../Services/userService';
+
+import '../../Assets/MyProfile.css';
 
 function MyProfile() {
     const [profile, setProfile] = useState({
@@ -24,14 +27,22 @@ function MyProfile() {
     });
 
     useEffect(() => {  
-        axiosClient.get(`${process.env.REACT_APP_API_URL}/users/profile`).then(response => {
-            setProfile(response.data);
-            console.log(response.data);
-        }).catch(error => {
+        fetchProfile();
+    }, []);
+
+    const fetchProfile = async() => {
+        try {
+            const response = await GetUserProfileAsync();
+			if (response.data) {
+                setProfile(response.data);
+			} else {
+				toast("Bad request");
+			}
+        } catch (error) {
             console.error("Error fetching profile: ", error);
             toast("Error fetching profile");
-        });
-    }, []);
+        }
+    }
 
     const handleInputChange = (e) => {
         setProfile({
@@ -70,7 +81,7 @@ function MyProfile() {
             const response = await UpdateUserAsync(profile);
             if (response.status === 200) {
                 toast("Profile updated successfully");
-                setTimeout(`window.location.reload()`, 2000);   // dobra fora (ali mora se izmeniti)
+                await fetchProfile();
             }
         } catch (error) {
             toast("Error updating profile");
@@ -94,7 +105,7 @@ function MyProfile() {
         confirmNewPassword: 'Confirm new password',
     };
 
-    return (	
+    return (
         <div className="profile-container">
             <h1>Edit Profile</h1>
             <form onSubmit={handleSubmit} className="profile-form">
